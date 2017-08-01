@@ -1,0 +1,44 @@
+<resources>
+    <string name="app_name">Living Spaces</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="phoneNumber">1-877-266-7300</string>
+    <string name="openUntil">Open Until 9:00 PM</string>
+    <string name="closed">Closed</string>
+    <string name="viewWebsite">View Website</string>
+
+
+    <!-- Google Maps API Key -->
+    <string name="GoogleMapsAPIKey">AIzaSyD2FwAWzwL9gEXrXhI5ajv-BU2o42l1b0E</string>
+
+
+    <!-- Google Analytics ID -->
+    <string name="GoogleAnalyticsID">UA-463007-5</string>
+
+    <!--sharing strings list -->
+    <string name="share_subject">My Living Spaces Wishlist</string>
+    <string name="share_url">http://dev.livingspaces.com/landingpage.aspx?fileName=wish-list&amp;</string>
+    <string name="shareMsgText1">I wanted to share my</string>
+    <string name="shareMsgText2">Living Spaces Wishlist</string>
+    <string name="shareMsgText3">&#160;with you.</string>
+    <string name="shareChooserTitle">Share Wishlist</string>
+
+
+    <!-- Wish List Fragment -->
+    <string name="scan_btn_text"></string>
+
+    <string name="subscribe_page_title">EMAIL</string>
+
+    <string name="facebook">Facebook</string>
+    <string name="google">Google +</string>
+    <string name="youtube">YouTube</string>
+    <string name="pinterest">Pinterest</string>
+    <string name="houzz">Houzz</string>
+    <string name="twitter">Twitter</string>
+    <string name="instagram">Instagram</string>
+    <string name="blog">Blog</string>
+
+</resources>

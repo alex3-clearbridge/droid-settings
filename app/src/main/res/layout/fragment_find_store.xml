@@ -1,0 +1,42 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/background_light"
+    tools:context="com.livingspaces.proshopper.fragments.FindStoreFrag">
+
+    <FrameLayout
+        android:id="@+id/f_et_zip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FBFBFB"
+        android:clickable="true"
+        android:padding="10dp">
+
+        <com.livingspaces.proshopper.views.LSEditText
+            android:id="@+id/et_zip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_text_box"
+            android:hint="Enter ZIP Code"
+            android:imeOptions="actionGo"
+            android:inputType="number"
+            android:maxLength="5"
+            android:paddingBottom="5dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="8dp"
+            android:singleLine="true"
+            android:textColor="#3F3F3F"
+            app:font="regular" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/container_storeSwap"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/f_et_zip" />
+
+</RelativeLayout>

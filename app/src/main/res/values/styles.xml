@@ -1,0 +1,76 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorAccent">@android:color/holo_orange_dark</item>
+        <item name="android:windowBackground">@drawable/ls_img_splash_750</item>
+    </style>
+
+    <style name="DialogSlideAnim" parent="@android:style/Theme.Dialog">
+        <item name="android:windowAnimationStyle">@style/DialogAnimation</item>
+    </style>
+
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_dialog_down</item>
+        <item name="android:windowExitAnimation">@anim/slide_dialog_up</item>
+    </style>
+
+    <style name="LSButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:padding">6dp</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/Button_Light_txt</item>
+        <item name="android:background">@drawable/button</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="LSTitleTxt">
+        <item name="android:textSize">17sp</item>
+        <item name="android:textColor">@color/Main_txt</item>
+    </style>
+
+    <style name="LSDefTxt">
+        <item name="android:typeface">sans</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/Main_txt</item>
+    </style>
+
+    <style name="LSLightTxt">
+        <item name="android:typeface">sans</item>
+        <item name="android:textSize">19sp</item>
+        <item name="android:textColor">@color/Light_txt</item>
+    </style>
+
+    <style name="LSHomeScreenTxt">
+        <item name="android:typeface">sans</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/Main_txt</item>
+    </style>
+
+    <style name="DialogMainTxt">
+        <item name="android:typeface">sans</item>
+        <item name="android:textSize">17.5sp</item>
+        <item name="android:textColor">@color/Main_txt</item>
+    </style>
+
+    <style name="DialogErrorTxt">
+        <item name="android:typeface">sans</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/Dialog_Error_txt</item>
+    </style>
+
+    <style name="DialogHelpTxt">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/need_help_color</item>
+    </style>
+
+    <style name="DetailTitleTxt">
+        <item name="android:typeface">sans</item>
+        <item name="android:textSize">21sp</item>
+        <item name="android:textColor">@color/Main_txt</item>
+    </style>
+
+
+</resources>

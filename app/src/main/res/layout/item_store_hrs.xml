@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/rl_storeHours"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="5dp"
+    android:layout_marginRight="5dp"
+    android:background="@android:color/transparent"
+    android:orientation="horizontal">
+
+    <ImageView
+        android:id="@+id/iv_storeHrsOverlay"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:adjustViewBounds="true"
+        android:src="@drawable/ls_m_img_list_info"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/background_light"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingLeft="5dp"
+        android:paddingRight="10dp">
+
+        <com.livingspaces.proshopper.views.LSTextView
+            android:id="@+id/tv_storeNum_top"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:layout_marginTop="15dp"
+            android:text="@string/phoneNumber"
+            android:textColor="#F08B00"
+            android:textSize="17sp"
+            app:font="semibold" />
+
+        <com.livingspaces.proshopper.views.LSTextView
+            android:id="@+id/tv_storeHrs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:text="Store Hours"
+            android:textAllCaps="true"
+            android:textColor="#505050"
+            android:textSize="18sp"
+            app:font="bold" />
+
+        <RelativeLayout
+            android:id="@+id/rl_storeHrs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="15dp">
+
+            <com.livingspaces.proshopper.views.LSTextView
+                android:id="@+id/tv_storeWeekdays"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Mon - Fri"
+                android:textColor="#505050"
+                android:textSize="18sp"
+                app:font="light" />
+
+            <com.livingspaces.proshopper.views.LSTextView
+                android:id="@+id/tv_storeWeekdayHrs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:paddingRight="10dp"
+                android:text="10:00 am - 9:00 pm "
+                android:textColor="#505050"
+                android:textSize="18sp"
+                app:font="light" />
+
+            <View
+                android:id="@+id/v_divHrs"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_below="@id/tv_storeWeekdays"
+                android:layout_marginBottom="2dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="2dp"
+                android:background="#F0F0F0"
+                android:paddingRight="10dp" />
+
+
+            <com.livingspaces.proshopper.views.LSTextView
+                android:id="@+id/tv_storeWeekend"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/v_divHrs"
+                android:text="Sat - Sun"
+                android:textColor="#505050"
+                android:textSize="18sp"
+                app:font="light" />
+
+            <com.livingspaces.proshopper.views.LSTextView
+                android:id="@+id/tv_storeWeekendHrs"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/v_divHrs"
+                android:paddingRight="10dp"
+                android:text="10:00 am - 9:00 pm "
+                android:textColor="#505050"
+                android:textSize="18sp"
+                app:font="light" />
+
+        </RelativeLayout>
+
+        <com.livingspaces.proshopper.views.LSTextView
+            android:id="@+id/tv_storeNum_bottom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="@string/phoneNumber"
+            android:textColor="#F08B00"
+            android:textSize="17sp"
+            android:visibility="gone" />
+
+    </LinearLayout>
+</LinearLayout>
