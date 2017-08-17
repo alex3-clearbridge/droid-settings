@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/rounded_corner"
+    android:padding="30dp"
+    android:clickable="true">
+
+    <com.livingspaces.proshopper.views.LSTextView
+        android:id="@+id/tv_head_login_dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20.7dp"
+        android:layout_gravity="center"
+        android:textSize="17.5sp"
+        android:textColor="@color/MainLog_txt"/>
+
+    <com.livingspaces.proshopper.views.LSTextView
+        android:id="@+id/tv_login_dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24.8dp"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textSize="17.5sp"
+        android:textColor="@color/MainLog_txt"/>
+
+    <com.livingspaces.proshopper.views.LSTextView
+        android:id="@+id/tv_login_button"
+        android:layout_width="171.7dp"
+        android:layout_height="37.4dp"
+        android:layout_marginTop="35.2dp"
+        android:layout_gravity="center"
+        android:text="OK"
+        android:background="@drawable/button_login"
+        style="@style/LoginButton"/>
+
+</LinearLayout>

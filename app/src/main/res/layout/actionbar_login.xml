@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/actionBarSize"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/iv_log_topLeft"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:adjustViewBounds="true"
+        android:clickable="true"
+        android:focusable="true"
+        android:layout_marginLeft="12.5dp"
+        android:layout_marginStart="12.5dp"
+        android:scaleType="fitCenter" />
+
+    <com.livingspaces.proshopper.views.LSTextView
+        android:id="@+id/tv_log_topCenter"
+        style="@style/LSLogTitleTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:alpha="0"
+        android:gravity="center"
+        android:padding="5dp"
+        android:singleLine="true"
+        android:text="Fragment Title"
+        android:textAllCaps="true"
+        app:font="bold" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="@android:color/darker_gray" />
+
+</RelativeLayout>

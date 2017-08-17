@@ -3,6 +3,7 @@ package com.livingspaces.proshopper.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +29,9 @@ public class NavigationFrag extends Fragment implements View.OnClickListener {
         ADD("Add to Wishlist", R.id.nav_add, R.drawable.ls_h_icon_add),
         VIEW("View Wishlist", R.id.nav_view, R.drawable.ls_h_icon_view),
         SUB("Subscribe", R.id.nav_sub, R.drawable.ls_h_icon_sub),
-        SOCIAL("Social Media", R.id.nav_social, R.drawable.ls_h_icon_social);
+        SOCIAL("Social Media", R.id.nav_social, R.drawable.ls_h_icon_social),
+        ACCOUNT("My Account", R.id.nav_account, R.drawable.is_h_btn_account),
+        SETTINGS("Settings", R.id.nav_settings, R.drawable.ls_h_btn_settings);
 
         private int resId, imgId;
         private String title;
@@ -98,6 +101,14 @@ public class NavigationFrag extends Fragment implements View.OnClickListener {
             case R.id.nav_social:
                 label = "Social Media";
                 Global.FragManager.stackFrag(SocialFrag.newInstance());
+                break;
+            case R.id.nav_account:
+                label = "My Account";
+                Global.FragManager.stackFrag(AccountFrag.newInstance());
+                break;
+            case R.id.nav_settings:
+                label = "Settings";
+                Global.FragManager.stackFrag(SettingsFrag.newInstance());
                 break;
         }
 

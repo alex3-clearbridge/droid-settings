@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:background="@android:color/background_light"
+    tools:context="com.livingspaces.proshopper.fragments.SettingsFrag">
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="49.5dp"
+        android:layout_marginTop="1.1dp">
+
+        <com.livingspaces.proshopper.views.LSTextView
+            android:id="@+id/tv_settings_terms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24.5dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:text="Terms of Use"
+            android:textSize="15sp"
+            android:textColor="@color/MainLog_txt"/>
+
+        <ImageView
+            android:id="@+id/iv_settings_terms"
+            android:layout_width="17.5dp"
+            android:layout_height="17.5dp"
+            android:layout_marginRight="15dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ls_g_btn_go"/>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="284.9dp"
+        android:layout_height="1dp"
+        android:background="@color/nav_divider_color"
+        android:layout_gravity="center"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="49.5dp"
+        android:layout_marginTop="1.1dp">
+
+        <com.livingspaces.proshopper.views.LSTextView
+            android:id="@+id/tv_settings_policy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24.5dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:text="Privacy Policy"
+            android:textSize="15sp"
+            android:textColor="@color/MainLog_txt"/>
+
+        <ImageView
+            android:id="@+id/iv_settings_policy"
+            android:layout_width="17.5dp"
+            android:layout_height="17.5dp"
+            android:layout_marginRight="15dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ls_g_btn_go"/>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="284.9dp"
+        android:layout_height="1dp"
+        android:background="@color/nav_divider_color"
+        android:layout_gravity="center"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="49.5dp"
+        android:layout_marginTop="1.1dp">
+
+        <com.livingspaces.proshopper.views.LSTextView
+            android:id="@+id/tv_settings_about"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24.5dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:text="About out Ads"
+            android:textSize="15sp"
+            android:textColor="@color/MainLog_txt"/>
+
+        <ImageView
+            android:id="@+id/iv_settings_about"
+            android:layout_width="17.5dp"
+            android:layout_height="17.5dp"
+            android:layout_marginRight="15dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ls_g_btn_go"/>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="284.9dp"
+        android:layout_height="1dp"
+        android:background="@color/nav_divider_color"
+        android:layout_gravity="center"/>
+
+</LinearLayout>

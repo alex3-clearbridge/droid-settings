@@ -333,7 +333,7 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
                 dialogBarcode.hide();
                 startFragForItem(item);
 
-                /** Google Analytics - enter_barcode_success */
+                /* Google Analytics - enter_barcode_success */
                 Utility.gaTracker.send(new HitBuilders.EventBuilder()
                                 .setCategory("ui_action")
                                 .setAction("enter_barcode_success")
@@ -349,7 +349,7 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
 
                 dialogBarcode.showError();
 
-                /** Google Analytics - enter_barcode_fail */
+                /* Google Analytics - enter_barcode_fail */
                 Utility.gaTracker.send(new HitBuilders.EventBuilder()
                                 .setCategory("ui_action")
                                 .setAction("enter_barcode_fail")
@@ -366,6 +366,8 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
     }
 
     private void startFragForItem(Item item) {
+
+        Log.d(TAG, item.toString());
         if (forWishlist)
             Global.FragManager.stackFrag(ItemDetailFrag.newInstance(item).forWishlist(WLCallback));
         else

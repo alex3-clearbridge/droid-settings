@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/background_light"
+    tools:context="com.livingspaces.proshopper.fragments.CreateAccountFrag">
+
+    <EditText
+        android:id="@+id/ed_first_name"
+        android:layout_width="255dp"
+        android:layout_height="29dp"
+        android:layout_marginTop="39.5dp"
+        android:layout_gravity="center"
+        android:inputType="textPersonName"
+        android:hint="First Name"
+        android:background="@drawable/edit_text_box_login"
+        style="@style/LoginEditText"/>
+
+    <EditText
+        android:id="@+id/ed_last_name"
+        android:layout_width="255dp"
+        android:layout_height="29dp"
+        android:layout_marginTop="23dp"
+        android:layout_gravity="center"
+        android:inputType="textPersonName"
+        android:hint="Last Name"
+        android:background="@drawable/edit_text_box_login"
+        style="@style/LoginEditText"/>
+
+    <EditText
+        android:id="@+id/ed_create_email"
+        android:layout_width="255dp"
+        android:layout_height="29dp"
+        android:layout_marginTop="18.5dp"
+        android:layout_gravity="center"
+        android:inputType="textEmailAddress"
+        android:hint="Email"
+        android:background="@drawable/edit_text_box_login"
+        style="@style/LoginEditText"/>
+
+    <EditText
+        android:id="@+id/ed_create_password"
+        android:layout_width="255dp"
+        android:layout_height="29dp"
+        android:layout_marginTop="21dp"
+        android:layout_gravity="center"
+        android:inputType="textPassword"
+        android:hint="Password"
+        android:background="@drawable/edit_text_box_login"
+        style="@style/LoginEditText"/>
+
+    <EditText
+        android:id="@+id/ed_create_confirm_password"
+        android:layout_width="255dp"
+        android:layout_height="29dp"
+        android:layout_marginTop="20.5dp"
+        android:layout_gravity="center"
+        android:inputType="textPassword"
+        android:hint="Confirm Password"
+        android:background="@drawable/edit_text_box_login"
+        style="@style/LoginEditText"/>
+
+    <com.livingspaces.proshopper.views.LSTextView
+        android:id="@+id/tv_privacy_terms"
+        android:layout_width="246.5dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="19dp"
+        android:layout_marginLeft="33dp"
+        android:text=""
+        android:textSize="14sp"
+        android:textColor="@color/MainLog_txt"/>
+
+    <com.livingspaces.proshopper.views.LSTextView
+        android:id="@+id/tv_create_account"
+        android:layout_width="226.5dp"
+        android:layout_height="32.5dp"
+        android:layout_marginTop="50dp"
+        android:layout_gravity="center"
+        android:background="@drawable/button_login"
+        android:text="Create Account"
+        style="@style/LoginButton"/>
+
+
+</LinearLayout>

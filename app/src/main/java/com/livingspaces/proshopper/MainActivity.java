@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager 
     }
 
     private void updateViewsForFrag() {
+        Log.d(TAG, "updateViewsForFrag");
         if (fragStack.isEmpty()) actionBar.update(null);
         else {
             actionBar.update(fragStack.peek());
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager 
 
     @Override
     public void onBackPressed() {
+        Log.d(TAG, "onBackPressed");
         if (!fragStack.isEmpty() && fragStack.peek().handleBackPress()) return;
 
         if (getSupportFragmentManager().getBackStackEntryCount() >= 1) popFrag(false);
@@ -78,11 +80,13 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager 
 
     @Override
     public void refreshActionBar() {
+        Log.d(TAG, "refreshActionBar");
         if (!fragStack.isEmpty()) actionBar.update(fragStack.peek());
     }
 
     @Override
     public boolean popFrag(boolean quickPop) {
+        Log.d(TAG, "popFrag");
         if (getSupportFragmentManager().getBackStackEntryCount() == 0) return false;
         getSupportFragmentManager().popBackStackImmediate();
 
@@ -96,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager 
 
     @Override
     public void popToFrag(String fragTitle) {
+        Log.d(TAG, "popToFrag");
         while (!fragStack.isEmpty() && !fragStack.peek().getTitle().equals(fragTitle) && popFrag(true))
             ;
         updateViewsForFrag();
@@ -103,13 +108,16 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager 
 
     @Override
     public void popToHome() {
+        Log.d(TAG, "popToHome");
         while (popFrag(true)) ;
         updateViewsForFrag();
     }
 
     @Override
     public void stackFrag(final BaseStackFrag frag) {
+        Log.d(TAG, "stackFrag");
         if (fragStack.size() > 0 && fragStack.peek().getClass().equals(frag.getClass())) return;
+        Log.d(TAG, "set NotTouchable");
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
         new Handler().post(new Runnable() {
@@ -133,12 +141,14 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager 
 
     @Override
     public void startFrag(BaseStackFrag frag) {
+        Log.d(TAG, "startFrag");
         popToHome();
         stackFrag(frag);
     }
 
     @Override
     public void swapFrag(BaseStackFrag frag) {
+        Log.d(TAG, "swapFrag");
         popFrag(true);
         stackFrag(frag);
     }

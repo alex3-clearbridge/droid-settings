@@ -30,6 +30,11 @@
         <item name="android:textColor">@color/Main_txt</item>
     </style>
 
+    <style name="LSLogTitleTxt">
+        <item name="android:textSize">17sp</item>
+        <item name="android:textColor">@color/MainLog_txt</item>
+    </style>
+
     <style name="LSDefTxt">
         <item name="android:typeface">sans</item>
         <item name="android:textSize">18sp</item>
@@ -71,6 +76,21 @@
         <item name="android:textSize">21sp</item>
         <item name="android:textColor">@color/Main_txt</item>
     </style>
+
+    <style name="LoginEditText">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@color/MainLog_txt</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:paddingLeft">9dp</item>
+    </style>
+
+    <style name="LoginButton">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">#f8f6e8</item>
+        <item name="android:gravity">center</item>
+        <!--<item name="android:textScaleX">0.5dp</item>-->
+    </style>
+
 
 
 </resources>

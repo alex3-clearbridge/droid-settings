@@ -8,6 +8,7 @@ import android.util.Log;
 import android.util.LruCache;
 import android.util.Pair;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
 import com.android.volley.Request;
@@ -17,10 +18,15 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.livingspaces.proshopper.interfaces.IREQCallback;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -53,6 +59,11 @@ public class NetworkManager {
     public static void makeREQ(IREQCallback REQcb) {
         if (_networkManager == null) return;
         _networkManager.sendRequest(REQcb);
+    }
+
+    public static void makePostREQ(String name, String pass, IREQCallback REQcb) {
+        if (_networkManager == null) return;
+        _networkManager.sendPostRequest(name, pass, REQcb);
     }
 
     public static ImageLoader getIMGLoader() {
@@ -90,6 +101,40 @@ public class NetworkManager {
 
     protected void cancelPendingRequests(Object tag) {
         if (_requestQueue != null) _requestQueue.cancelAll(tag);
+    }
+
+    protected void sendPostRequest (final String name, final String pass, final IREQCallback REQcb) {
+        if (REQcb == null) return;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, REQcb.getURL(),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(TAG, "RSP Success :: " + response);
+                        REQcb.onRSPSuccess(response);
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                REQcb.onRSPFail();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                Map<String, String>  params = new HashMap<String, String>();
+                params.put("grant_type", "password");
+                params.put("username", name);
+                params.put("password", pass);
+
+                return params;
+            }
+        };
+
+        Log.d(TAG, "REQ: " + stringRequest.toString());
+        addToRequestQueue(stringRequest);
+
     }
 
     protected void sendRequest(final IREQCallback REQcb) {
