@@ -16,6 +16,7 @@ public class Services {
         Subscribe("http://www.livingspaces.com/landingpage.aspx?fileName=app-email-sign-up"),
         Website("http://www.livingspaces.com/"),
         // ShareProduct("http://www.livingspaces.com/landingpage.aspx?fileName=wish-list&")
+        Cart("http://www.livingspaces.com/viewcart.aspx"),
         ShareProduct("http://dev.livingspaces.com/landingpage.aspx?fileName=wish-list&"); //"http://dev.livingspaces.com/landingpage.aspx?fileName=wish-list&"
 
         private String url;

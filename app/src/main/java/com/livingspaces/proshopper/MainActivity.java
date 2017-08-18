@@ -129,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager 
                         .commitAllowingStateLoss();
 
                 fragStack.push(frag);
+                Log.d(TAG, "Pushed fragment :: " + frag.getTitle());
                 actionBar.post(new Runnable() {
                     @Override
                     public void run() {

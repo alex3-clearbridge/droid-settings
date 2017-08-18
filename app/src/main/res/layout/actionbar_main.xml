@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/iv_topLeft"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_width="88.5dp"
+        android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -34,29 +34,27 @@
 
     <ImageView
         android:id="@+id/iv_topRight"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginRight="10dp"
+        android:layout_marginRight="17.5dp"
+        android:layout_centerVertical="true"
         android:clickable="false"
-        android:minWidth="50dp"
-        android:padding="10dp"
         android:scaleType="fitCenter"
-        android:visibility="invisible" />
+        android:visibility="visible" />
 
 
     <ImageView
         android:id="@+id/iv_topRightExtra"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginRight="10dp"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="14.5dp"
         android:layout_toLeftOf="@id/iv_topRight"
+        android:layout_centerVertical="true"
         android:clickable="false"
-        android:minWidth="50dp"
-        android:padding="10dp"
         android:scaleType="fitCenter"
-        android:visibility="invisible" />
+        android:visibility="visible" />
 
     <com.livingspaces.proshopper.views.LSTextView
         android:id="@+id/tv_topRight"
@@ -69,7 +67,6 @@
         android:clickable="true"
         android:gravity="center"
         android:singleLine="true"
-        android:text="@string/viewWebsite"
         app:font="semibold" />
 
     <View

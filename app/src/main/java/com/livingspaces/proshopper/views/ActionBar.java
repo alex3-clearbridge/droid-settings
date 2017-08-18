@@ -7,10 +7,12 @@ import android.graphics.drawable.Drawable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.livingspaces.proshopper.R;
 import com.livingspaces.proshopper.fragments.BaseStackFrag;
@@ -25,7 +27,9 @@ import com.google.android.gms.analytics.HitBuilders;
  */
 public class ActionBar extends RelativeLayout {
 
-    private Drawable d_main, d_back;
+    private static final String TAG = ActionBar.class.getSimpleName();
+
+    private Drawable d_main, d_back, d_cart, d_web;
 
     private ImageView iv_topLeft, iv_topRight, iv_topRightEx;
     private TextView tv_topRight;
@@ -53,6 +57,8 @@ public class ActionBar extends RelativeLayout {
 
         d_main = ContextCompat.getDrawable(getContext(), R.drawable.ls_h_img_logo);
         d_back = ContextCompat.getDrawable(getContext(), R.drawable.ls_g_btn_back);
+        d_cart = ContextCompat.getDrawable(getContext(), R.drawable.ls_h_btn_cart);
+        d_web = ContextCompat.getDrawable(getContext(), R.drawable.ls_h_btn_web);
 
         iv_topLeft = (ImageView) findViewById(R.id.iv_topLeft);
         iv_topRight = (ImageView) findViewById(R.id.iv_topRight);
@@ -82,7 +88,10 @@ public class ActionBar extends RelativeLayout {
         FragmentManager fManager = Global.FragManager.getFragMan();
         int backStackCount = fManager.getBackStackEntryCount();
 
+        Log.d(TAG, "Back stack count = " + backStackCount);
+
         if (frag != null) {
+            Log.d(TAG, "frag != null");
 
             if (animate(tv_topCenter, true)) tv_topCenter.setText(frag.getTitle());
             else animateBlink(tv_topCenter, new Runnable() {
@@ -97,10 +106,11 @@ public class ActionBar extends RelativeLayout {
             animate(iv_topRightEx, frag.setTopRightEx(iv_topRightEx));
 
         } else {
+            Log.d(TAG, "frag == null");
             animate(tv_topCenter, false);
-            animate(tv_topRight, true);
-            animate(iv_topRight, false);
-            animate(iv_topRightEx,false);
+            animate(tv_topRight, false);
+            animate(iv_topRight, true);
+            animate(iv_topRightEx,true);
             setViewWebsite();
         }
 
@@ -167,18 +177,36 @@ public class ActionBar extends RelativeLayout {
     }
 
     private void setViewWebsite() {
-        tv_topRight.setText(R.string.viewWebsite);
-        tv_topRight.setOnClickListener(new OnClickListener() {
+        iv_topRight.setClickable(false);
+        iv_topRight.setImageDrawable(d_cart);
+        iv_topRight.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Global.FragManager.stackFrag(WebViewFrag.newInstance("WWW.livingspaces.COM", Services.URL.Website.get()));
+            public void onClick(View view) {
+                Global.FragManager.stackFrag(WebViewFrag.newInstance("Cart", Services.URL.Cart.get()));
 
                 /** Google Analytics -- home_button_click */
                 Utility.gaTracker.send(new HitBuilders.EventBuilder()
-                                .setCategory("ui_action")
-                                .setAction("home_button_click")
-                                .setLabel("View Website")
-                                .build()
+                        .setCategory("ui_action")
+                        .setAction("home_button_click")
+                        .setLabel("View Cart")
+                        .build()
+                );
+            }
+        });
+
+        iv_topRightEx.setClickable(false);
+        iv_topRightEx.setImageDrawable(d_web);
+        iv_topRightEx.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Global.FragManager.stackFrag(WebViewFrag.newInstance("LivingSpaces", Services.URL.Website.get()));
+
+                /** Google Analytics -- home_button_click */
+                Utility.gaTracker.send(new HitBuilders.EventBuilder()
+                        .setCategory("ui_action")
+                        .setAction("home_button_click")
+                        .setLabel("View Website")
+                        .build()
                 );
             }
         });

@@ -27,6 +27,10 @@ public class Global {
         Prefs.Init(mainActivity);
     }
 
+    public static void Init(LoginActivity loginActivity){
+        Prefs.Init(loginActivity);
+    }
+
     public static Camera getCameraInstance(){
         Camera c = null;
 
@@ -46,6 +50,10 @@ public class Global {
         public static void Init(MainActivity mainActivity) {
             sharedPrefs = mainActivity.getSharedPreferences(Prefs.TAG, Context.MODE_PRIVATE);
             getWishListRAW();
+        }
+
+        public static void Init(LoginActivity loginActivity){
+            sharedPrefs = loginActivity.getApplicationContext().getSharedPreferences(Prefs.TAG, Context.MODE_PRIVATE);
         }
 
         public static String getWishListRAW() {
