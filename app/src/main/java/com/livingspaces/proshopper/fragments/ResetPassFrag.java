@@ -15,7 +15,7 @@ import com.livingspaces.proshopper.views.LSTextView;
  * Created by alexeyredchets on 2017-08-15.
  */
 
-public class ResetPassFrag extends BaseLoginFrag {
+public class ResetPassFrag extends BaseStackFrag {
 
     private static final String TAG = ResetPassFrag.class.getSimpleName();
 

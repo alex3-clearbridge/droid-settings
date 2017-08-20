@@ -27,10 +27,6 @@ public class Global {
         Prefs.Init(mainActivity);
     }
 
-    public static void Init(LoginActivity loginActivity){
-        Prefs.Init(loginActivity);
-    }
-
     public static Camera getCameraInstance(){
         Camera c = null;
 
@@ -43,6 +39,7 @@ public class Global {
     public static class Prefs {
         private static final String TAG = "LivingSpace.Preferences";
         private static final String KEY_wishlist = "wishlist";
+        private static final String KEY_token = "token";
 
         private static SharedPreferences sharedPrefs;
         private static String d_wishList;
@@ -50,10 +47,6 @@ public class Global {
         public static void Init(MainActivity mainActivity) {
             sharedPrefs = mainActivity.getSharedPreferences(Prefs.TAG, Context.MODE_PRIVATE);
             getWishListRAW();
-        }
-
-        public static void Init(LoginActivity loginActivity){
-            sharedPrefs = loginActivity.getApplicationContext().getSharedPreferences(Prefs.TAG, Context.MODE_PRIVATE);
         }
 
         public static String getWishListRAW() {
@@ -89,6 +82,17 @@ public class Global {
 
             wishId = wishId + ",";
             return d_wishList.contains(wishId);
+        }
+
+        public static void editToken(String token){
+
+            if (sharedPrefs == null) return;
+
+            sharedPrefs.edit().putString(KEY_token, token).apply();
+        }
+
+        public static boolean hasToken(){
+            return sharedPrefs != null && sharedPrefs.contains(KEY_token);
         }
     }
 }

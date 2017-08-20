@@ -66,6 +66,16 @@ public class NetworkManager {
         _networkManager.sendPostRequest(name, pass, REQcb);
     }
 
+    public static void makePostREQ(String fname,
+                                   String lname,
+                                   String email,
+                                   String pass,
+                                   String confPass,
+                                   IREQCallback REQcb) {
+        if (_networkManager == null) return;
+        _networkManager.sendPostRequest(fname, lname, email, pass, confPass, REQcb);
+    }
+
     public static ImageLoader getIMGLoader() {
         if (_networkManager == null) return null;
         return _networkManager.getImageLoader();
@@ -106,6 +116,8 @@ public class NetworkManager {
     protected void sendPostRequest (final String name, final String pass, final IREQCallback REQcb) {
         if (REQcb == null) return;
 
+        //if (!isConnectedToNetwork()) return;
+
         StringRequest stringRequest = new StringRequest(Request.Method.POST, REQcb.getURL(),
                 new Response.Listener<String>() {
                     @Override
@@ -114,11 +126,13 @@ public class NetworkManager {
                         REQcb.onRSPSuccess(response);
 
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                REQcb.onRSPFail();
-            }
+                },
+                new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Log.d(TAG, error.toString());
+                    REQcb.onRSPFail();
+                }
         }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
@@ -132,9 +146,60 @@ public class NetworkManager {
             }
         };
 
-        Log.d(TAG, "REQ: " + stringRequest.toString());
+        Log.d(TAG, "REQ: " + stringRequest.toString() + " end");
         addToRequestQueue(stringRequest);
+    }
 
+    protected void sendPostRequest (final String fname,
+                                    final String lname,
+                                    final String email,
+                                    final String pass,
+                                    final String confPass,
+                                    final IREQCallback REQcb) {
+        if (REQcb == null) return;
+
+        //if (!isConnectedToNetwork()) return;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, REQcb.getURL(),
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(TAG, "RSP Success :: " + response);
+                        REQcb.onRSPSuccess(response);
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d(TAG, error.toString());
+                        REQcb.onRSPFail();
+                    }
+                }) {
+
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String>  params = new HashMap<String, String>();
+                params.put("firstName", fname);
+                params.put("lastName", lname);
+                params.put("emailAddress", email);
+                params.put("password", pass);
+                params.put("confirmPass", confPass);
+                params.put("wantsNews", "false");
+
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String,String> params = new HashMap<String, String>();
+                params.put("Content-Type","application/x-www-form-urlencoded");
+                return params;
+            }
+        };
+
+        Log.d(TAG, "REQ: " + stringRequest.toString() + " end");
+        addToRequestQueue(stringRequest);
     }
 
     protected void sendRequest(final IREQCallback REQcb) {

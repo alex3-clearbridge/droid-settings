@@ -9,7 +9,9 @@ import android.view.WindowManager;
 
 import com.livingspaces.proshopper.analytics.AnalyticsApplication;
 import com.livingspaces.proshopper.fragments.BaseStackFrag;
+import com.livingspaces.proshopper.fragments.LoginFrag;
 import com.livingspaces.proshopper.fragments.NavigationFrag;
+import com.livingspaces.proshopper.fragments.SettingsFrag;
 import com.livingspaces.proshopper.interfaces.IMainFragManager;
 import com.livingspaces.proshopper.networking.GpsManager;
 import com.livingspaces.proshopper.networking.NetworkManager;
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager 
 
     private ActionBar actionBar;
     private Stack<BaseStackFrag> fragStack;
+    private boolean hasToken = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +43,15 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager 
     private void Init() {
         fragStack = new Stack<>();
         actionBar = (ActionBar) findViewById(R.id.actionbar);
+
+        hasToken = Global.Prefs.hasToken();
+
         getSupportFragmentManager().beginTransaction().add(R.id.container_main, NavigationFrag.newInstance()).commit();
+
+        if (!hasToken) {
+            Global.FragManager.stackFrag(LoginFrag.newInstance());
+        }
+
         Utility.activity = this;
         GpsManager.getInstance().setContext(this);
 
@@ -50,8 +61,12 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager 
 
     private void updateViewsForFrag() {
         Log.d(TAG, "updateViewsForFrag");
-        if (fragStack.isEmpty()) actionBar.update(null);
+        if (fragStack.isEmpty()){
+            Log.d(TAG, "fragStack.isEmpty()");
+            actionBar.update(null);
+        }
         else {
+            Log.d(TAG, "fragStack.is not Empty()");
             actionBar.update(fragStack.peek());
             fragStack.peek().onResurface();
         }
@@ -72,28 +87,46 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager 
     @Override
     public void onBackPressed() {
         Log.d(TAG, "onBackPressed");
-        if (!fragStack.isEmpty() && fragStack.peek().handleBackPress()) return;
+        if (!fragStack.isEmpty() && fragStack.peek().handleBackPress()){
+            Log.d(TAG, "fragStack is not Empty() & handleBackPress");
+            return;
+        }
 
-        if (getSupportFragmentManager().getBackStackEntryCount() >= 1) popFrag(false);
-        else super.onBackPressed();
+        if (getSupportFragmentManager().getBackStackEntryCount() >= 1) {
+            Log.d(TAG, "getBackStackEntryCount >= 1");
+            popFrag(false);
+        }
+        else {
+            Log.d(TAG, "super.OnBackPress");
+            super.onBackPressed();
+        }
     }
 
     @Override
     public void refreshActionBar() {
         Log.d(TAG, "refreshActionBar");
-        if (!fragStack.isEmpty()) actionBar.update(fragStack.peek());
+        if (!fragStack.isEmpty()){
+            Log.d(TAG, "fragStack is not Empty()");
+            actionBar.update(fragStack.peek());
+        }
     }
 
     @Override
     public boolean popFrag(boolean quickPop) {
         Log.d(TAG, "popFrag");
-        if (getSupportFragmentManager().getBackStackEntryCount() == 0) return false;
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            Log.d(TAG, "getBackStackEntryCount() == 0");
+            return false;
+        }
         getSupportFragmentManager().popBackStackImmediate();
 
         BaseStackFrag poppedFrag = fragStack.pop();
         Log.d(TAG, "Popped Fragment :: " + poppedFrag.getTitle());
 
-        if (!quickPop) updateViewsForFrag();
+        if (!quickPop) {
+            Log.d(TAG, "!quickPop");
+            updateViewsForFrag();
+        }
 
         return true;
     }
@@ -116,7 +149,10 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager 
     @Override
     public void stackFrag(final BaseStackFrag frag) {
         Log.d(TAG, "stackFrag");
-        if (fragStack.size() > 0 && fragStack.peek().getClass().equals(frag.getClass())) return;
+        if (fragStack.size() > 0 && fragStack.peek().getClass().equals(frag.getClass())) {
+            Log.d(TAG, "fragStack.size() > 0 && fragStack.peek().getClass().equals(frag.getClass())");
+            return;
+        }
         Log.d(TAG, "set NotTouchable");
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                 WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
@@ -152,5 +188,9 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager 
         Log.d(TAG, "swapFrag");
         popFrag(true);
         stackFrag(frag);
+    }
+
+    private boolean hasToken(){
+        return hasToken;
     }
 }

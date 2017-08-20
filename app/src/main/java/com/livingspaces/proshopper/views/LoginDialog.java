@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -93,11 +94,36 @@ public class LoginDialog extends LinearLayout {
         }
     };
 
-    public void show() {
+    public void show(String method) {
         setVisibility(INVISIBLE);
         startAnimation(slideDownAnim);
-        tv_header.setText("INVALID EMAIL");
-        tv_message.setText("Your email does not exist in our system, try again.");
+        switch (method) {
+            case "empty":
+                Log.d(TAG, method);
+                tv_header.setText("Error");
+                tv_message.setText("All fields are required");
+                break;
+            case "notValid":
+                Log.d(TAG, method);
+                tv_header.setText("Invalid email");
+                tv_message.setText("Email is not valid. Try again.");
+                break;
+            case "ok":
+                Log.d(TAG, method);
+                tv_header.setText("Success");
+                tv_message.setText("You successfully logged in.");
+                break;
+            case "notMatch":
+                Log.d(TAG, method);
+                tv_header.setText("Error");
+                tv_message.setText("Passwords do not match");
+                break;
+            default:
+                Log.d(TAG, method);
+                tv_header.setText("INVALID EMAIL");
+                tv_message.setText("Your email does not exist in our system, try again.");
+                break;
+        }
     }
 
     public void hide() {

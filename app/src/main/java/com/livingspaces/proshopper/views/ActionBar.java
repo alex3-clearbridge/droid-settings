@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.livingspaces.proshopper.R;
 import com.livingspaces.proshopper.fragments.BaseStackFrag;
+import com.livingspaces.proshopper.fragments.NavigationFrag;
 import com.livingspaces.proshopper.fragments.WebViewFrag;
 import com.livingspaces.proshopper.networking.Services;
 import com.livingspaces.proshopper.utilities.Global;
@@ -29,9 +30,9 @@ public class ActionBar extends RelativeLayout {
 
     private static final String TAG = ActionBar.class.getSimpleName();
 
-    private Drawable d_main, d_back, d_cart, d_web;
+    private Drawable d_main, d_back, d_cart, d_web, d_close;
 
-    private ImageView iv_topLeft, iv_topRight, iv_topRightEx;
+    private ImageView iv_topLeft, iv_topLeftEx, iv_topRight, iv_topRightEx;
     private TextView tv_topRight;
     private LSTextView tv_topCenter;
 
@@ -53,14 +54,18 @@ public class ActionBar extends RelativeLayout {
     }
 
     private void initialize() {
+        Log.d(TAG, "initialize");
+
         inflate(getContext(), R.layout.actionbar_main, this);
 
         d_main = ContextCompat.getDrawable(getContext(), R.drawable.ls_h_img_logo);
         d_back = ContextCompat.getDrawable(getContext(), R.drawable.ls_g_btn_back);
         d_cart = ContextCompat.getDrawable(getContext(), R.drawable.ls_h_btn_cart);
         d_web = ContextCompat.getDrawable(getContext(), R.drawable.ls_h_btn_web);
+        d_close = ContextCompat.getDrawable(getContext(), R.drawable.ls_g_btn_cancel);
 
         iv_topLeft = (ImageView) findViewById(R.id.iv_topLeft);
+        iv_topLeftEx = (ImageView)findViewById(R.id.iv_topLeftExtra);
         iv_topRight = (ImageView) findViewById(R.id.iv_topRight);
         iv_topRightEx = (ImageView) findViewById(R.id.iv_topRightExtra);
         tv_topRight = (TextView) findViewById(R.id.tv_topRight);
@@ -72,19 +77,21 @@ public class ActionBar extends RelativeLayout {
         tv_topCenter.setTypeface(fontBold);
         tv_topRight.setTypeface(fontSemiBold);
 
-        iv_topLeft.setClickable(false);
-        iv_topLeft.setImageDrawable(d_main);
-        iv_topLeft.setOnClickListener(new OnClickListener() {
+        /*iv_topLeftEx.setClickable(false);
+        iv_topLeftEx.setImageDrawable(d_close);;
+        iv_topLeftEx.setOnClickListener(new OnClickListener() {
             @Override
-            public void onClick(View v) {
-                Global.FragManager.onBackPressed();
+            public void onClick(View view) {
+
             }
-        });
+        });*/
 
         setViewWebsite();
     }
 
     public void update(final BaseStackFrag frag) {
+        Log.d(TAG, "update");
+
         FragmentManager fManager = Global.FragManager.getFragMan();
         int backStackCount = fManager.getBackStackEntryCount();
 
@@ -93,10 +100,14 @@ public class ActionBar extends RelativeLayout {
         if (frag != null) {
             Log.d(TAG, "frag != null");
 
-            if (animate(tv_topCenter, true)) tv_topCenter.setText(frag.getTitle());
+            if (animate(tv_topCenter, true)){
+                Log.d(TAG, "animate tv_topCenter true");
+                tv_topCenter.setText(frag.getTitle());
+            }
             else animateBlink(tv_topCenter, new Runnable() {
                 @Override
                 public void run() {
+                    Log.d(TAG, "animateBlink tv_topCenter");
                     tv_topCenter.setText(frag.getTitle());
                 }
             });
@@ -111,12 +122,11 @@ public class ActionBar extends RelativeLayout {
             animate(tv_topRight, false);
             animate(iv_topRight, true);
             animate(iv_topRightEx,true);
-            setViewWebsite();
+            //setViewWebsite();
         }
 
         if (backStackCount == 1 && !wasStack) animateForStackChange(true);
-        else if (backStackCount == 0 && wasStack) animateForStackChange(false);
-    }
+        else if (backStackCount == 0 && wasStack) animateForStackChange(false);    }
 
     public static boolean animate(final View view, final boolean on) {
 //        boolean wasOn = view.getAlpha() > 0;
@@ -147,6 +157,8 @@ public class ActionBar extends RelativeLayout {
     }
 
     public static void animateBlink(final View view, final Runnable viewUpdate) {
+        Log.d(TAG, "animateBlink");
+
         view.setClickable(false);
         view.animate().alpha(0).setDuration(100).withEndAction(new Runnable() {
             @Override
@@ -163,6 +175,7 @@ public class ActionBar extends RelativeLayout {
     }
 
     private void animateForStackChange(final boolean isStack) {
+        Log.d(TAG, "animateForStackChange :: " + isStack);
 
         iv_topLeft.setClickable(isStack);
         iv_topLeft.animate().alpha(0).setDuration(250).withEndAction(new Runnable() {
@@ -177,6 +190,17 @@ public class ActionBar extends RelativeLayout {
     }
 
     private void setViewWebsite() {
+        Log.d(TAG, "setViewWebsite");
+
+        iv_topLeft.setClickable(false);
+        iv_topLeft.setImageDrawable(d_main);
+        iv_topLeft.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Global.FragManager.onBackPressed();
+            }
+        });
+
         iv_topRight.setClickable(false);
         iv_topRight.setImageDrawable(d_cart);
         iv_topRight.setOnClickListener(new OnClickListener() {
@@ -184,7 +208,7 @@ public class ActionBar extends RelativeLayout {
             public void onClick(View view) {
                 Global.FragManager.stackFrag(WebViewFrag.newInstance("Cart", Services.URL.Cart.get()));
 
-                /** Google Analytics -- home_button_click */
+                /* Google Analytics -- home_button_click */
                 Utility.gaTracker.send(new HitBuilders.EventBuilder()
                         .setCategory("ui_action")
                         .setAction("home_button_click")
@@ -201,7 +225,7 @@ public class ActionBar extends RelativeLayout {
             public void onClick(View view) {
                 Global.FragManager.stackFrag(WebViewFrag.newInstance("LivingSpaces", Services.URL.Website.get()));
 
-                /** Google Analytics -- home_button_click */
+                /* Google Analytics -- home_button_click */
                 Utility.gaTracker.send(new HitBuilders.EventBuilder()
                         .setCategory("ui_action")
                         .setAction("home_button_click")
@@ -211,5 +235,4 @@ public class ActionBar extends RelativeLayout {
             }
         });
     }
-
 }

@@ -18,6 +18,8 @@ import com.livingspaces.proshopper.data.Token;
 import com.livingspaces.proshopper.interfaces.IREQCallback;
 import com.livingspaces.proshopper.networking.NetworkManager;
 import com.livingspaces.proshopper.networking.Services;
+import com.livingspaces.proshopper.utilities.Global;
+import com.livingspaces.proshopper.utilities.Utility;
 import com.livingspaces.proshopper.views.LSTextView;
 import com.livingspaces.proshopper.views.LoginDialog;
 
@@ -25,7 +27,7 @@ import com.livingspaces.proshopper.views.LoginDialog;
  * Created by alexeyredchets on 2017-08-14.
  */
 
-public class LoginFrag extends BaseLoginFrag implements LoginDialog.ICallback {
+public class LoginFrag extends BaseStackFrag implements LoginDialog.ICallback {
 
     private static final String TAG = LoginFrag.class.getSimpleName();
 
@@ -59,7 +61,6 @@ public class LoginFrag extends BaseLoginFrag implements LoginDialog.ICallback {
         overlay = view.findViewById(R.id.shade_login);
         overlay.setVisibility(View.GONE);
 
-
         return view;
     }
 
@@ -75,13 +76,13 @@ public class LoginFrag extends BaseLoginFrag implements LoginDialog.ICallback {
                 if (isEmpty(ed_login) || isEmpty(ed_password)){
                     //Toast.makeText(getContext(), "Login and password could not be empty", Toast.LENGTH_SHORT).show();
                     overlay(true);
-                    mLoginDialog.show();
+                    mLoginDialog.show("empty");
                     return;
                 }
                 if (!isValidEmail(ed_login)){
                     //Toast.makeText(getContext(), "Email is not valid", Toast.LENGTH_SHORT).show();
                     overlay(true);
-                    mLoginDialog.show();
+                    mLoginDialog.show("notValid");
                     return;
                 }
                 onLoginClicked(ed_login.getText().toString(), ed_password.getText().toString());
@@ -92,7 +93,7 @@ public class LoginFrag extends BaseLoginFrag implements LoginDialog.ICallback {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "createAccount button Clicked");
-                LoginUtility.FragManager.stackFrag(CreateAccountFrag.newInstance());
+                Global.FragManager.stackFrag(CreateAccountFrag.newInstance());
             }
         });
 
@@ -100,7 +101,7 @@ public class LoginFrag extends BaseLoginFrag implements LoginDialog.ICallback {
             @Override
             public void onClick(View view) {
                 Log.d(TAG, "Forgot Pass was clicked");
-                LoginUtility.FragManager.stackFrag(ResetPassFrag.newInstance());
+                Global.FragManager.stackFrag(ResetPassFrag.newInstance());
             }
         });
     }
@@ -142,15 +143,24 @@ public class LoginFrag extends BaseLoginFrag implements LoginDialog.ICallback {
     }
 
     private void onLoginClicked(String name, String pass){
+
+
         NetworkManager.makePostREQ(name, pass, new IREQCallback() {
             @Override
             public void onRSPSuccess(String rsp) {
                 Log.d(TAG, "onRSPSuccess");
 
-                Token token = new Token(rsp);
-
-                Toast.makeText(getContext(), token.token, Toast.LENGTH_SHORT).show();
-
+                if (rsp.contains("access_token")){
+                    Token token = new Token(rsp);
+                    Global.Prefs.editToken(token.token);
+                    overlay(true);
+                    mLoginDialog.show("ok");
+                    Global.FragManager.onBackPressed();
+                }
+                else {
+                    overlay(true);
+                    mLoginDialog.show("notInSystem");
+                }
             }
 
             @Override
@@ -158,7 +168,7 @@ public class LoginFrag extends BaseLoginFrag implements LoginDialog.ICallback {
                 Log.d(TAG, "onRSPFail");
                 //Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
                 overlay(true);
-                mLoginDialog.show();
+                mLoginDialog.show("notInSystem");
             }
 
             @Override
@@ -180,5 +190,16 @@ public class LoginFrag extends BaseLoginFrag implements LoginDialog.ICallback {
     public void onOk() {
         overlay(false);
         mLoginDialog.hide();
+    }
+
+    @Override
+    public boolean handleBackPress() {
+        Log.d(TAG, "handleBackPress");
+        if (mLoginDialog != null && isViewShowing(mLoginDialog)){
+            Log.d(TAG, "close dialog on back press");
+            onOk();
+            return true;
+        }
+        else return super.handleBackPress();
     }
 }
