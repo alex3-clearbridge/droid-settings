@@ -84,6 +84,12 @@ public class Global {
             return d_wishList.contains(wishId);
         }
 
+        public static void clearToken(){
+            if (sharedPrefs == null || !sharedPrefs.contains(KEY_token)) return;
+
+            sharedPrefs.edit().remove(KEY_token).apply();
+        }
+
         public static void editToken(String token){
 
             if (sharedPrefs == null) return;

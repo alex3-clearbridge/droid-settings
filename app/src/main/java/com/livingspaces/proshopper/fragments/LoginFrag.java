@@ -35,6 +35,7 @@ public class LoginFrag extends BaseStackFrag implements LoginDialog.ICallback {
     private LSTextView tv_login, tv_createAccount, tv_forgotPass;
     private EditText ed_login, ed_password;
     private View overlay;
+    private boolean isLoading = false, isLogged = false;
 
     public static LoginFrag newInstance(){
         return new LoginFrag();
@@ -144,6 +145,11 @@ public class LoginFrag extends BaseStackFrag implements LoginDialog.ICallback {
 
     private void onLoginClicked(String name, String pass){
 
+        if (isLoading) return;
+
+        overlay(true);
+        mLoginDialog.show(true);
+        isLoading = true;
 
         NetworkManager.makePostREQ(name, pass, new IREQCallback() {
             @Override
@@ -153,22 +159,17 @@ public class LoginFrag extends BaseStackFrag implements LoginDialog.ICallback {
                 if (rsp.contains("access_token")){
                     Token token = new Token(rsp);
                     Global.Prefs.editToken(token.token);
-                    overlay(true);
-                    mLoginDialog.show("ok");
-                    Global.FragManager.onBackPressed();
+                    showDialog("ok");
+                    isLogged = true;
                 }
                 else {
-                    overlay(true);
-                    mLoginDialog.show("notInSystem");
+                    onRSPFail();
                 }
             }
-
             @Override
             public void onRSPFail() {
+                showDialog("notInSystem");
                 Log.d(TAG, "onRSPFail");
-                //Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
-                overlay(true);
-                mLoginDialog.show("notInSystem");
             }
 
             @Override
@@ -186,10 +187,21 @@ public class LoginFrag extends BaseStackFrag implements LoginDialog.ICallback {
         return !TextUtils.isEmpty(s) && Patterns.EMAIL_ADDRESS.matcher(s).matches();
     }
 
+    private void showDialog(String choice){
+        isLoading = false;
+        mLoginDialog.hide();
+        mLoginDialog.show(choice);
+    }
+
     @Override
     public void onOk() {
         overlay(false);
         mLoginDialog.hide();
+
+        if (isLogged) {
+            isLogged = false;
+            Global.FragManager.popToHome();
+        }
     }
 
     @Override

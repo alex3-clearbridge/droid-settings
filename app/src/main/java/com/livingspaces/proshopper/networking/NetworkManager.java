@@ -66,6 +66,11 @@ public class NetworkManager {
         _networkManager.sendPostRequest(name, pass, REQcb);
     }
 
+    public static void makePostREQ(String email, IREQCallback REQcb) {
+        if (_networkManager == null) return;
+        _networkManager.sendPostRequest(email, REQcb);
+    }
+
     public static void makePostREQ(String fname,
                                    String lname,
                                    String email,
@@ -136,7 +141,6 @@ public class NetworkManager {
         }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-
                 Map<String, String>  params = new HashMap<String, String>();
                 params.put("grant_type", "password");
                 params.put("username", name);
@@ -144,6 +148,35 @@ public class NetworkManager {
 
                 return params;
             }
+        };
+
+        Log.d(TAG, "REQ: " + stringRequest.toString() + " end");
+        addToRequestQueue(stringRequest);
+    }
+
+    protected void sendPostRequest (final String email, final IREQCallback REQcb) {
+        if (REQcb == null) return;
+
+        //if (!isConnectedToNetwork()) return;
+
+        String finalUrl = REQcb.getURL() + "email=" + email;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, finalUrl,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d(TAG, "RSP Success :: " + response);
+                        REQcb.onRSPSuccess(response);
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d(TAG, error.toString());
+                        REQcb.onRSPFail();
+                    }
+                }) {
         };
 
         Log.d(TAG, "REQ: " + stringRequest.toString() + " end");
@@ -160,7 +193,13 @@ public class NetworkManager {
 
         //if (!isConnectedToNetwork()) return;
 
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, REQcb.getURL(),
+        String finalUrl = REQcb.getURL() + "firstName=" + fname + "&" +
+                "lastName=" + lname + "&" +
+                "emailAddress=" + email + "&" +
+                "password=" + pass + "&" +
+                "confirmPass=" + confPass + "&" +
+                "wantsNews=" + "false";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, finalUrl,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -177,8 +216,11 @@ public class NetworkManager {
                     }
                 }) {
 
-            @Override
+            /*@Override
             protected Map<String, String> getParams() throws AuthFailureError {
+                Log.d(TAG, "calling getParams");
+                Log.d(TAG, fname + " " + lname + " " +email + " " +pass + " " +confPass);
+
                 Map<String, String>  params = new HashMap<String, String>();
                 params.put("firstName", fname);
                 params.put("lastName", lname);
@@ -188,19 +230,33 @@ public class NetworkManager {
                 params.put("wantsNews", "false");
 
                 return params;
-            }
+            }*/
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
+                Log.d(TAG, "calling getHeaders");
+
                 Map<String,String> params = new HashMap<String, String>();
                 params.put("Content-Type","application/x-www-form-urlencoded");
                 return params;
+            }
+
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                try {
+                    String dataString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                    return Response.success(dataString, HttpHeaderParser.parseCacheHeaders(response));
+                } catch (UnsupportedEncodingException e) {
+                    return Response.error(new ParseError(e));
+                }
             }
         };
 
         Log.d(TAG, "REQ: " + stringRequest.toString() + " end");
         addToRequestQueue(stringRequest);
     }
+
+
 
     protected void sendRequest(final IREQCallback REQcb) {
         if (REQcb == null) return;

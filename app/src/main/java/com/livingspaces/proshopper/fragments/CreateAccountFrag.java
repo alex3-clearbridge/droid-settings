@@ -42,6 +42,7 @@ public class CreateAccountFrag extends BaseStackFrag implements LoginDialog.ICal
     private LSTextView tv_terms, tv_createBtn;
     private LoginDialog mLoginDialog;
     private View overlay;
+    private boolean isAccountCreated = false, isLoading = false;
 
     public static CreateAccountFrag newInstance(){
         return new CreateAccountFrag();
@@ -89,16 +90,16 @@ public class CreateAccountFrag extends BaseStackFrag implements LoginDialog.ICal
                         || isEmpty(ed_email)
                         || isEmpty(ed_pass)
                         || isEmpty(ed_confirmPass)){
-                    overlay(true);
-                    mLoginDialog.show("empty");
+                    showDialog("empty");
                 }
                 else if (!isValidEmail(ed_email)){
-                    overlay(true);
-                    mLoginDialog.show("notValid");
+                    showDialog("notValid");
+                }
+                else if (!isPass(ed_pass)){
+                    showDialog("smallPass");
                 }
                 else if (!match(ed_pass, ed_confirmPass)){
-                    overlay(true);
-                    mLoginDialog.show("notMatch");
+                    showDialog("notMatch");
                 }
 
                 else {
@@ -108,7 +109,6 @@ public class CreateAccountFrag extends BaseStackFrag implements LoginDialog.ICal
                             ed_pass.getText().toString(),
                             ed_confirmPass.getText().toString());
                 }
-
             }
         });
     }
@@ -119,30 +119,30 @@ public class CreateAccountFrag extends BaseStackFrag implements LoginDialog.ICal
                                    String pass,
                                    String confPass){
 
+        if (isLoading) return;
+
+        overlay(true);
+        mLoginDialog.show(true);
+        isLoading = true;
+
         NetworkManager.makePostREQ(fname, lname, email, pass, confPass, new IREQCallback() {
             @Override
             public void onRSPSuccess(String rsp) {
                 Log.d(TAG, "onRSPSuccess");
 
-                if (rsp.contains("access_token")){
-                    Token token = new Token(rsp);
-                    Global.Prefs.editToken(token.token);
-                    overlay(true);
-                    mLoginDialog.show("ok");
-                    Global.FragManager.onBackPressed();
+                Log.d(TAG, "RESPONSE :: " + rsp);
+
+                if (rsp.contains("User account Created Successfully")){
+                   isAccountCreated = true;
+                   tokenRequest();
                 }
-                else {
-                    overlay(true);
-                    mLoginDialog.show("notInSystem");
-                }
+                else onRSPFail();
             }
 
             @Override
             public void onRSPFail() {
                 Log.d(TAG, "onRSPFail");
-                //Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
-                overlay(true);
-                mLoginDialog.show("notInSystem");
+                showDialog("createFailed");
             }
 
             @Override
@@ -152,27 +152,34 @@ public class CreateAccountFrag extends BaseStackFrag implements LoginDialog.ICal
         });
     }
 
-    private boolean isFieldsValid(){
-        if (isEmpty(ed_firstName)
-                || isEmpty(ed_lastName)
-                || isEmpty(ed_email)
-                || isEmpty(ed_pass)
-                || isEmpty(ed_confirmPass)){
-            overlay(true);
-            mLoginDialog.show("empty");
-            return false;
-        }
-        if (!isValidEmail(ed_email)){
-            overlay(true);
-            mLoginDialog.show("notValid");
-            return false;
-        }
-        if (!match(ed_pass, ed_confirmPass)){
-            overlay(true);
-            mLoginDialog.show("notMatch");
-            return false;
-        }
-        return true;
+    private void tokenRequest(){
+        NetworkManager.makePostREQ(ed_email.getText().toString(), ed_pass.getText().toString(), new IREQCallback() {
+            @Override
+            public void onRSPSuccess(String rsp) {
+                Log.d(TAG, "onRSPSuccess");
+
+                if (rsp.contains("access_token")){
+                    Token token = new Token(rsp);
+                    Global.Prefs.editToken(token.token);
+                    showDialog("createSuccess");
+                }
+                else {
+                    showDialog("createFailed");
+                }
+            }
+
+            @Override
+            public void onRSPFail() {
+                Log.d(TAG, "onRSPFail");
+                //Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
+                showDialog("notInSystem");
+            }
+
+            @Override
+            public String getURL() {
+                return Services.API.Token.get();
+            }
+        });
     }
 
     public void overlay(final boolean show) {
@@ -200,6 +207,12 @@ public class CreateAccountFrag extends BaseStackFrag implements LoginDialog.ICal
                 if (!show) overlay.setVisibility(View.GONE);
             }
         }).start();
+    }
+
+    private void showDialog(String choice){
+        isLoading = false;
+        mLoginDialog.hide();
+        mLoginDialog.show(choice);
     }
 
     private boolean isViewShowing(View view) {
@@ -265,6 +278,10 @@ public class CreateAccountFrag extends BaseStackFrag implements LoginDialog.ICal
         return pass.getText().toString().equals(confPass.getText().toString());
     }
 
+    private boolean isPass(EditText ed){
+        return ed.getText().toString().length() >= 6;
+    }
+
     @Override
     public String getTitle() {
         return "Create an Account";
@@ -272,8 +289,15 @@ public class CreateAccountFrag extends BaseStackFrag implements LoginDialog.ICal
 
     @Override
     public void onOk() {
+        Log.d(TAG, "onOk clicked");
         overlay(false);
         mLoginDialog.hide();
+
+        if (isAccountCreated) {
+
+            isAccountCreated = false;
+            Global.FragManager.popToHome();
+        }
 
     }
 

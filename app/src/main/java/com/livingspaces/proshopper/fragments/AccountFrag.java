@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.livingspaces.proshopper.R;
+import com.livingspaces.proshopper.utilities.Global;
 import com.livingspaces.proshopper.views.LSTextView;
 
 /**
@@ -61,7 +62,8 @@ public class AccountFrag extends BaseStackFrag {
         topRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getContext(), "Logout Clicked", Toast.LENGTH_SHORT).show();
+                Global.Prefs.clearToken();
+                Global.FragManager.popToHome();
             }
         });
 

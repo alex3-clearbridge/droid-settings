@@ -177,6 +177,8 @@ public class ActionBar extends RelativeLayout {
     private void animateForStackChange(final boolean isStack) {
         Log.d(TAG, "animateForStackChange :: " + isStack);
 
+
+
         iv_topLeft.setClickable(isStack);
         iv_topLeft.animate().alpha(0).setDuration(250).withEndAction(new Runnable() {
             @Override

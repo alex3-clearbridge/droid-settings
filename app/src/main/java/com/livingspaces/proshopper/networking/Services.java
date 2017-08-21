@@ -38,7 +38,8 @@ public class Services {
         Stores("store/getAllStores/"),
         StoresWithZip("store/getAllStoresByZip/"),
         Token("token"),
-        CreateAccount("api/account/createAccount");
+        CreateAccount("api/account/createAccount?"),
+        ResetPassword("api/account/forgotPassword?");
 
         private String path;
 
