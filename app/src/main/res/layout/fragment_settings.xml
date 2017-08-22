@@ -9,6 +9,7 @@
     tools:context="com.livingspaces.proshopper.fragments.SettingsFrag">
     
     <RelativeLayout
+        android:id="@+id/v_terms"
         android:layout_width="match_parent"
         android:layout_height="49.5dp"
         android:layout_marginTop="1.1dp">
@@ -42,6 +43,7 @@
         android:layout_gravity="center"/>
 
     <RelativeLayout
+        android:id="@+id/v_policy"
         android:layout_width="match_parent"
         android:layout_height="49.5dp"
         android:layout_marginTop="1.1dp">
@@ -75,6 +77,7 @@
         android:layout_gravity="center"/>
 
     <RelativeLayout
+        android:id="@+id/v_about"
         android:layout_width="match_parent"
         android:layout_height="49.5dp"
         android:layout_marginTop="1.1dp">

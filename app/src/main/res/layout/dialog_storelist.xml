@@ -3,12 +3,29 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:clickable="true">
 
+    <com.livingspaces.proshopper.views.LSTextView
+        android:id="@+id/tv_head_storelist_dialog"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="Select a store"
+        android:textSize="17.5sp"
+        android:textAllCaps="true"
+        android:textColor="@color/MainLog_txt"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="20dp"
+        android:background="@android:color/darker_gray" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_storelist"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 </LinearLayout>

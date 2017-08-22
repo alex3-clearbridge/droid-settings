@@ -17,8 +17,8 @@ public class Services {
         Website("http://www.livingspaces.com/"),
         // ShareProduct("http://www.livingspaces.com/landingpage.aspx?fileName=wish-list&")
         Cart("http://www.livingspaces.com/viewcart.aspx"),
-        Policy("http://www.livingspaces.com/privacy-policy"),
-        Terms("http://www.livingspaces.com/terms-of-use"),
+        Policy("http://dev.livingspaces.com/privacy-policy-app"),
+        Terms("http://dev.livingspaces.com/terms-of-use-app"),
         ShareProduct("http://dev.livingspaces.com/landingpage.aspx?fileName=wish-list&"); //"http://dev.livingspaces.com/landingpage.aspx?fileName=wish-list&"
 
         private String url;

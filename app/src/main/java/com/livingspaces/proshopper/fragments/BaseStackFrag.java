@@ -1,6 +1,7 @@
 package com.livingspaces.proshopper.fragments;
 
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.view.WindowManager;
 import android.widget.ImageView;
@@ -9,7 +10,7 @@ import android.widget.TextView;
 /**
  * Created by rugvedambekar on 15-09-21.
  */
-public abstract class BaseStackFrag extends Fragment {
+public abstract class BaseStackFrag extends DialogFragment {
 
     public abstract String getTitle();
 
