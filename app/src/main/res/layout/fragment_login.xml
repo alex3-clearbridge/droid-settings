@@ -1,73 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:background="@android:color/background_light"
     android:clickable="true"
     tools:context="com.livingspaces.proshopper.fragments.LoginFrag">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+    <EditText
+        android:id="@+id/ed_login_email"
+        android:layout_width="270dp"
+        android:layout_height="29dp"
+        android:layout_marginTop="38.1dp"
+        android:layout_gravity="center"
+        android:inputType="textEmailAddress"
+        android:hint="Email"
+        android:background="@drawable/edit_text_box_login"
+        style="@style/LoginEditText"/>
 
-        <EditText
-            android:id="@+id/ed_login_email"
-            android:layout_width="270dp"
-            android:layout_height="29dp"
-            android:layout_marginTop="38.1dp"
-            android:layout_gravity="center"
-            android:inputType="textEmailAddress"
-            android:hint="Email"
-            android:background="@drawable/edit_text_box_login"
-            style="@style/LoginEditText"/>
+    <EditText
+        android:id="@+id/ed_login_password"
+        android:layout_width="270dp"
+        android:layout_height="29dp"
+        android:layout_marginTop="23dp"
+        android:layout_gravity="center"
+        android:inputType="textPassword"
+        android:hint="Password"
+        android:background="@drawable/edit_text_box_login"
+        style="@style/LoginEditText"/>
 
-        <EditText
-            android:id="@+id/ed_login_password"
-            android:layout_width="270dp"
-            android:layout_height="29dp"
-            android:layout_marginTop="23dp"
-            android:layout_gravity="center"
-            android:inputType="textPassword"
-            android:hint="Password"
-            android:background="@drawable/edit_text_box_login"
-            style="@style/LoginEditText"/>
+    <com.livingspaces.proshopper.views.LSTextView
+        android:id="@+id/tv_login_forgotPassowrd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14.5dp"
+        android:layout_marginLeft="27.5dp"
+        android:text="Forgot your password?"
+        android:textSize="14.5sp"
+        android:textColor="#007aaf"/>
 
-        <com.livingspaces.proshopper.views.LSTextView
-            android:id="@+id/tv_login_forgotPassowrd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14.5dp"
-            android:layout_marginLeft="27.5dp"
-            android:text="Forgot your password?"
-            android:textSize="14.5sp"
-            android:textColor="#007aaf"/>
+    <com.livingspaces.proshopper.views.LSTextView
+        android:id="@+id/tv_login"
+        android:layout_width="226.5dp"
+        android:layout_height="32.5dp"
+        android:layout_marginTop="34dp"
+        android:layout_gravity="center"
+        android:background="@drawable/button_login"
+        android:text="Login"
+        style="@style/LoginButton"/>
 
-        <com.livingspaces.proshopper.views.LSTextView
-            android:id="@+id/tv_login"
-            android:layout_width="226.5dp"
-            android:layout_height="32.5dp"
-            android:layout_marginTop="34dp"
-            android:layout_gravity="center"
-            android:background="@drawable/button_login"
-            android:text="Login"
-            style="@style/LoginButton"/>
+    <com.livingspaces.proshopper.views.LSTextView
+        android:id="@+id/tv_login_create"
+        android:layout_width="226.5dp"
+        android:layout_height="32.5dp"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        android:background="@drawable/button_login"
+        android:text="Create an Account"
+        style="@style/LoginButton"/>
 
-        <com.livingspaces.proshopper.views.LSTextView
-            android:id="@+id/tv_login_create"
-            android:layout_width="226.5dp"
-            android:layout_height="32.5dp"
-            android:layout_marginTop="20dp"
-            android:layout_gravity="center"
-            android:background="@drawable/button_login"
-            android:text="Create an Account"
-            style="@style/LoginButton"/>
-
-    </LinearLayout>
-
-    <View
+    <!--<View
         android:id="@+id/shade_login"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -79,8 +73,8 @@
         android:layout_width="286dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="60.5dp"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true" />-->
 
 
     
-</RelativeLayout>
+</LinearLayout>

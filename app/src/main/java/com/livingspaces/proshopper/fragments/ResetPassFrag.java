@@ -1,6 +1,5 @@
 package com.livingspaces.proshopper.fragments;
 
-import android.animation.Animator;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -10,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.livingspaces.proshopper.R;
 import com.livingspaces.proshopper.interfaces.IREQCallback;
@@ -18,21 +16,21 @@ import com.livingspaces.proshopper.networking.NetworkManager;
 import com.livingspaces.proshopper.networking.Services;
 import com.livingspaces.proshopper.utilities.Global;
 import com.livingspaces.proshopper.views.LSTextView;
-import com.livingspaces.proshopper.views.LoginDialog;
 
 /**
  * Created by alexeyredchets on 2017-08-15.
  */
 
-public class ResetPassFrag extends BaseStackFrag implements LoginDialog.ICallback{
+public class ResetPassFrag extends BaseStackFrag implements DialogFrag.ICallback{
 
     private static final String TAG = ResetPassFrag.class.getSimpleName();
 
+    private DialogFrag mDialogFrag;
     private EditText ed_email;
     private LSTextView tv_send;
-    private LoginDialog mLoginDialog;
-    private View overlay;
+    private Bundle args;
     private boolean isResetSuccess = false, isLoading = false;
+    private boolean isDialogShowing = false;
 
     public static ResetPassFrag newInstance(){
         return new ResetPassFrag();
@@ -48,11 +46,10 @@ public class ResetPassFrag extends BaseStackFrag implements LoginDialog.ICallbac
 
         ed_email = (EditText)view.findViewById(R.id.ed_forgotPass_email);
         tv_send = (LSTextView)view.findViewById(R.id.tv_forgotPass_button);
-        mLoginDialog = (LoginDialog)view.findViewById(R.id.dialog_reset_pass);
-        mLoginDialog.setVisibility(View.GONE);
-        mLoginDialog.setCallback(this);
-        overlay = view.findViewById(R.id.shade_reset_pass);
-        overlay.setVisibility(View.GONE);
+
+        mDialogFrag = new DialogFrag();
+        mDialogFrag.setCallback(this);
+        args = new Bundle();
 
         return view;
     }
@@ -65,25 +62,25 @@ public class ResetPassFrag extends BaseStackFrag implements LoginDialog.ICallbac
             @Override
             public void onClick(View view) {
                 if (isEmpty(ed_email)){
-                    overlay(true);
-                    mLoginDialog.show("empty");
+                    showDialog("empty");
                 }
                 else if (!isValidEmail(ed_email)){
-                    overlay(true);
-                    mLoginDialog.show("notValid");
+                    showDialog("notValid");
                 }
                 else{
-                    onResetCalled(ed_email.getText().toString());
+                    onResetCalled();
                 }
             }
         });
     }
 
-    private void onResetCalled(String email){
+    private void onResetCalled(){
+
+        String email = ed_email.getText().toString();
+
         if (isLoading) return;
 
-        overlay(true);
-        mLoginDialog.show(true);
+        showDialog("loading");
         isLoading = true;
 
         NetworkManager.makePostREQ(email, new IREQCallback() {
@@ -94,10 +91,10 @@ public class ResetPassFrag extends BaseStackFrag implements LoginDialog.ICallbac
                 Log.d(TAG, "RESPONSE :: " + rsp);
 
                 if (rsp.contains("Your email containing instructions to reset your password has been sent!")){
+                    onOk();
                     isLoading = false;
                     isResetSuccess = true;
-                    mLoginDialog.hide();
-                    mLoginDialog.show("emailSent");
+                    showDialog("emailSent");
                 }
                 else onRSPFail();
             }
@@ -105,8 +102,9 @@ public class ResetPassFrag extends BaseStackFrag implements LoginDialog.ICallbac
             @Override
             public void onRSPFail() {
                 Log.d(TAG, "onRSPFail");
-                mLoginDialog.hide();
-                mLoginDialog.show("invalidEmail");
+                onOk();
+                isLoading = false;
+                showDialog("invalidEmail");
             }
 
             @Override
@@ -119,33 +117,6 @@ public class ResetPassFrag extends BaseStackFrag implements LoginDialog.ICallbac
     @Override
     public String getTitle() {
         return "Forgot Password";
-    }
-
-    public void overlay(final boolean show) {
-        if (overlay == null || (show && isViewShowing(overlay)) || (!show && !isViewShowing(overlay)) )
-            return;
-        Log.d(TAG, "OVERLAY");
-
-        if (show) overlay.setVisibility(View.INVISIBLE);
-        overlay.animate().setDuration(500).alpha(show ? 1 : 0).setListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationCancel(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationStart(Animator animation) {
-                if (show) overlay.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                if (!show) overlay.setVisibility(View.GONE);
-            }
-        }).start();
     }
 
     private boolean isViewShowing(View view) {
@@ -161,10 +132,19 @@ public class ResetPassFrag extends BaseStackFrag implements LoginDialog.ICallbac
         return !TextUtils.isEmpty(s) && Patterns.EMAIL_ADDRESS.matcher(s).matches();
     }
 
+    private void showDialog(String choice){
+        isDialogShowing = true;
+        args.putString("case", choice);
+        mDialogFrag.setArguments(args);
+        mDialogFrag.show(getFragmentManager(), "dialogFragment");
+    }
+
     @Override
     public void onOk() {
-        overlay(false);
-        mLoginDialog.hide();
+        if (mDialogFrag != null) {
+            isDialogShowing = false;
+            mDialogFrag.dismiss();
+        }
 
         if (isResetSuccess) {
             isResetSuccess = false;
@@ -173,14 +153,18 @@ public class ResetPassFrag extends BaseStackFrag implements LoginDialog.ICallbac
     }
 
     @Override
+    public void created() {
+        mDialogFrag.setCont();
+    }
+
+    @Override
     public boolean handleBackPress() {
         Log.d(TAG, "handleBackPress");
-        if (mLoginDialog != null && isViewShowing(mLoginDialog)){
+        if (mDialogFrag != null && isDialogShowing){
             Log.d(TAG, "close dialog on back press");
             onOk();
             return true;
         }
         else return super.handleBackPress();
-
     }
 }

@@ -8,7 +8,7 @@ import org.json.JSONObject;
  */
 
 public class Token {
-    public String token, type;
+    public String access_token, type, refresh_token;
     public int expires;
 
     public Token(String JsonString) {
@@ -18,7 +18,8 @@ public class Token {
         try {
             JSONObject jOBJ = new JSONObject(JsonString);
 
-            token = jOBJ.getString(Token.JSONKey.access_token.name());
+            access_token = jOBJ.getString(Token.JSONKey.access_token.name());
+            refresh_token = jOBJ.getString(Token.JSONKey.refresh_token.name());
             type = jOBJ.getString(JSONKey.token_type.name());
             expires = jOBJ.getInt(JSONKey.expires_in.name());
         } catch (JSONException e) {
@@ -26,7 +27,7 @@ public class Token {
     }
 
     public enum JSONKey {
-        access_token, expires_in, token_type
+        access_token, expires_in, token_type, refresh_token
     }
 
 }

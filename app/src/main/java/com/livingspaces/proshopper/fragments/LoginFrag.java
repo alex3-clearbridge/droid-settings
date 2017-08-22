@@ -1,6 +1,5 @@
 package com.livingspaces.proshopper.fragments;
 
-import android.animation.Animator;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -10,32 +9,33 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.livingspaces.proshopper.LoginUtility;
 import com.livingspaces.proshopper.R;
 import com.livingspaces.proshopper.data.Token;
 import com.livingspaces.proshopper.interfaces.IREQCallback;
 import com.livingspaces.proshopper.networking.NetworkManager;
 import com.livingspaces.proshopper.networking.Services;
 import com.livingspaces.proshopper.utilities.Global;
-import com.livingspaces.proshopper.utilities.Utility;
 import com.livingspaces.proshopper.views.LSTextView;
-import com.livingspaces.proshopper.views.LoginDialog;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by alexeyredchets on 2017-08-14.
  */
 
-public class LoginFrag extends BaseStackFrag implements LoginDialog.ICallback {
+public class LoginFrag extends BaseStackFrag implements DialogFrag.ICallback {
 
     private static final String TAG = LoginFrag.class.getSimpleName();
 
-    private LoginDialog mLoginDialog;
+    private DialogFrag mDialogFrag;
     private LSTextView tv_login, tv_createAccount, tv_forgotPass;
     private EditText ed_login, ed_password;
-    private View overlay;
-    private boolean isLoading = false, isLogged = false;
+    private boolean isLoading = false, isLogged = false, isDialogShowing = false;
+    private Bundle args;
 
     public static LoginFrag newInstance(){
         return new LoginFrag();
@@ -51,16 +51,15 @@ public class LoginFrag extends BaseStackFrag implements LoginDialog.ICallback {
 
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
-        mLoginDialog = (LoginDialog)view.findViewById(R.id.dialog_login);
-        mLoginDialog.setVisibility(View.GONE);
-        mLoginDialog.setCallback(this);
         ed_login = (EditText)view.findViewById(R.id.ed_login_email);
         ed_password = (EditText)view.findViewById(R.id.ed_login_password);
         tv_login = (LSTextView)view.findViewById(R.id.tv_login);
         tv_createAccount = (LSTextView)view.findViewById(R.id.tv_login_create);
         tv_forgotPass = (LSTextView)view.findViewById(R.id.tv_login_forgotPassowrd);
-        overlay = view.findViewById(R.id.shade_login);
-        overlay.setVisibility(View.GONE);
+
+        mDialogFrag = new DialogFrag();
+        mDialogFrag.setCallback(this);
+        args = new Bundle();
 
         return view;
     }
@@ -75,15 +74,11 @@ public class LoginFrag extends BaseStackFrag implements LoginDialog.ICallback {
                 Log.d(TAG, "Login button Clicked");
 
                 if (isEmpty(ed_login) || isEmpty(ed_password)){
-                    //Toast.makeText(getContext(), "Login and password could not be empty", Toast.LENGTH_SHORT).show();
-                    overlay(true);
-                    mLoginDialog.show("empty");
+                    showDialog("empty");
                     return;
                 }
                 if (!isValidEmail(ed_login)){
-                    //Toast.makeText(getContext(), "Email is not valid", Toast.LENGTH_SHORT).show();
-                    overlay(true);
-                    mLoginDialog.show("notValid");
+                    showDialog( "notValid");
                     return;
                 }
                 onLoginClicked(ed_login.getText().toString(), ed_password.getText().toString());
@@ -107,48 +102,11 @@ public class LoginFrag extends BaseStackFrag implements LoginDialog.ICallback {
         });
     }
 
-    public void overlay(final boolean show) {
-        if (overlay == null || (show && isViewShowing(overlay)) || (!show && !isViewShowing(overlay)) )
-            return;
-        Log.d(TAG, "OVERLAY");
-
-        if (show) overlay.setVisibility(View.INVISIBLE);
-        overlay.animate().setDuration(500).alpha(show ? 1 : 0).setListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationCancel(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationStart(Animator animation) {
-                if (show) overlay.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                if (!show) overlay.setVisibility(View.GONE);
-            }
-        }).start();
-    }
-
-    private boolean isViewShowing(View view) {
-        return view.getVisibility() != View.GONE;
-    }
-
-    @Override
-    public String getTitle() {
-        return "Login";
-    }
-
     private void onLoginClicked(String name, String pass){
 
         if (isLoading) return;
 
-        overlay(true);
-        mLoginDialog.show(true);
+        showDialog("loading");
         isLoading = true;
 
         NetworkManager.makePostREQ(name, pass, new IREQCallback() {
@@ -156,9 +114,11 @@ public class LoginFrag extends BaseStackFrag implements LoginDialog.ICallback {
             public void onRSPSuccess(String rsp) {
                 Log.d(TAG, "onRSPSuccess");
 
-                if (rsp.contains("access_token")){
+                if (rsp.contains("access_token") && (rsp.contains("refresh_token"))){
+                    onOk();
+                    isLoading = false;
                     Token token = new Token(rsp);
-                    Global.Prefs.editToken(token.token);
+                    Global.Prefs.editToken(token.access_token);
                     showDialog("ok");
                     isLogged = true;
                 }
@@ -168,6 +128,8 @@ public class LoginFrag extends BaseStackFrag implements LoginDialog.ICallback {
             }
             @Override
             public void onRSPFail() {
+                onOk();
+                isLoading = false;
                 showDialog("notInSystem");
                 Log.d(TAG, "onRSPFail");
             }
@@ -188,15 +150,23 @@ public class LoginFrag extends BaseStackFrag implements LoginDialog.ICallback {
     }
 
     private void showDialog(String choice){
-        isLoading = false;
-        mLoginDialog.hide();
-        mLoginDialog.show(choice);
+        isDialogShowing = true;
+        args.putString("case", choice);
+        mDialogFrag.setArguments(args);
+        mDialogFrag.show(getFragmentManager(), "dialogFragment");
+    }
+
+    @Override
+    public String getTitle() {
+        return "Login";
     }
 
     @Override
     public void onOk() {
-        overlay(false);
-        mLoginDialog.hide();
+        if (mDialogFrag != null) {
+            isDialogShowing = false;
+            mDialogFrag.dismiss();
+        }
 
         if (isLogged) {
             isLogged = false;
@@ -205,9 +175,14 @@ public class LoginFrag extends BaseStackFrag implements LoginDialog.ICallback {
     }
 
     @Override
+    public void created() {
+        mDialogFrag.setCont();
+    }
+
+    @Override
     public boolean handleBackPress() {
         Log.d(TAG, "handleBackPress");
-        if (mLoginDialog != null && isViewShowing(mLoginDialog)){
+        if (mDialogFrag != null && isDialogShowing){
             Log.d(TAG, "close dialog on back press");
             onOk();
             return true;

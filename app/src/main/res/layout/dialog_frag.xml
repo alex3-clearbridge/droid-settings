@@ -31,6 +31,15 @@
         android:textSize="17.5sp"
         android:textColor="@color/MainLog_txt"/>
 
+    <ProgressBar
+        android:id="@+id/pBar_dialog_frag"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="15dp"
+        android:layout_below="@id/tv_header_dialog_frag"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"/>
+
     <com.livingspaces.proshopper.views.LSTextView
         android:id="@+id/tv_button_dialog_frag"
         android:layout_width="171.7dp"

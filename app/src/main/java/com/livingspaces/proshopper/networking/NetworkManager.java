@@ -145,6 +145,8 @@ public class NetworkManager {
                 params.put("grant_type", "password");
                 params.put("username", name);
                 params.put("password", pass);
+                params.put("Client_id", "mobileapidev.livingspaces.com");
+                params.put("Client_secret", "lsfsecret");
 
                 return params;
             }

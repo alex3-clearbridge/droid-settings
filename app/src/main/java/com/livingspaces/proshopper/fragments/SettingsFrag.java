@@ -13,6 +13,8 @@ import android.view.Window;
 import android.widget.Toast;
 
 import com.livingspaces.proshopper.R;
+import com.livingspaces.proshopper.networking.Services;
+import com.livingspaces.proshopper.utilities.Global;
 
 /**
  * Created by alexeyredchets on 2017-08-15.
@@ -52,25 +54,22 @@ public class SettingsFrag extends BaseStackFrag {
             @Override
             public void onClick(View view) {
 
-                FragmentManager fm = getActivity().getSupportFragmentManager();
-                DialogFragment dialogFragment = new DialogFrag();
-                dialogFragment.show(fm, "dialogFragment");
+                Global.FragManager.stackFrag(WebViewFrag.newInstance("Terms of use", Services.URL.Terms.get()));
 
-                Toast.makeText(getContext(), "onTerms", Toast.LENGTH_SHORT).show();
             }
         });
 
         v_policy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getContext(), "onPolicy", Toast.LENGTH_SHORT).show();
+                Global.FragManager.stackFrag(WebViewFrag.newInstance("Privacy policy", Services.URL.Policy.get()));
             }
         });
 
         v_about.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getContext(), "onAbout", Toast.LENGTH_SHORT).show();
+                Global.FragManager.stackFrag(WebViewFrag.newInstance("About out ads", Services.URL.About.get()));
             }
         });
 
@@ -80,4 +79,5 @@ public class SettingsFrag extends BaseStackFrag {
     public String getTitle() {
         return NavigationFrag.NavItem.SETTINGS.title();
     }
+
 }

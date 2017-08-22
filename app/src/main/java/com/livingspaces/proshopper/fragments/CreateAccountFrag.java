@@ -1,10 +1,8 @@
 package com.livingspaces.proshopper.fragments;
 
-import android.animation.Animator;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -18,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.livingspaces.proshopper.R;
 import com.livingspaces.proshopper.data.Token;
@@ -26,23 +23,27 @@ import com.livingspaces.proshopper.interfaces.IREQCallback;
 import com.livingspaces.proshopper.networking.NetworkManager;
 import com.livingspaces.proshopper.networking.Services;
 import com.livingspaces.proshopper.utilities.Global;
-import com.livingspaces.proshopper.utilities.Layout;
 import com.livingspaces.proshopper.views.LSTextView;
-import com.livingspaces.proshopper.views.LoginDialog;
+
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by alexeyredchets on 2017-08-14.
  */
 
-public class CreateAccountFrag extends BaseStackFrag implements LoginDialog.ICallback{
+public class CreateAccountFrag extends BaseStackFrag implements DialogFrag.ICallback{
 
     private static final String TAG = CreateAccountFrag.class.getSimpleName();
 
     private EditText ed_firstName, ed_lastName, ed_email, ed_pass, ed_confirmPass;
     private LSTextView tv_terms, tv_createBtn;
-    private LoginDialog mLoginDialog;
-    private View overlay;
-    private boolean isAccountCreated = false, isLoading = false;
+    private DialogFrag mDialogFrag;
+    private Bundle args;
+    private boolean isDialogShowing = false;
+    private boolean isCreatedAndLogged = false, isLoading = false;
+
+    private Date firstTime, secondTime;
 
     public static CreateAccountFrag newInstance(){
         return new CreateAccountFrag();
@@ -58,9 +59,6 @@ public class CreateAccountFrag extends BaseStackFrag implements LoginDialog.ICal
 
         View view =  inflater.inflate(R.layout.fragment_create_account, container, false);
 
-        mLoginDialog = (LoginDialog)view.findViewById(R.id.dialog_create_account);
-        mLoginDialog.setVisibility(View.GONE);
-        mLoginDialog.setCallback(this);
         ed_firstName = (EditText)view.findViewById(R.id.ed_first_name);
         ed_lastName = (EditText)view.findViewById(R.id.ed_last_name);
         ed_email = (EditText)view.findViewById(R.id.ed_create_email);
@@ -68,8 +66,10 @@ public class CreateAccountFrag extends BaseStackFrag implements LoginDialog.ICal
         ed_confirmPass = (EditText)view.findViewById(R.id.ed_create_confirm_password);
         tv_terms = (LSTextView)view.findViewById(R.id.tv_privacy_terms);
         tv_createBtn = (LSTextView)view.findViewById(R.id.tv_create_account);
-        overlay = view.findViewById(R.id.shade_create_account);
-        overlay.setVisibility(View.GONE);
+
+        mDialogFrag = new DialogFrag();
+        mDialogFrag.setCallback(this);
+        args = new Bundle();
 
         return view;
     }
@@ -84,7 +84,6 @@ public class CreateAccountFrag extends BaseStackFrag implements LoginDialog.ICal
             @Override
             public void onClick(View view) {
                 Log.d(TAG,"Create account clicked");
-
                 if (isEmpty(ed_firstName)
                         || isEmpty(ed_lastName)
                         || isEmpty(ed_email)
@@ -103,27 +102,24 @@ public class CreateAccountFrag extends BaseStackFrag implements LoginDialog.ICal
                 }
 
                 else {
-                    createAccountCall(ed_firstName.getText().toString(),
-                            ed_lastName.getText().toString(),
-                            ed_email.getText().toString(),
-                            ed_pass.getText().toString(),
-                            ed_confirmPass.getText().toString());
+                    createAccountCall();
                 }
             }
         });
     }
 
-    private void createAccountCall(String fname,
-                                   String lname,
-                                   String email,
-                                   String pass,
-                                   String confPass){
+    private void createAccountCall(){
+
+        String fname = ed_firstName.getText().toString();
+        String lname = ed_lastName.getText().toString();
+        String email = ed_email.getText().toString();
+        String pass = ed_pass.getText().toString();
+        String confPass = ed_confirmPass.getText().toString();
 
         if (isLoading) return;
 
-        overlay(true);
-        mLoginDialog.show(true);
         isLoading = true;
+        showDialog("loading");
 
         NetworkManager.makePostREQ(fname, lname, email, pass, confPass, new IREQCallback() {
             @Override
@@ -133,7 +129,6 @@ public class CreateAccountFrag extends BaseStackFrag implements LoginDialog.ICal
                 Log.d(TAG, "RESPONSE :: " + rsp);
 
                 if (rsp.contains("User account Created Successfully")){
-                   isAccountCreated = true;
                    tokenRequest();
                 }
                 else onRSPFail();
@@ -142,6 +137,7 @@ public class CreateAccountFrag extends BaseStackFrag implements LoginDialog.ICal
             @Override
             public void onRSPFail() {
                 Log.d(TAG, "onRSPFail");
+                onOk();
                 showDialog("createFailed");
             }
 
@@ -158,9 +154,11 @@ public class CreateAccountFrag extends BaseStackFrag implements LoginDialog.ICal
             public void onRSPSuccess(String rsp) {
                 Log.d(TAG, "onRSPSuccess");
 
+                onOk();
                 if (rsp.contains("access_token")){
                     Token token = new Token(rsp);
-                    Global.Prefs.editToken(token.token);
+                    Global.Prefs.editToken(token.access_token);
+                    isCreatedAndLogged = true;
                     showDialog("createSuccess");
                 }
                 else {
@@ -171,7 +169,7 @@ public class CreateAccountFrag extends BaseStackFrag implements LoginDialog.ICal
             @Override
             public void onRSPFail() {
                 Log.d(TAG, "onRSPFail");
-                //Toast.makeText(getContext(), "Error", Toast.LENGTH_SHORT).show();
+                onOk();
                 showDialog("notInSystem");
             }
 
@@ -182,46 +180,15 @@ public class CreateAccountFrag extends BaseStackFrag implements LoginDialog.ICal
         });
     }
 
-    public void overlay(final boolean show) {
-        if (overlay == null || (show && isViewShowing(overlay)) || (!show && !isViewShowing(overlay)) )
-            return;
-        Log.d(TAG, "OVERLAY");
-
-        if (show) overlay.setVisibility(View.INVISIBLE);
-        overlay.animate().setDuration(500).alpha(show ? 1 : 0).setListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationCancel(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationStart(Animator animation) {
-                if (show) overlay.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                if (!show) overlay.setVisibility(View.GONE);
-            }
-        }).start();
-    }
-
     private void showDialog(String choice){
-        isLoading = false;
-        mLoginDialog.hide();
-        mLoginDialog.show(choice);
-    }
+        isDialogShowing = true;
+        args.putString("case", choice);
+        mDialogFrag.setArguments(args);
+        mDialogFrag.show(getFragmentManager(), "dialogFragment");
 
-    private boolean isViewShowing(View view) {
-        return view.getVisibility() != View.GONE;
     }
-
 
     private void onPolicyClicked(String choice){
-
         if (choice.equals("policy")) Global.FragManager.stackFrag(WebViewFrag.newInstance("Policies", Services.URL.Policy.get()));
         else Global.FragManager.stackFrag(WebViewFrag.newInstance("Terms", Services.URL.Terms.get()));
     }
@@ -290,26 +257,32 @@ public class CreateAccountFrag extends BaseStackFrag implements LoginDialog.ICal
     @Override
     public void onOk() {
         Log.d(TAG, "onOk clicked");
-        overlay(false);
-        mLoginDialog.hide();
 
-        if (isAccountCreated) {
-
-            isAccountCreated = false;
-            Global.FragManager.popToHome();
+        if (mDialogFrag != null) {
+            isDialogShowing = false;
+            mDialogFrag.dismiss();
+            if (isLoading) isLoading = false;
         }
 
+        if (isCreatedAndLogged) {
+            isCreatedAndLogged = false;
+            Global.FragManager.popToHome();
+        }
+    }
+
+    @Override
+    public void created() {
+        mDialogFrag.setCont();
     }
 
     @Override
     public boolean handleBackPress() {
         Log.d(TAG, "handleBackPress");
-        if (mLoginDialog != null && isViewShowing(mLoginDialog)){
+        if (mDialogFrag != null && isDialogShowing){
             Log.d(TAG, "close dialog on back press");
             onOk();
             return true;
         }
         else return super.handleBackPress();
-
     }
 }
