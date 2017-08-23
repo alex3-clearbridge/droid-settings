@@ -35,8 +35,9 @@ public class ActionBar extends RelativeLayout {
     private ImageView iv_topLeft, iv_topLeftEx, iv_topRight, iv_topRightEx;
     private TextView tv_topRight;
     private LSTextView tv_topCenter;
+    private String fragTitle;
 
-    private boolean wasStack = false;
+    //private boolean wasStack = false;
 
     public ActionBar(Context context) {
         super(context);
@@ -83,6 +84,8 @@ public class ActionBar extends RelativeLayout {
     public void update(final BaseStackFrag frag) {
         Log.d(TAG, "update");
 
+        fragTitle = "";
+
         FragmentManager fManager = Global.FragManager.getFragMan();
         int backStackCount = fManager.getBackStackEntryCount();
 
@@ -103,6 +106,8 @@ public class ActionBar extends RelativeLayout {
                 }
             });
 
+            fragTitle = frag.getTitle();
+
             animate(tv_topRight, frag.setTopRight(tv_topRight));
             animate(iv_topRight, frag.setTopRight(iv_topRight));
             animate(iv_topRightEx, frag.setTopRightEx(iv_topRightEx));
@@ -116,8 +121,8 @@ public class ActionBar extends RelativeLayout {
             //setViewWebsite();
         }
 
-        if (backStackCount == 1 && !wasStack) animateForStackChange(true);
-        else if (backStackCount == 0 && wasStack) animateForStackChange(false);    }
+        if (backStackCount >= 1) animateForStackChange(true);
+        else if (backStackCount == 0) animateForStackChange(false);    }
 
     public static boolean animate(final View view, final boolean on) {
 //        boolean wasOn = view.getAlpha() > 0;
@@ -168,18 +173,30 @@ public class ActionBar extends RelativeLayout {
     private void animateForStackChange(final boolean isStack) {
         Log.d(TAG, "animateForStackChange :: " + isStack);
 
+        if (fragTitle.isEmpty() || !fragTitle.equals("Login")){
+            Log.d(TAG, "not login frag ");
+            iv_topLeft.setClickable(isStack);
+            iv_topLeft.animate().alpha(0).setDuration(250).withEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    iv_topLeft.setImageDrawable(isStack ? d_back : d_main);
+                    iv_topLeft.animate().alpha(1).setDuration(250).start();
+                }
+            }).start();
+        }
+        else {
+            Log.d(TAG, "login frag");
+            iv_topLeft.setClickable(isStack);
+            iv_topLeft.animate().alpha(0).setDuration(250).withEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    iv_topLeft.setImageDrawable(d_close);
+                    iv_topLeft.animate().alpha(1).setDuration(250).start();
+                }
+            }).start();
+        }
 
-
-        iv_topLeft.setClickable(isStack);
-        iv_topLeft.animate().alpha(0).setDuration(250).withEndAction(new Runnable() {
-            @Override
-            public void run() {
-                iv_topLeft.setImageDrawable(isStack ? d_back : d_main);
-                iv_topLeft.animate().alpha(1).setDuration(250).start();
-            }
-        }).start();
-
-        wasStack = isStack;
+        //wasStack = isStack;
     }
 
     private void setViewWebsite() {

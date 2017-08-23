@@ -109,33 +109,33 @@ public class DialogFrag extends DialogFragment {
         switch (choice) {
             case "empty":
                 Log.d(TAG, choice);
-                tv_header.setText("Error");
-                tv_text.setText("All fields are required.");
+                tv_header.setText("Form Error");
+                tv_text.setText("Invalid Username or Password.");
                 break;
             case "notValid":
                 Log.d(TAG, choice);
                 tv_header.setText("Invalid email");
-                tv_text.setText("Email is not valid. Try again.");
+                tv_text.setText("Please enter a valid email address.");
+                break;
+            case "smallPass":
+                Log.d(TAG, choice);
+                tv_header.setText("PASSWORD ERROR");
+                tv_text.setText("Password must be at least 6 characters.");
+                break;
+            case "createFailed":
+                Log.d(TAG, choice);
+                tv_header.setText("LOGIN FAILED");
+                tv_text.setText("Sorry, an unknown error occured. Please try again later.");
                 break;
             case "ok":
                 Log.d(TAG, choice);
                 tv_header.setText("Success");
-                tv_text.setText("You successfully logged in.");
+                tv_text.setText("Login successful.");
                 break;
             case "notMatch":
                 Log.d(TAG, choice);
-                tv_header.setText("Error");
+                tv_header.setText("Password Error");
                 tv_text.setText("Passwords do not match.");
-                break;
-            case "smallPass":
-                Log.d(TAG, choice);
-                tv_header.setText("Error");
-                tv_text.setText("Passwords cannot be less than 6 characters.");
-                break;
-            case "createFailed":
-                Log.d(TAG, choice);
-                tv_header.setText("Error");
-                tv_text.setText("Server error or email is already taken.");
                 break;
             case "createSuccess":
                 Log.d(TAG, choice);
@@ -158,11 +158,6 @@ public class DialogFrag extends DialogFragment {
                 tv_text.setVisibility(View.INVISIBLE);
                 pd_loading.setVisibility(View.VISIBLE);
                 tv_button.setText("Cancel");
-                break;
-            default:
-                Log.d(TAG, choice);
-                tv_header.setText("INVALID EMAIL");
-                tv_text.setText("Your email does not exist in our system, try again.");
                 break;
         }
     }

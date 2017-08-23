@@ -7,27 +7,116 @@
     android:background="@android:color/background_light"
     android:clickable="true"
     tools:context="com.livingspaces.proshopper.fragments.AccountFrag">
-    <com.livingspaces.proshopper.views.LSTextView
-        android:id="@+id/tv_select_store"
-        android:layout_width="292.5dp"
-        android:layout_height="32.5dp"
-        android:layout_marginTop="23dp"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/button_login"
-        android:text="Select a Store"
-        style="@style/LoginButton"/>
 
-   <!-- <View
-        android:id="@+id/shade_account"
+    <RelativeLayout
+        android:id="@+id/v_no_store"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:visibility="gone">
+
+        <com.livingspaces.proshopper.views.LSTextView
+            android:id="@+id/tv_select_store"
+            android:layout_width="292.5dp"
+            android:layout_height="32.5dp"
+            android:layout_marginTop="23dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/button_login"
+            android:text="Select a Store"
+            style="@style/LoginButton" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/v_has_store"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/BlackFaded">
-    </View>
+        android:layout_marginLeft="11.5dp"
+        android:clickable="true">
 
-    <com.livingspaces.proshopper.views.StoreDialog
-        android:id="@+id/dialog_store"
-        android:layout_width="286dp"
-        android:layout_height="439dp"
-        android:layout_centerInParent="true" />-->
+        <com.livingspaces.proshopper.views.LSTextView
+            android:id="@+id/tv_storename_accountfrag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20.7dp"
+            android:text="Huntington beach"
+            android:textSize="14sp"
+            android:textAllCaps="true"
+            android:textColor="@color/MainLog_txt"/>
+
+        <com.livingspaces.proshopper.views.LSTextView
+            android:id="@+id/tv_storeaddress_accountfrag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_storename_accountfrag"
+            android:text="6912 Edinger Ave"
+            android:textSize="14sp"
+            android:textColor="@color/MainLog_txt"/>
+
+        <com.livingspaces.proshopper.views.LSTextView
+            android:id="@+id/tv_storecity_accountfrag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_storeaddress_accountfrag"
+            android:layout_marginBottom="20.7dp"
+            android:text="Huntington beach,"
+            android:textSize="14sp"
+            android:textColor="@color/MainLog_txt"/>
+
+        <com.livingspaces.proshopper.views.LSTextView
+            android:id="@+id/tv_storestate_accountfrag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/tv_storecity_accountfrag"
+            android:layout_alignBaseline="@+id/tv_storecity_accountfrag"
+            android:text="CA"
+            android:textSize="14sp"
+            android:textColor="@color/MainLog_txt"/>
+
+        <com.livingspaces.proshopper.views.LSTextView
+            android:id="@+id/tv_storezip_accountfrag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/tv_storestate_accountfrag"
+            android:layout_alignBaseline="@+id/tv_storestate_accountfrag"
+            android:text="92647"
+            android:textSize="14sp"
+            android:textColor="@color/MainLog_txt"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="11.5dp"
+            android:orientation="horizontal"
+            android:layout_below="@id/tv_storestate_accountfrag"
+            android:layout_marginTop="10dp">
+
+            <com.livingspaces.proshopper.views.LSTextView
+                android:id="@+id/tv_call_accountfrag"
+                android:layout_width="0dp"
+                android:layout_height="32.5dp"
+                android:layout_weight="3"
+                android:background="@drawable/button_login"
+                android:text="Call"
+                style="@style/LoginButton" />
+            <View
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"/>
+
+            <com.livingspaces.proshopper.views.LSTextView
+                android:id="@+id/tv_changestore_accountfrag"
+                android:layout_width="0dp"
+                android:layout_height="32.5dp"
+                android:layout_weight="3"
+                android:background="@drawable/button_login"
+                android:text="Change Store"
+                style="@style/LoginButton" />
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
 
 </RelativeLayout>

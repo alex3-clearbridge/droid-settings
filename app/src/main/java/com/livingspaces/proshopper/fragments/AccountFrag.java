@@ -1,6 +1,9 @@
 package com.livingspaces.proshopper.fragments;
 
 import android.animation.Animator;
+import android.content.Intent;
+import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -27,9 +30,11 @@ public class AccountFrag extends BaseStackFrag implements StoreDialog.ICallback{
 
     private static final String TAG = AccountFrag.class.getSimpleName();
 
-    private LSTextView tv_selectStore;
+    private LSTextView tv_selectStore, tv_storeName, tv_storeAddress, tv_storeCity, tv_storeState, tv_storeZip, tv_callBtn, tv_changeStoreBtn;
     private StoreDialog mStoreDialog;
-    private View overlay;
+    private View rootView, hasStoreView, noStoreView;
+    private Store mStore;
+    private boolean hasStore = false;
 
     public static AccountFrag newInstance(){
         return new AccountFrag();
@@ -43,28 +48,69 @@ public class AccountFrag extends BaseStackFrag implements StoreDialog.ICallback{
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(TAG,"onCreateView");
 
-        View view = inflater.inflate(R.layout.fragment_account, container, false);
-        tv_selectStore = (LSTextView)view.findViewById(R.id.tv_select_store);
+        rootView = inflater.inflate(R.layout.fragment_account, container, false);
+
+        tv_selectStore = (LSTextView)rootView.findViewById(R.id.tv_select_store);
+
+        hasStoreView = rootView.findViewById(R.id.v_has_store);
+        noStoreView = rootView.findViewById(R.id.v_no_store);
+        noStoreView.setVisibility(View.GONE);
+
+        tv_storeName = (LSTextView) rootView.findViewById(R.id.tv_storename_accountfrag);
+        tv_storeAddress = (LSTextView) rootView.findViewById(R.id.tv_storeaddress_accountfrag);
+        tv_storeCity = (LSTextView) rootView.findViewById(R.id.tv_storecity_accountfrag);
+        tv_storeState = (LSTextView) rootView.findViewById(R.id.tv_storestate_accountfrag);
+        tv_storeZip = (LSTextView) rootView.findViewById(R.id.tv_storezip_accountfrag);
+        tv_callBtn = (LSTextView) rootView.findViewById(R.id.tv_call_accountfrag);
+        tv_changeStoreBtn = (LSTextView) rootView.findViewById(R.id.tv_changestore_accountfrag);
 
         mStoreDialog = new StoreDialog();
         mStoreDialog.setCallback(this);
 
-        return view;
+        hasStore = Global.Prefs.hasStore();
+
+        return rootView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        tv_selectStore.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "Select store clicked");
+        if (hasStore){
+            mStore = Global.Prefs.getStore();
+            if (mStore == null) return;
+            showStore();
+        }
+        else
+            chooseStore();
+    }
 
-                mStoreDialog.show(getFragmentManager(), "storeDialogFragment");
+    private void showStore(){
+        noStoreView.setVisibility(View.GONE);
+        hasStoreView.setVisibility(View.VISIBLE);
 
-            }
-        });
+        Typeface fontLight = Typeface.createFromAsset(getContext().getAssets(), "SourceSansPro-Light.ttf");
+        Typeface fontBold = Typeface.createFromAsset(getContext().getAssets(), "SourceSansPro-Bold.otf");
+        tv_storeName.setTypeface(fontBold);
+        tv_storeAddress.setTypeface(fontLight);
+        tv_storeCity.setTypeface(fontLight);
+        tv_storeState.setTypeface(fontLight);
+        tv_storeZip.setTypeface(fontLight);
+
+        tv_storeName.setText(mStore.getName());
+        tv_storeAddress.setText(mStore.getAddress());
+        tv_storeCity.setText(mStore.getCity() + ", ");
+        tv_storeState.setText(mStore.getState() + " ");
+        tv_storeZip.setText(mStore.getZipCode());
+
+        tv_callBtn.setOnClickListener(onCallBtnCLicked);
+        tv_changeStoreBtn.setOnClickListener(onSelectStoreClicked);
+    }
+
+    private void chooseStore(){
+        hasStoreView.setVisibility(View.GONE);
+        noStoreView.setVisibility(View.VISIBLE);
+        tv_selectStore.setOnClickListener(onSelectStoreClicked);
     }
 
     @Override
@@ -83,13 +129,42 @@ public class AccountFrag extends BaseStackFrag implements StoreDialog.ICallback{
 
     }
 
+    private View.OnClickListener onSelectStoreClicked = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            mStoreDialog.show(getFragmentManager(), "storeDialogFragment");
+        }
+    };
+
+    private View.OnClickListener onCallBtnCLicked = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            String phoneNumber = getResources().getString(R.string.phoneNumber);
+            Intent intent = new Intent(Intent.ACTION_DIAL, Uri.fromParts("tel", phoneNumber, null));
+            startActivity(intent);
+        }
+    };
+
     @Override
     public String getTitle() {
         return NavigationFrag.NavItem.ACCOUNT.title();
     }
 
     @Override
-    public void onStoreSelected() {
+    public void onStoreSelected(Store store) {
+
+        if (mStoreDialog == null) return;
+
+        if (store == null) return;
+
+        mStore = store;
+
+        Global.Prefs.saveStore(store);
+        hasStore = true;
+
+        mStoreDialog.dismiss();
+
+        showStore();
 
     }
 }

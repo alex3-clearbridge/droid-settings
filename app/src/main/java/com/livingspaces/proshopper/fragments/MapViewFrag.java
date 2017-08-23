@@ -223,11 +223,11 @@ public class MapViewFrag extends BaseStackFrag {
         double latitude, longitude;
 
         if (myStore != null && myStore.currStore != null) {
-            latitude = Double.parseDouble(myStore.currStore.latitude);
-            longitude = Double.parseDouble(myStore.currStore.longitude);
+            latitude = Double.parseDouble(myStore.currStore.getLatitude());
+            longitude = Double.parseDouble(myStore.currStore.getLongitude());
 
-            Log.e(TAG, "CENTER on Store: " + myStore.currStore.name + " @ "
-                    + myStore.currStore.latitude + ", " + myStore.currStore.longitude);
+            Log.e(TAG, "CENTER on Store: " + myStore.currStore.getName() + " @ "
+                    + myStore.currStore.getLatitude() + ", " + myStore.currStore.getLongitude());
         } else {
             Log.e(TAG, " CENTER on IRVINE ");
             // default location to Irvine, CA
@@ -302,8 +302,8 @@ public class MapViewFrag extends BaseStackFrag {
             int index = 0;
             for (Store s : all_stores) {
                 LatLng store_location = new LatLng(
-                        Double.parseDouble(s.latitude),
-                        Double.parseDouble(s.longitude));
+                        Double.parseDouble(s.getLatitude()),
+                        Double.parseDouble(s.getLongitude()));
 
                 markerOptionsList.add(new MarkerOptions()
                         .position(store_location)
@@ -364,7 +364,7 @@ public class MapViewFrag extends BaseStackFrag {
                 Store store = all_stores.get(storeNumber);
                 LatLng markerPosition = marker.getPosition();
 
-                Log.d(TAG, "Clicked on storeNumber: " + marker.getSnippet() + " - " + all_stores.get(storeNumber).name);
+                Log.d(TAG, "Clicked on storeNumber: " + marker.getSnippet() + " - " + all_stores.get(storeNumber).getName());
                 Log.d(TAG, "Lat: " + Double.toString(markerPosition.latitude) + " Long: " + Double.toString(markerPosition.longitude));
 
                 centerOnStore(markerPosition);
@@ -484,8 +484,8 @@ public class MapViewFrag extends BaseStackFrag {
             currStore = store;
             if (storeView == null) return;
 
-            tv_storeTitle.setText(currStore.name);
-            ((TextView) storeView.findViewById(R.id.tv_storeAddr)).setText(currStore.address);
+            tv_storeTitle.setText(currStore.getName());
+            ((TextView) storeView.findViewById(R.id.tv_storeAddr)).setText(currStore.getAddress());
             ((TextView) storeView.findViewById(R.id.tv_storeCityStateZIP)).setText(currStore.cityStateZip());
 
             TextView tv_storeDist = ((TextView) storeView.findViewById(R.id.tv_storeDist));
@@ -521,7 +521,7 @@ public class MapViewFrag extends BaseStackFrag {
                 tv_storeDir.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Utility.openGoogleMaps(currStore.latitude, currStore.longitude, currStore.address);
+                        Utility.openGoogleMaps(currStore.getLatitude(), currStore.getLongitude(), currStore.getAddress());
                     }
                 });
             }
@@ -531,8 +531,8 @@ public class MapViewFrag extends BaseStackFrag {
                     @Override
                     public void onClick(View v) {
                         if (currStore != null) {
-                            double latitude = Double.parseDouble(currStore.latitude);
-                            double longitude = Double.parseDouble(currStore.longitude);
+                            double latitude = Double.parseDouble(currStore.getLatitude());
+                            double longitude = Double.parseDouble(currStore.getLongitude());
                             LatLng markerPosition = new LatLng(latitude, longitude);
                             centerOnStore(markerPosition);
                             markerClicked++;

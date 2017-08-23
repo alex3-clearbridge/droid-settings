@@ -186,8 +186,8 @@ public class StoreAdapter extends BaseAdapter {
         public void bindStore(Store s) {
             this.store = s;
 
-            tv_title.setText(store.name);
-            tv_addr.setText(store.address);
+            tv_title.setText(store.getName());
+            tv_addr.setText(store.getAddress());
             tv_dist.setText(store.distance());
             tv_cityStateZip.setText(store.cityStateZip());
             storeHrsView.clearAnimation();
@@ -210,7 +210,7 @@ public class StoreAdapter extends BaseAdapter {
                         Utility.gaTracker.send(new HitBuilders.EventBuilder().
                                         setCategory("ui_action")
                                         .setAction("call_store")
-                                        .setLabel(store.name)
+                                        .setLabel(store.getName())
                                         .build()
                         );
                     }
@@ -220,13 +220,13 @@ public class StoreAdapter extends BaseAdapter {
                 tv_storeDir.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Utility.openGoogleMaps(store.latitude, store.longitude, store.address);
+                        Utility.openGoogleMaps(store.getLatitude(), store.getLongitude(), store.getAddress());
 
                         /** Google Analytics -- store_directions */
                         Utility.gaTracker.send(new HitBuilders.EventBuilder().
                                         setCategory("ui_action")
                                         .setAction("store_directions")
-                                        .setLabel(store.name)
+                                        .setLabel(store.getName())
                                         .build()
                         );
                     }
@@ -268,7 +268,7 @@ public class StoreAdapter extends BaseAdapter {
             Utility.gaTracker.send(new HitBuilders.EventBuilder().
                             setCategory("ui_action")
                             .setAction("store_info")
-                            .setLabel(store.name)
+                            .setLabel(store.getName())
                             .build()
             );
         }

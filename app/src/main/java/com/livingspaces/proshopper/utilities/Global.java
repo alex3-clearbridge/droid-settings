@@ -8,6 +8,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.livingspaces.proshopper.MainActivity;
+import com.livingspaces.proshopper.data.Store;
 import com.livingspaces.proshopper.interfaces.IMainFragManager;
 
 /**
@@ -39,9 +40,22 @@ public class Global {
         private static final String TAG = "LivingSpace.Preferences";
         private static final String KEY_wishlist = "wishlist";
         private static final String KEY_token = "token";
+        private static final String KEY_storeName = "storeName",
+                KEY_storeId = "storeId",
+                KEY_storeZipcode = "storeZipCode",
+                KEY_storeAddress = "storeAddress",
+                KEY_storeCity = "storeCity",
+                KEY_storeState = "storeState";
 
         private static SharedPreferences sharedPrefs;
-        private static String d_wishList;
+        private static String d_wishList,
+                store_id,
+                store_name,
+                store_zip,
+                store_address,
+                store_city,
+                store_state;
+
 
         public static void Init(MainActivity mainActivity) {
             sharedPrefs = mainActivity.getSharedPreferences(Prefs.TAG, Context.MODE_PRIVATE);
@@ -98,6 +112,48 @@ public class Global {
 
         public static boolean hasToken(){
             return sharedPrefs != null && sharedPrefs.contains(KEY_token);
+        }
+
+        public static boolean hasStore(){
+            return sharedPrefs != null && sharedPrefs.contains(KEY_storeId);
+        }
+
+        public static void saveStore(Store store){
+
+            if (sharedPrefs == null || store == null) return;
+
+            sharedPrefs.edit()
+                    .putString(KEY_storeId, store.getId())
+                    .putString(KEY_storeName, store.getName())
+                    .putString(KEY_storeZipcode, store.getZipCode())
+                    .putString(KEY_storeAddress, store.getAddress())
+                    .putString(KEY_storeCity, store.getCity())
+                    .putString(KEY_storeState, store.getState())
+                    .apply();
+
+
+        }
+
+        public static Store getStore(){
+
+            if (sharedPrefs == null && !sharedPrefs.contains(KEY_storeId)) return null;
+
+            store_id = sharedPrefs.getString(KEY_storeId, "");
+            store_name = sharedPrefs.getString(KEY_storeName, "");
+            store_zip = sharedPrefs.getString(KEY_storeZipcode, "");
+            store_address = sharedPrefs.getString(KEY_storeAddress, "");
+            store_city = sharedPrefs.getString(KEY_storeCity, "");
+            store_state = sharedPrefs.getString(KEY_storeState, "");
+
+            Store store = new Store();
+            store.setId(store_id);
+            store.setName(store_name);
+            store.setZipCode(store_zip);
+            store.setAddress(store_address);
+            store.setCity(store_city);
+            store.setState(store_state);
+
+            return store;
         }
     }
 }

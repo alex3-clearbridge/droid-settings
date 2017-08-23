@@ -53,11 +53,11 @@ public class StoreDialogAdapter extends RecyclerView.Adapter<StoreDialogAdapter.
         Log.d(TAG, "onBindViewHolder: ");
         Store store = storeList[position];
 
-        holder.tv_storeName.setText(store.name);
-        holder.tv_storeAddress.setText(store.address);
-        holder.tv_storeCity.setText(store.city + ", ");
-        holder.tv_storeState.setText(store.state + " ");
-        holder.tv_storeZip.setText(store.zipCode);
+        holder.tv_storeName.setText(store.getName());
+        holder.tv_storeAddress.setText(store.getAddress());
+        holder.tv_storeCity.setText(store.getCity() + ", ");
+        holder.tv_storeState.setText(store.getState() + " ");
+        holder.tv_storeZip.setText(store.getZipCode());
         holder.iv_add.setImageDrawable(d_add);
 
     }

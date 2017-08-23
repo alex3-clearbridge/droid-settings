@@ -129,7 +129,6 @@ public class NetworkManager {
                     public void onResponse(String response) {
                         Log.d(TAG, "RSP Success :: " + response);
                         REQcb.onRSPSuccess(response);
-
                     }
                 },
                 new Response.ErrorListener() {

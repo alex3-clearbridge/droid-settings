@@ -68,14 +68,15 @@ public class StoreDialog extends DialogFragment implements StoreDialogAdapter.Cl
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        isLoading = true;
+        mRecyclerView.setVisibility(View.GONE);
+        pd_loading.setVisibility(View.VISIBLE);
+
         requestStores();
     }
 
     private void requestStores(){
 
-        if (isLoading) return;
-
-        isLoading = true;
         mRecyclerView.setVisibility(View.GONE);
         pd_loading.setVisibility(View.VISIBLE);
 
@@ -115,10 +116,10 @@ public class StoreDialog extends DialogFragment implements StoreDialogAdapter.Cl
 
     @Override
     public void onClick(Store store) {
-        Toast.makeText(getContext(), store.name, Toast.LENGTH_SHORT).show();
+        callback.onStoreSelected(store);
     }
 
     public interface ICallback {
-        void onStoreSelected();
+        void onStoreSelected(Store store);
     }
 }

@@ -81,6 +81,10 @@ public class LoginFrag extends BaseStackFrag implements DialogFrag.ICallback {
                     showDialog( "notValid");
                     return;
                 }
+                else if (!isPass(ed_password)){
+                    showDialog("smallPass");
+                    return;
+                }
                 onLoginClicked(ed_login.getText().toString(), ed_password.getText().toString());
             }
         });
@@ -130,7 +134,7 @@ public class LoginFrag extends BaseStackFrag implements DialogFrag.ICallback {
             public void onRSPFail() {
                 onOk();
                 isLoading = false;
-                showDialog("notInSystem");
+                showDialog("createFailed");
                 Log.d(TAG, "onRSPFail");
             }
 
@@ -147,6 +151,10 @@ public class LoginFrag extends BaseStackFrag implements DialogFrag.ICallback {
     private boolean isValidEmail(EditText ed){
         String s = ed.getText().toString();
         return !TextUtils.isEmpty(s) && Patterns.EMAIL_ADDRESS.matcher(s).matches();
+    }
+
+    private boolean isPass(EditText ed){
+        return ed.getText().toString().length() >= 6;
     }
 
     private void showDialog(String choice){
