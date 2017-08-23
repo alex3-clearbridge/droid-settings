@@ -1,9 +1,11 @@
 package com.livingspaces.proshopper.adapters;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +21,7 @@ import com.livingspaces.proshopper.views.LSTextView;
 
 public class StoreDialogAdapter extends RecyclerView.Adapter<StoreDialogAdapter.ViewHolder> {
 
-
+    private static final String TAG = StoreDialogAdapter.class.getSimpleName();
     private Store[] storeList;
     private Context context;
     private ClickListener clickListener;
@@ -33,12 +35,14 @@ public class StoreDialogAdapter extends RecyclerView.Adapter<StoreDialogAdapter.
     }
 
     public void updateAdapter(Store[] storeList){
+        Log.d(TAG, "updateAdapter: ");
         this.storeList = storeList;
         notifyDataSetChanged();
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        Log.d(TAG, "onCreateViewHolder: ");
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.item_store_dialog, parent, false);
         return new ViewHolder(view);
@@ -46,12 +50,13 @@ public class StoreDialogAdapter extends RecyclerView.Adapter<StoreDialogAdapter.
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
+        Log.d(TAG, "onBindViewHolder: ");
         Store store = storeList[position];
 
         holder.tv_storeName.setText(store.name);
         holder.tv_storeAddress.setText(store.address);
-        holder.tv_storeCity.setText(store.city);
-        holder.tv_storeState.setText(store.state);
+        holder.tv_storeCity.setText(store.city + ", ");
+        holder.tv_storeState.setText(store.state + " ");
         holder.tv_storeZip.setText(store.zipCode);
         holder.iv_add.setImageDrawable(d_add);
 
@@ -59,7 +64,8 @@ public class StoreDialogAdapter extends RecyclerView.Adapter<StoreDialogAdapter.
 
     @Override
     public int getItemCount() {
-        return 0;
+        Log.d(TAG, "getItemCount: ");
+        return storeList != null ? storeList.length : 0;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -69,6 +75,7 @@ public class StoreDialogAdapter extends RecyclerView.Adapter<StoreDialogAdapter.
 
         public ViewHolder(View itemView) {
             super(itemView);
+            Log.d(TAG, "ViewHolder: ");
 
             tv_storeName = (LSTextView)itemView.findViewById(R.id.tv_storename_storedialog);
             tv_storeAddress = (LSTextView)itemView.findViewById(R.id.tv_storeaddress_storedialog);
@@ -76,6 +83,14 @@ public class StoreDialogAdapter extends RecyclerView.Adapter<StoreDialogAdapter.
             tv_storeState = (LSTextView)itemView.findViewById(R.id.tv_storestate_storedialog);
             tv_storeZip = (LSTextView)itemView.findViewById(R.id.tv_storezip_storedialog);
             iv_add = (ImageView) itemView.findViewById(R.id.iv_storedialog);
+
+            Typeface fontLight = Typeface.createFromAsset(context.getAssets(), "SourceSansPro-Light.ttf");
+            Typeface fontBold = Typeface.createFromAsset(context.getAssets(), "SourceSansPro-Bold.otf");
+            tv_storeName.setTypeface(fontBold);
+            tv_storeAddress.setTypeface(fontLight);
+            tv_storeCity.setTypeface(fontLight);
+            tv_storeState.setTypeface(fontLight);
+            tv_storeZip.setTypeface(fontLight);
 
             itemView.setOnClickListener(this);
         }

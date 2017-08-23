@@ -60,9 +60,9 @@ public class FindStoreFrag extends BaseStackFrag implements IEditTextImeBackList
             public String getURL() {
                 Log.e(TAG, "getURL: " + zipCode);
                 if (zipCode != null && !zipCode.equals("")) {
-                    return Services.API.StoresWithZip.getByZip(zipCode);
+                    return "http://api.livingspaces.com/api/v1/store/getAllStoresByZip/" + Integer.parseInt(zipCode);//Services.API.StoresWithZip.getByZip(zipCode);
                 } else {
-                    return Services.API.Stores.get();
+                    return "http://api.livingspaces.com/api/v1/store/getAllStores/";//Services.API.Stores.get();
                 }
             }
 

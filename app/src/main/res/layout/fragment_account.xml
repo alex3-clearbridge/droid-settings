@@ -7,23 +7,17 @@
     android:background="@android:color/background_light"
     android:clickable="true"
     tools:context="com.livingspaces.proshopper.fragments.AccountFrag">
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <com.livingspaces.proshopper.views.LSTextView
+        android:id="@+id/tv_select_store"
+        android:layout_width="292.5dp"
+        android:layout_height="32.5dp"
+        android:layout_marginTop="23dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/button_login"
+        android:text="Select a Store"
+        style="@style/LoginButton"/>
 
-        <com.livingspaces.proshopper.views.LSTextView
-            android:id="@+id/tv_select_store"
-            android:layout_width="292.5dp"
-            android:layout_height="32.5dp"
-            android:layout_marginTop="23dp"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/button_login"
-            android:text="Select a Store"
-            style="@style/LoginButton"/>
-
-    </RelativeLayout>
-
-    <View
+   <!-- <View
         android:id="@+id/shade_account"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -34,6 +28,6 @@
         android:id="@+id/dialog_store"
         android:layout_width="286dp"
         android:layout_height="439dp"
-        android:layout_centerInParent="true" />
+        android:layout_centerInParent="true" />-->
 
 </RelativeLayout>

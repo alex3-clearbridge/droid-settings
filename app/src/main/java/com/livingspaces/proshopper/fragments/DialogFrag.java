@@ -81,7 +81,7 @@ public class DialogFrag extends DialogFragment {
     public void onStart() {
         super.onStart();
 
-        getDialog().getWindow().setLayout(680, ViewGroup.LayoutParams.WRAP_CONTENT);
+        //getDialog().getWindow().setLayout(680, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
     @Override

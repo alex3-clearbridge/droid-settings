@@ -45,13 +45,9 @@ public class AccountFrag extends BaseStackFrag implements StoreDialog.ICallback{
 
         View view = inflater.inflate(R.layout.fragment_account, container, false);
         tv_selectStore = (LSTextView)view.findViewById(R.id.tv_select_store);
-        mStoreDialog = (StoreDialog)view.findViewById(R.id.dialog_store);
-        mStoreDialog.setVisibility(View.GONE);
+
+        mStoreDialog = new StoreDialog();
         mStoreDialog.setCallback(this);
-
-
-        overlay = view.findViewById(R.id.shade_account);
-        overlay.setVisibility(View.GONE);
 
         return view;
     }
@@ -65,67 +61,10 @@ public class AccountFrag extends BaseStackFrag implements StoreDialog.ICallback{
             public void onClick(View view) {
                 Log.d(TAG, "Select store clicked");
 
-                NetworkManager.makeREQ(new IREQCallback() {
-                    @Override
-                    public void onRSPSuccess(String rsp) {
+                mStoreDialog.show(getFragmentManager(), "storeDialogFragment");
 
-                        Store[] stores = DataModel.parseStores(rsp);
-                        if (stores == null) {
-                            onRSPFail();
-                            return;
-                        }
-
-                        overlay(true);
-                        mStoreDialog.updateAdapter(stores);
-                        mStoreDialog.setVisibility(View.VISIBLE);
-                    }
-
-                    @Override
-                    public void onRSPFail() {
-
-                    }
-
-                    @Override
-                    public String getURL() {
-                        return "http://api.livingspaces.com/api/v1/store/getAllStores";
-                    }
-                });
-
-
-                Toast.makeText(getContext(), "Select store clicked", Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    public void overlay(final boolean show) {
-        if (overlay == null || (show && isViewShowing(overlay)) || (!show && !isViewShowing(overlay)) )
-            return;
-        Log.d(TAG, "OVERLAY");
-
-        if (show) overlay.setVisibility(View.INVISIBLE);
-        overlay.animate().setDuration(500).alpha(show ? 1 : 0).setListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationCancel(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationStart(Animator animation) {
-                if (show) overlay.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                if (!show) overlay.setVisibility(View.GONE);
-            }
-        }).start();
-    }
-
-    private boolean isViewShowing(View view) {
-        return view.getVisibility() != View.GONE;
     }
 
     @Override

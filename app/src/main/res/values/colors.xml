@@ -39,4 +39,7 @@
 
     <color name="TextView_Link_color">#007aaf</color>
 
+    <color name="DarkLine_SelectStore_Header">#868686</color>
+    <color name="LightLine_Divider_Stores">#51979797</color>
+
 </resources>

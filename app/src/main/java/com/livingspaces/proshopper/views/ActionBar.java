@@ -77,15 +77,6 @@ public class ActionBar extends RelativeLayout {
         tv_topCenter.setTypeface(fontBold);
         tv_topRight.setTypeface(fontSemiBold);
 
-        /*iv_topLeftEx.setClickable(false);
-        iv_topLeftEx.setImageDrawable(d_close);;
-        iv_topLeftEx.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });*/
-
         setViewWebsite();
     }
 

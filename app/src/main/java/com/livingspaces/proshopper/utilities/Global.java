@@ -7,7 +7,6 @@ import android.hardware.Camera;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.livingspaces.proshopper.LoginActivity;
 import com.livingspaces.proshopper.MainActivity;
 import com.livingspaces.proshopper.interfaces.IMainFragManager;
 

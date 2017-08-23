@@ -13,4 +13,11 @@
         android:divider="@drawable/storelist_divider"
         android:dividerHeight="1dp" />
 
+    <ProgressBar
+        android:id="@+id/pBar_frag_storeList"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center"
+        android:visibility="gone"/>
+
 </FrameLayout>

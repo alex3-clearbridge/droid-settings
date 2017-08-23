@@ -11,6 +11,7 @@ import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.livingspaces.proshopper.R;
 import com.livingspaces.proshopper.adapters.StoreAdapter;
@@ -30,7 +31,7 @@ public class StoreListFrag extends BaseStackFrag implements StoreAdapter.Callbac
     private Store[] stores;
 
     private FrameLayout rootView;
-    private ProgressBar loadingView;
+    private View loadingView;
     private ListView lv_stores;
     private StoreAdapter sAdapter;
 
@@ -48,6 +49,7 @@ public class StoreListFrag extends BaseStackFrag implements StoreAdapter.Callbac
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = (FrameLayout) inflater.inflate(R.layout.fragment_storelist, container, false);
         lv_stores = (ListView) rootView.findViewById(R.id.lv_stores);
+        loadingView = rootView.findViewById(R.id.pBar_frag_storeList);
 
         if (stores != null) {
             makeStoresList();
@@ -87,16 +89,11 @@ public class StoreListFrag extends BaseStackFrag implements StoreAdapter.Callbac
             }
         });
 
-        if (loadingView != null) {
-            rootView.removeView(loadingView);
-            loadingView = null;
-        }
+        if (loadingView != null) loadingView.setVisibility(View.GONE);
     }
 
     public void makeLoadingScreen() {
-        loadingView = new ProgressBar(getActivity());
-        loadingView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        rootView.addView(loadingView);
+        if (loadingView != null) loadingView.setVisibility(View.VISIBLE);
     }
 
     public void setStores(Store[] s) {

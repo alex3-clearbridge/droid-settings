@@ -5,7 +5,7 @@ package com.livingspaces.proshopper.networking;
  */
 public class Services {
 
-    //private static final String URL_BASE = "http://api.livingspaces.com/api/v1/"; //"http://apidev.livingspaces.com/api/v1/"
+    //private static final String URL_BASE = "http://api.livingspaces.com/api/v1/"; //"http://apidev.livingspaces.com/api/v1/"//"http://mobileapidev.livingspaces.com/"
     private static final String URL_BASE = "http://mobileapidev.livingspaces.com/";
 
     public enum URL {
