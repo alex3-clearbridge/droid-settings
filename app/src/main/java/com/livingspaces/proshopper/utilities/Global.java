@@ -39,7 +39,8 @@ public class Global {
     public static class Prefs {
         private static final String TAG = "LivingSpace.Preferences";
         private static final String KEY_wishlist = "wishlist";
-        private static final String KEY_token = "token";
+        private static final String KEY_access_token = "accessToken";
+        private static final String KEY_refresh_token = "refreshToken";
         private static final String KEY_storeName = "storeName",
                 KEY_storeId = "storeId",
                 KEY_storeZipcode = "storeZipCode",
@@ -98,20 +99,35 @@ public class Global {
         }
 
         public static void clearToken(){
-            if (sharedPrefs == null || !sharedPrefs.contains(KEY_token)) return;
+            if (sharedPrefs == null || !sharedPrefs.contains(KEY_access_token)) return;
 
-            sharedPrefs.edit().remove(KEY_token).apply();
+            sharedPrefs.edit().remove(KEY_access_token).apply();
         }
 
-        public static void editToken(String token){
+        public static void editToken(String access_token, String refresh_token){
 
             if (sharedPrefs == null) return;
 
-            sharedPrefs.edit().putString(KEY_token, token).apply();
+            sharedPrefs.edit()
+                    .putString(KEY_access_token, access_token)
+                    .putString(KEY_refresh_token, refresh_token)
+                    .apply();
         }
 
         public static boolean hasToken(){
-            return sharedPrefs != null && sharedPrefs.contains(KEY_token);
+            return sharedPrefs != null &&
+                    sharedPrefs.contains(KEY_access_token) &&
+                    sharedPrefs.contains(KEY_refresh_token);
+        }
+
+        public static String getAccessToken(){
+            if (sharedPrefs == null && !sharedPrefs.contains(KEY_access_token)) return "";
+            return sharedPrefs.getString(KEY_access_token, "");
+        }
+
+        public static String getRefreshToken(){
+            if (sharedPrefs == null && !sharedPrefs.contains(KEY_refresh_token)) return "";
+            return sharedPrefs.getString(KEY_refresh_token, "");
         }
 
         public static boolean hasStore(){

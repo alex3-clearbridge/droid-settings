@@ -154,10 +154,17 @@ public class DialogFrag extends DialogFragment {
                 break;
             case "loading":
                 Log.d(TAG, choice);
+                tv_header.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "SourceSansPro-Light.ttf"));
+                tv_header.setAllCaps(false);
                 tv_header.setText("Working on your request");
                 tv_text.setVisibility(View.INVISIBLE);
                 pd_loading.setVisibility(View.VISIBLE);
                 tv_button.setText("Cancel");
+                break;
+            case "noNetwork":
+                Log.d(TAG, choice);
+                tv_header.setText("Network Error");
+                tv_text.setText("Please check your network connection");
                 break;
         }
     }

@@ -62,7 +62,7 @@ public class SettingsFrag extends BaseStackFrag {
         v_policy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Global.FragManager.stackFrag(WebViewFrag.newInstance("Privacy policy", Services.URL.Policy.get()));
+                Global.FragManager.stackFrag(WebViewFrag.newInstance("Privacy policy", Services.URL.StorePolicy.get()));
             }
         });
 

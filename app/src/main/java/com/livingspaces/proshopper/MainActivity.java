@@ -8,13 +8,16 @@ import android.util.Log;
 import android.view.WindowManager;
 
 import com.livingspaces.proshopper.analytics.AnalyticsApplication;
+import com.livingspaces.proshopper.data.Token;
 import com.livingspaces.proshopper.fragments.BaseStackFrag;
 import com.livingspaces.proshopper.fragments.LoginFrag;
 import com.livingspaces.proshopper.fragments.NavigationFrag;
 import com.livingspaces.proshopper.fragments.SettingsFrag;
 import com.livingspaces.proshopper.interfaces.IMainFragManager;
+import com.livingspaces.proshopper.interfaces.IREQCallback;
 import com.livingspaces.proshopper.networking.GpsManager;
 import com.livingspaces.proshopper.networking.NetworkManager;
+import com.livingspaces.proshopper.networking.Services;
 import com.livingspaces.proshopper.utilities.Global;
 import com.livingspaces.proshopper.utilities.Layout;
 import com.livingspaces.proshopper.utilities.Utility;
@@ -49,7 +52,11 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager 
         getSupportFragmentManager().beginTransaction().add(R.id.container_main, NavigationFrag.newInstance()).commit();
 
         if (!hasToken) {
-            Global.FragManager.stackFrag(LoginFrag.newInstance());
+            // Not logged yet
+            callLogin();
+        }
+        else {
+            updateToken();
         }
 
         Utility.activity = this;
@@ -57,6 +64,41 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager 
 
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
         Utility.gaTracker = application.getDefaultTracker();
+    }
+
+    private void callLogin(){
+        Log.d(TAG, "callLogin: ");
+        Global.FragManager.stackFrag(LoginFrag.newInstance());
+    }
+
+    private void updateToken(){
+        Log.d(TAG, "updateToken: ");
+        NetworkManager.refreshTokenREQ(new IREQCallback() {
+            @Override
+            public void onRSPSuccess(String rsp) {
+                Log.d(TAG, "onRSPSuccess");
+
+                if (rsp.contains("access_token") && (rsp.contains("refresh_token"))) {
+                    Token token = new Token(rsp);
+                    Global.Prefs.editToken(token.access_token, token.refresh_token);
+                }
+                else {
+                    onRSPFail();
+                }
+            }
+
+            @Override
+            public void onRSPFail() {
+                // Probably refresh token is expired. Ask user to login
+                Log.d(TAG, "onRSPFail");
+                callLogin();
+            }
+
+            @Override
+            public String getURL() {
+                return Services.API.Token.get();
+            }
+        });
     }
 
     private void updateViewsForFrag() {

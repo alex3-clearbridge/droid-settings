@@ -14,10 +14,11 @@ public class Services {
         //SignIn("https://www.livingspaces.com/Secure/UserPortal/UserSignIn.aspx"),//"https://dev.livingspaces.com/Secure/UserPortal/UserSignIn.aspx"
         SignIn("https://dev.livingspaces.com/Secure/UserPortal/UserSignIn.aspx"),
         Subscribe("http://www.livingspaces.com/landingpage.aspx?fileName=app-email-sign-up"),
-        Website("http://www.livingspaces.com/"),
+        Website("http://dev.livingspaces.com"),
         // ShareProduct("http://www.livingspaces.com/landingpage.aspx?fileName=wish-list&")
-        Cart("http://www.livingspaces.com/viewcart.aspx"),
-        Policy("http://dev.livingspaces.com/privacy-policy-app"),
+        Cart("http://dev.livingspaces.com/viewcart.aspx"),
+        PrivacyPolicy("http://dev.livingspaces.com/privacy-policy-app"),
+        StorePolicy("http://dev.livingspaces.com/store-policies-app"),
         Terms("http://dev.livingspaces.com/terms-of-use-app"),
         About("http://dev.livingspaces.com/about-our-ads-app"),
         ShareProduct("http://dev.livingspaces.com/landingpage.aspx?fileName=wish-list&"); //"http://dev.livingspaces.com/landingpage.aspx?fileName=wish-list&"
@@ -34,7 +35,7 @@ public class Services {
     }
 
     public enum API {
-        Product("api/Product/getItemIdFromBarcode/"),
+        Product("api/Product/"),
         Products("products/"),
         Stores("store/getAllStores/"),
         StoresWithZip("store/getAllStoresByZip/"),

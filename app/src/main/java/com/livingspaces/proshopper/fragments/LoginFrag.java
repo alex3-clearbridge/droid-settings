@@ -1,6 +1,10 @@
 package com.livingspaces.proshopper.fragments;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
@@ -37,7 +41,7 @@ public class LoginFrag extends BaseStackFrag implements DialogFrag.ICallback {
     private boolean isLoading = false, isLogged = false, isDialogShowing = false;
     private Bundle args;
 
-    public static LoginFrag newInstance(){
+    public static LoginFrag newInstance() {
         return new LoginFrag();
     }
 
@@ -51,11 +55,11 @@ public class LoginFrag extends BaseStackFrag implements DialogFrag.ICallback {
 
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
-        ed_login = (EditText)view.findViewById(R.id.ed_login_email);
-        ed_password = (EditText)view.findViewById(R.id.ed_login_password);
-        tv_login = (LSTextView)view.findViewById(R.id.tv_login);
-        tv_createAccount = (LSTextView)view.findViewById(R.id.tv_login_create);
-        tv_forgotPass = (LSTextView)view.findViewById(R.id.tv_login_forgotPassowrd);
+        ed_login = (EditText) view.findViewById(R.id.ed_login_email);
+        ed_password = (EditText) view.findViewById(R.id.ed_login_password);
+        tv_login = (LSTextView) view.findViewById(R.id.tv_login);
+        tv_createAccount = (LSTextView) view.findViewById(R.id.tv_login_create);
+        tv_forgotPass = (LSTextView) view.findViewById(R.id.tv_login_forgotPassowrd);
 
         mDialogFrag = new DialogFrag();
         mDialogFrag.setCallback(this);
@@ -68,83 +72,84 @@ public class LoginFrag extends BaseStackFrag implements DialogFrag.ICallback {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        tv_login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "Login button Clicked");
+        tv_login.setOnClickListener(view1 -> {
+            Log.d(TAG, "Login button Clicked");
 
-                if (isEmpty(ed_login) || isEmpty(ed_password)){
-                    showDialog("empty");
-                    return;
-                }
-                if (!isValidEmail(ed_login)){
-                    showDialog( "notValid");
-                    return;
-                }
-                else if (!isPass(ed_password)){
-                    showDialog("smallPass");
-                    return;
-                }
-                onLoginClicked(ed_login.getText().toString(), ed_password.getText().toString());
+            if (!isConnectedToNetwork()){
+                showDialog("noNetwork");
+                return;
             }
+            if (isEmpty(ed_login) || isEmpty(ed_password)) {
+                showDialog("empty");
+                return;
+            }
+            if (!isValidEmail(ed_login)) {
+                showDialog("notValid");
+                return;
+            } else if (!isPass(ed_password)) {
+                showDialog("smallPass");
+                return;
+            }
+            onLoginClicked(ed_login.getText().toString(), ed_password.getText().toString());
         });
 
-        tv_createAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "createAccount button Clicked");
-                Global.FragManager.stackFrag(CreateAccountFrag.newInstance());
-            }
+        tv_createAccount.setOnClickListener(view12 -> {
+            Log.d(TAG, "createAccount button Clicked");
+            Global.FragManager.stackFrag(CreateAccountFrag.newInstance());
         });
 
-        tv_forgotPass.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG, "Forgot Pass was clicked");
-                Global.FragManager.stackFrag(ResetPassFrag.newInstance());
-            }
+        tv_forgotPass.setOnClickListener(view13 -> {
+            Log.d(TAG, "Forgot Pass was clicked");
+            Global.FragManager.stackFrag(ResetPassFrag.newInstance());
         });
     }
 
-    private void onLoginClicked(String name, String pass){
+    private void onLoginClicked(String name, String pass) {
 
         if (isLoading) return;
 
         showDialog("loading");
         isLoading = true;
 
-        NetworkManager.makePostREQ(name, pass, new IREQCallback() {
-            @Override
-            public void onRSPSuccess(String rsp) {
-                Log.d(TAG, "onRSPSuccess");
+        new Handler().postDelayed(() -> {
+            NetworkManager.makeLoginREQ(name, pass, new IREQCallback() {
+                @Override
+                public void onRSPSuccess(String rsp) {
+                    Log.d(TAG, "onRSPSuccess");
 
-                if (rsp.contains("access_token") && (rsp.contains("refresh_token"))){
+                    if (rsp.contains("access_token") && (rsp.contains("refresh_token"))) {
+                        onOk();
+                        isLoading = false;
+                        Token token = new Token(rsp);
+                        Global.Prefs.editToken(token.access_token, token.refresh_token);
+                        isLogged = true;
+                        new Handler().postDelayed(() -> {
+                            showDialog("ok");
+                        }, 500);
+                    } else {
+                        onRSPFail();
+                    }
+                }
+
+                @Override
+                public void onRSPFail() {
                     onOk();
                     isLoading = false;
-                    Token token = new Token(rsp);
-                    Global.Prefs.editToken(token.access_token);
-                    showDialog("ok");
-                    isLogged = true;
+                    new Handler().postDelayed(() -> {
+                        showDialog("createFailed");
+                    }, 500);
+                    Log.d(TAG, "onRSPFail");
                 }
-                else {
-                    onRSPFail();
-                }
-            }
-            @Override
-            public void onRSPFail() {
-                onOk();
-                isLoading = false;
-                showDialog("createFailed");
-                Log.d(TAG, "onRSPFail");
-            }
 
-            @Override
-            public String getURL() {
-                return Services.API.Token.get();            }
-        });
+                @Override
+                public String getURL() {
+                    return Services.API.Token.get();
+                }
+            });
+        }, 1000);
     }
 
-    private boolean isEmpty(EditText ed){
+    private boolean isEmpty(EditText ed) {
         return ed.getText().length() == 0;
     }
 
@@ -180,6 +185,12 @@ public class LoginFrag extends BaseStackFrag implements DialogFrag.ICallback {
             isLogged = false;
             Global.FragManager.popToHome();
         }
+    }
+
+    private boolean isConnectedToNetwork(){
+        ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isAvailable() && activeNetwork.isConnected();
     }
 
     @Override

@@ -1,6 +1,10 @@
 package com.livingspaces.proshopper.fragments;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
@@ -58,18 +62,19 @@ public class ResetPassFrag extends BaseStackFrag implements DialogFrag.ICallback
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        tv_send.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (isEmpty(ed_email)){
-                    showDialog("empty");
-                }
-                else if (!isValidEmail(ed_email)){
-                    showDialog("notValid");
-                }
-                else{
-                    onResetCalled();
-                }
+        tv_send.setOnClickListener(view1 -> {
+            if (!isConnectedToNetwork()){
+                showDialog("noNetwork");
+                return;
+            }
+            if (isEmpty(ed_email)){
+                showDialog("empty");
+            }
+            else if (!isValidEmail(ed_email)){
+                showDialog("notValid");
+            }
+            else{
+                onResetCalled();
             }
         });
     }
@@ -83,35 +88,41 @@ public class ResetPassFrag extends BaseStackFrag implements DialogFrag.ICallback
         showDialog("loading");
         isLoading = true;
 
-        NetworkManager.makePostREQ(email, new IREQCallback() {
-            @Override
-            public void onRSPSuccess(String rsp) {
-                Log.d(TAG, "onRSPSuccess");
+        new Handler().postDelayed(() -> {
+            NetworkManager.makeResetPassREQ(email, new IREQCallback() {
+                @Override
+                public void onRSPSuccess(String rsp) {
+                    Log.d(TAG, "onRSPSuccess");
 
-                Log.d(TAG, "RESPONSE :: " + rsp);
+                    Log.d(TAG, "RESPONSE :: " + rsp);
 
-                if (rsp.contains("Your email containing instructions to reset your password has been sent!")){
+                    if (rsp.contains("Your email containing instructions to reset your password has been sent!")){
+                        onOk();
+                        isLoading = false;
+                        isResetSuccess = true;
+                        new Handler().postDelayed(() -> {
+                            showDialog("emailSent");
+                        }, 500);
+                    }
+                    else onRSPFail();
+                }
+
+                @Override
+                public void onRSPFail() {
+                    Log.d(TAG, "onRSPFail");
                     onOk();
                     isLoading = false;
-                    isResetSuccess = true;
-                    showDialog("emailSent");
+                    new Handler().postDelayed(() -> {
+                        showDialog("invalidEmail");
+                    }, 500);
                 }
-                else onRSPFail();
-            }
 
-            @Override
-            public void onRSPFail() {
-                Log.d(TAG, "onRSPFail");
-                onOk();
-                isLoading = false;
-                showDialog("invalidEmail");
-            }
-
-            @Override
-            public String getURL() {
-                return Services.API.ResetPassword.get();
-            }
-        });
+                @Override
+                public String getURL() {
+                    return Services.API.ResetPassword.get();
+                }
+            });
+        }, 1000);
     }
 
     @Override
@@ -150,6 +161,12 @@ public class ResetPassFrag extends BaseStackFrag implements DialogFrag.ICallback
             isResetSuccess = false;
             Global.FragManager.popToHome();
         }
+    }
+
+    private boolean isConnectedToNetwork(){
+        ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isAvailable() && activeNetwork.isConnected();
     }
 
     @Override

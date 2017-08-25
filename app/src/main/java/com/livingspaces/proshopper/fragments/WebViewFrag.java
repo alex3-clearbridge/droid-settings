@@ -18,6 +18,7 @@ import com.livingspaces.proshopper.R;
 import com.livingspaces.proshopper.data.Item;
 import com.livingspaces.proshopper.interfaces.IWishlistCallback;
 import com.livingspaces.proshopper.networking.NetworkManager;
+import com.livingspaces.proshopper.networking.Services;
 import com.livingspaces.proshopper.utilities.Global;
 import com.livingspaces.proshopper.utilities.Utility;
 import com.google.android.gms.analytics.HitBuilders;
@@ -28,7 +29,7 @@ import com.google.android.gms.analytics.HitBuilders;
 public class WebViewFrag extends BaseStackFrag {
     private static final String TAG = WebViewFrag.class.getSimpleName();
 
-    private Drawable d_home;
+    private Drawable d_cart;
     private String title, url;
 
     private Item item;
@@ -71,7 +72,7 @@ public class WebViewFrag extends BaseStackFrag {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        d_home = ContextCompat.getDrawable(getActivity(), R.drawable.ls_s_btn_home);
+        d_cart = ContextCompat.getDrawable(getContext(), R.drawable.ls_h_btn_cart);
 
         rootView = (WebView) inflater.inflate(R.layout.fragment_webview, container, false);
 
@@ -97,18 +98,19 @@ public class WebViewFrag extends BaseStackFrag {
         if (item == null) return false;
 
         topRight.setRotation(0);
-        topRight.setImageDrawable(d_home);
+        topRight.setImageDrawable(d_cart);
         topRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Global.FragManager.popToHome();
+                Global.FragManager.stackFrag(WebViewFrag.newInstance("Cart", Services.URL.Cart.get()));
 
-                /** Google Analytics - product_details_home */
-                Utility.gaTracker.send(
-                        new HitBuilders.EventBuilder()
-                                .setCategory("ui_action")
-                                .setAction("product_details_home")
-                                .build()
+                /* Google Analytics -- home_button_click */
+                Utility.gaTracker.send(new HitBuilders.EventBuilder()
+                        .setCategory("ui_action")
+                        .setAction("cart_button_click")
+                        .setLabel("View Cart")
+                        .build()
                 );
             }
         });

@@ -183,6 +183,10 @@ public class ActionBar extends RelativeLayout {
                     iv_topLeft.animate().alpha(1).setDuration(250).start();
                 }
             }).start();
+            if (!isStack) {
+                setCartAndWeb();
+            }
+
         }
         else {
             Log.d(TAG, "login frag");
@@ -211,8 +215,21 @@ public class ActionBar extends RelativeLayout {
             }
         });
 
+        setCartAndWeb();
+    }
+
+    private void setCartAndWeb(){
+
+        Log.d(TAG, "setCartAndWeb: ");
         iv_topRight.setClickable(false);
-        iv_topRight.setImageDrawable(d_cart);
+        iv_topRight.setRotation(0);
+        iv_topRight.animate().alpha(0).setDuration(250).withEndAction(new Runnable() {
+            @Override
+            public void run() {
+                iv_topRight.setImageDrawable(d_cart);
+                iv_topRight.animate().alpha(1).setDuration(250).start();
+            }
+        }).start();
         iv_topRight.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -221,15 +238,21 @@ public class ActionBar extends RelativeLayout {
                 /* Google Analytics -- home_button_click */
                 Utility.gaTracker.send(new HitBuilders.EventBuilder()
                         .setCategory("ui_action")
-                        .setAction("home_button_click")
+                        .setAction("cart_button_click")
                         .setLabel("View Cart")
                         .build()
                 );
             }
         });
-
         iv_topRightEx.setClickable(false);
-        iv_topRightEx.setImageDrawable(d_web);
+        iv_topRightEx.setRotation(0);
+        iv_topRightEx.animate().alpha(0).setDuration(250).withEndAction(new Runnable() {
+            @Override
+            public void run() {
+                iv_topRightEx.setImageDrawable(d_web);
+                iv_topRightEx.animate().alpha(1).setDuration(250).start();
+            }
+        }).start();
         iv_topRightEx.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {

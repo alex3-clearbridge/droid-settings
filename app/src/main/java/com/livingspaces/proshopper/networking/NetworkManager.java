@@ -21,6 +21,7 @@ import com.android.volley.toolbox.JsonRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.livingspaces.proshopper.interfaces.IREQCallback;
+import com.livingspaces.proshopper.utilities.Global;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,6 +30,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
+
+import javax.microedition.khronos.opengles.GL;
 
 /**
  * Created by brandenwilson on 2015-02-09.
@@ -61,24 +64,29 @@ public class NetworkManager {
         _networkManager.sendRequest(REQcb);
     }
 
-    public static void makePostREQ(String name, String pass, IREQCallback REQcb) {
+    public static void makeLoginREQ(String name, String pass, IREQCallback REQcb) {
         if (_networkManager == null) return;
-        _networkManager.sendPostRequest(name, pass, REQcb);
+        _networkManager.sendLoginRequest(name, pass, REQcb);
     }
 
-    public static void makePostREQ(String email, IREQCallback REQcb) {
+    public static void makeResetPassREQ(String email, IREQCallback REQcb) {
         if (_networkManager == null) return;
-        _networkManager.sendPostRequest(email, REQcb);
+        _networkManager.sendResetPassRequest(email, REQcb);
     }
 
-    public static void makePostREQ(String fname,
+    public static void refreshTokenREQ(IREQCallback REQcb) {
+        if (_networkManager == null) return;
+        _networkManager.refreshTokenRequest(REQcb);
+    }
+
+    public static void makeCreateAccREQ(String fname,
                                    String lname,
                                    String email,
                                    String pass,
                                    String confPass,
                                    IREQCallback REQcb) {
         if (_networkManager == null) return;
-        _networkManager.sendPostRequest(fname, lname, email, pass, confPass, REQcb);
+        _networkManager.sendCreateAccRequest(fname, lname, email, pass, confPass, REQcb);
     }
 
     public static ImageLoader getIMGLoader() {
@@ -118,26 +126,18 @@ public class NetworkManager {
         if (_requestQueue != null) _requestQueue.cancelAll(tag);
     }
 
-    protected void sendPostRequest (final String name, final String pass, final IREQCallback REQcb) {
+    protected void sendLoginRequest (final String name, final String pass, final IREQCallback REQcb) {
         if (REQcb == null) return;
 
-        //if (!isConnectedToNetwork()) return;
-
         StringRequest stringRequest = new StringRequest(Request.Method.POST, REQcb.getURL(),
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d(TAG, "RSP Success :: " + response);
-                        REQcb.onRSPSuccess(response);
-                    }
+                response -> {
+                    Log.d(TAG, "RSP Success :: " + response);
+                    REQcb.onRSPSuccess(response);
                 },
-                new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
+                error -> {
                     Log.d(TAG, error.toString());
                     REQcb.onRSPFail();
-                }
-        }) {
+                }) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String>  params = new HashMap<String, String>();
@@ -149,34 +149,77 @@ public class NetworkManager {
 
                 return params;
             }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String>  headers = new HashMap<String, String>();
+                headers.put("grant_type", "password");
+                headers.put("username", name);
+                headers.put("password", pass);
+                headers.put("Client_id", "mobileapidev.livingspaces.com");
+                headers.put("Client_secret", "lsfsecret");
+
+                return headers;
+            }
         };
 
         Log.d(TAG, "REQ: " + stringRequest.toString() + " end");
         addToRequestQueue(stringRequest);
     }
 
-    protected void sendPostRequest (final String email, final IREQCallback REQcb) {
+    protected void refreshTokenRequest (final IREQCallback REQcb) {
         if (REQcb == null) return;
 
-        //if (!isConnectedToNetwork()) return;
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, REQcb.getURL(),
+                response -> {
+                    Log.d(TAG, "RSP Success :: " + response);
+                    REQcb.onRSPSuccess(response);
+                },
+                error -> {
+                    Log.d(TAG, error.toString());
+                    REQcb.onRSPFail();
+                }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String>  params = new HashMap<String, String>();
+                params.put("grant_type", "refresh_token");
+                params.put("refresh_token", Global.Prefs.getRefreshToken());
+                params.put("Client_Id", "mobileapidev.livingspaces.com");
+                params.put("client_secret", "lsfsecret");
+
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String>  headers = new HashMap<String, String>();
+                headers.put("grant_type", "refresh_token");
+                headers.put("refresh_token", Global.Prefs.getRefreshToken());
+                headers.put("Client_Id", "mobileapidev.livingspaces.com");
+                headers.put("client_secret", "lsfsecret");
+
+                return headers;
+            }
+        };
+
+        Log.d(TAG, "REQ: " + stringRequest.toString() + " end");
+        addToRequestQueue(stringRequest);
+    }
+
+    protected void sendResetPassRequest (final String email, final IREQCallback REQcb) {
+        if (REQcb == null) return;
 
         String finalUrl = REQcb.getURL() + "email=" + email;
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, finalUrl,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d(TAG, "RSP Success :: " + response);
-                        REQcb.onRSPSuccess(response);
+                response -> {
+                    Log.d(TAG, "RSP Success :: " + response);
+                    REQcb.onRSPSuccess(response);
 
-                    }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d(TAG, error.toString());
-                        REQcb.onRSPFail();
-                    }
+                error -> {
+                    Log.d(TAG, error.toString());
+                    REQcb.onRSPFail();
                 }) {
         };
 
@@ -184,7 +227,7 @@ public class NetworkManager {
         addToRequestQueue(stringRequest);
     }
 
-    protected void sendPostRequest (final String fname,
+    protected void sendCreateAccRequest (final String fname,
                                     final String lname,
                                     final String email,
                                     final String pass,
@@ -201,37 +244,15 @@ public class NetworkManager {
                 "confirmPass=" + confPass + "&" +
                 "wantsNews=" + "false";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, finalUrl,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d(TAG, "RSP Success :: " + response);
-                        REQcb.onRSPSuccess(response);
+                response -> {
+                    Log.d(TAG, "RSP Success :: " + response);
+                    REQcb.onRSPSuccess(response);
 
-                    }
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Log.d(TAG, error.toString());
-                        REQcb.onRSPFail();
-                    }
+                error -> {
+                    Log.d(TAG, error.toString());
+                    REQcb.onRSPFail();
                 }) {
-
-            /*@Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Log.d(TAG, "calling getParams");
-                Log.d(TAG, fname + " " + lname + " " +email + " " +pass + " " +confPass);
-
-                Map<String, String>  params = new HashMap<String, String>();
-                params.put("firstName", fname);
-                params.put("lastName", lname);
-                params.put("emailAddress", email);
-                params.put("password", pass);
-                params.put("confirmPass", confPass);
-                params.put("wantsNews", "false");
-
-                return params;
-            }*/
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
@@ -263,19 +284,11 @@ public class NetworkManager {
         if (REQcb == null) return;
 
         JsonRequest<String> request = new JsonRequest<String>(Request.Method.GET, REQcb.getURL(), "",
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String data) {
-                        Log.d(TAG, "RSP Success :: " + data);
-                        REQcb.onRSPSuccess(data);
-                    }
+                data -> {
+                    Log.d(TAG, "RSP Success :: " + data);
+                    REQcb.onRSPSuccess(data);
                 },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        REQcb.onRSPFail();
-                    }
-                }) {
+                error -> REQcb.onRSPFail()) {
             @Override
             protected Response<String> parseNetworkResponse(NetworkResponse response) {
                 try {
@@ -298,9 +311,18 @@ public class NetworkManager {
 
     public static Map<String, String> getDefHeaders(boolean forAPI) {
         Map<String, String> headers = new Hashtable<>();
-        if (forAPI) headers.put(KeyValues.X_AUTH.first, KeyValues.X_AUTH.second) ;
-        else
+        if (forAPI) {
+            Log.d(TAG, "getDefHeaders: X_AUTH");
+            headers.put(KeyValues.X_AUTH.first, KeyValues.X_AUTH.second) ;
+
+            if (Global.Prefs.hasToken()){
+                headers.put(KeyValues.TOKEN.first, KeyValues.TOKEN.second);
+            }
+        }
+        else {
+            Log.d(TAG, "getDefHeaders: MOB_APP");
             headers.put(KeyValues.MOB_APP.first, KeyValues.MOB_APP.second);
+        }
         return headers;
     }
 
@@ -315,5 +337,7 @@ public class NetworkManager {
     public static class KeyValues {
         public static Pair<String, String> MOB_APP = new Pair<>("mobileApp", "android");
         public static Pair<String, String> X_AUTH = new Pair<>("X-Auth-Token", "3CCE9BEB-AC66-4F12-BF37-B3FA66E08325");
+        public static Pair<String, String> TOKEN = new Pair<>("token", Global.Prefs.getAccessToken());
+
     }
 }

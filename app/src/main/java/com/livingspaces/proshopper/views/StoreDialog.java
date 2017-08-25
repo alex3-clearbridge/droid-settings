@@ -109,6 +109,8 @@ public class StoreDialog extends DialogFragment implements StoreDialogAdapter.Cl
         });
     }
 
+
+
     public void setCallback(ICallback cb) {
         callback = cb;
     }

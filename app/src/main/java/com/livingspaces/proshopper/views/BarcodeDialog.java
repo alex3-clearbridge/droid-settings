@@ -6,6 +6,7 @@ import android.os.Vibrator;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -22,6 +23,8 @@ import com.google.android.gms.analytics.HitBuilders;
  * Created by rugvedambekar on 15-09-30.
  */
 public class BarcodeDialog extends RelativeLayout implements EditTextKeyCB.IKeyListener {
+
+    private static final String TAG = BarcodeDialog.class.getSimpleName();
 
     private TextView tv_submit, tv_cancel, tv_ok;
     private TextView tv_cancelF, tv_error;
@@ -207,6 +210,7 @@ public class BarcodeDialog extends RelativeLayout implements EditTextKeyCB.IKeyL
     }
 
     public void show(boolean forLoading) {
+        Log.d(TAG, "show: " + forLoading);
         setVisibility(INVISIBLE);
         startAnimation(slideDownAnim);
 

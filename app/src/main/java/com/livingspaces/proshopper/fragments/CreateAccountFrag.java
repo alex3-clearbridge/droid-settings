@@ -1,7 +1,11 @@
 package com.livingspaces.proshopper.fragments;
 
+import android.content.Context;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -84,6 +88,10 @@ public class CreateAccountFrag extends BaseStackFrag implements DialogFrag.ICall
             @Override
             public void onClick(View view) {
                 Log.d(TAG,"Create account clicked");
+                if (!isConnectedToNetwork()){
+                    showDialog("noNetwork");
+                    return;
+                }
                 if (isEmpty(ed_firstName)
                         || isEmpty(ed_lastName)
                         || isEmpty(ed_email)
@@ -121,35 +129,39 @@ public class CreateAccountFrag extends BaseStackFrag implements DialogFrag.ICall
         isLoading = true;
         showDialog("loading");
 
-        NetworkManager.makePostREQ(fname, lname, email, pass, confPass, new IREQCallback() {
-            @Override
-            public void onRSPSuccess(String rsp) {
-                Log.d(TAG, "onRSPSuccess");
+        new Handler().postDelayed(() -> {
+            NetworkManager.makeCreateAccREQ(fname, lname, email, pass, confPass, new IREQCallback() {
+                @Override
+                public void onRSPSuccess(String rsp) {
+                    Log.d(TAG, "onRSPSuccess");
 
-                Log.d(TAG, "RESPONSE :: " + rsp);
+                    Log.d(TAG, "RESPONSE :: " + rsp);
 
-                if (rsp.contains("User account Created Successfully")){
-                   tokenRequest();
+                    if (rsp.contains("User account Created Successfully")){
+                        tokenRequest();
+                    }
+                    else onRSPFail();
                 }
-                else onRSPFail();
-            }
 
-            @Override
-            public void onRSPFail() {
-                Log.d(TAG, "onRSPFail");
-                onOk();
-                showDialog("createFailed");
-            }
+                @Override
+                public void onRSPFail() {
+                    Log.d(TAG, "onRSPFail");
+                    onOk();
+                    new Handler().postDelayed(() -> {
+                        showDialog("createFailed");
+                    }, 500);
+                }
 
-            @Override
-            public String getURL() {
-                return Services.API.CreateAccount.get();
-            }
-        });
+                @Override
+                public String getURL() {
+                    return Services.API.CreateAccount.get();
+                }
+            });
+        }, 1000);
     }
 
     private void tokenRequest(){
-        NetworkManager.makePostREQ(ed_email.getText().toString(), ed_pass.getText().toString(), new IREQCallback() {
+        NetworkManager.makeLoginREQ(ed_email.getText().toString(), ed_pass.getText().toString(), new IREQCallback() {
             @Override
             public void onRSPSuccess(String rsp) {
                 Log.d(TAG, "onRSPSuccess");
@@ -157,12 +169,16 @@ public class CreateAccountFrag extends BaseStackFrag implements DialogFrag.ICall
                 onOk();
                 if (rsp.contains("access_token")){
                     Token token = new Token(rsp);
-                    Global.Prefs.editToken(token.access_token);
+                    Global.Prefs.editToken(token.access_token, token.refresh_token);
                     isCreatedAndLogged = true;
-                    showDialog("createSuccess");
+                    new Handler().postDelayed(() -> {
+                        showDialog("createSuccess");
+                    }, 500);
                 }
                 else {
-                    showDialog("createFailed");
+                    new Handler().postDelayed(() -> {
+                        showDialog("createFailed");
+                    }, 500);
                 }
             }
 
@@ -170,7 +186,9 @@ public class CreateAccountFrag extends BaseStackFrag implements DialogFrag.ICall
             public void onRSPFail() {
                 Log.d(TAG, "onRSPFail");
                 onOk();
-                showDialog("notInSystem");
+                new Handler().postDelayed(() -> {
+                    showDialog("notInSystem");
+                }, 500);
             }
 
             @Override
@@ -189,7 +207,7 @@ public class CreateAccountFrag extends BaseStackFrag implements DialogFrag.ICall
     }
 
     private void onPolicyClicked(String choice){
-        if (choice.equals("policy")) Global.FragManager.stackFrag(WebViewFrag.newInstance("Policies", Services.URL.Policy.get()));
+        if (choice.equals("policy")) Global.FragManager.stackFrag(WebViewFrag.newInstance("Policies", Services.URL.PrivacyPolicy.get()));
         else Global.FragManager.stackFrag(WebViewFrag.newInstance("Terms", Services.URL.Terms.get()));
     }
 
@@ -268,6 +286,12 @@ public class CreateAccountFrag extends BaseStackFrag implements DialogFrag.ICall
             isCreatedAndLogged = false;
             Global.FragManager.popToHome();
         }
+    }
+
+    private boolean isConnectedToNetwork(){
+        ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isAvailable() && activeNetwork.isConnected();
     }
 
     @Override

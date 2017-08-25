@@ -91,7 +91,7 @@
     <RelativeLayout
         android:id="@+id/shade_codeDialog"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@android:color/background_light"
         android:clickable="true">
 
@@ -118,6 +118,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_below="@id/pBar_code"
+            android:layout_marginTop="30dp"
             style="@style/LSButton"
             android:text="Cancel"/>
 

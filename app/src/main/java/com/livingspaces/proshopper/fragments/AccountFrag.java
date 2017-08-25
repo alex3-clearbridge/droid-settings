@@ -34,7 +34,7 @@ public class AccountFrag extends BaseStackFrag implements StoreDialog.ICallback{
     private StoreDialog mStoreDialog;
     private View rootView, hasStoreView, noStoreView;
     private Store mStore;
-    private boolean hasStore = false;
+    private boolean hasStore = false, isDialogShowing = false;
 
     public static AccountFrag newInstance(){
         return new AccountFrag();
@@ -132,6 +132,7 @@ public class AccountFrag extends BaseStackFrag implements StoreDialog.ICallback{
     private View.OnClickListener onSelectStoreClicked = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+            isDialogShowing = true;
             mStoreDialog.show(getFragmentManager(), "storeDialogFragment");
         }
     };
@@ -165,6 +166,14 @@ public class AccountFrag extends BaseStackFrag implements StoreDialog.ICallback{
         mStoreDialog.dismiss();
 
         showStore();
+    }
 
+
+    @Override
+    public boolean handleBackPress() {
+        if (isDialogShowing){
+            mStoreDialog.dismiss();
+        }
+        return super.handleBackPress();
     }
 }
