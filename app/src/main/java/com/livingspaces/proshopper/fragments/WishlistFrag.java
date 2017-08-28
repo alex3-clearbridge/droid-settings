@@ -84,7 +84,7 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
 
             @Override
             public String getURL() {
-                return Services.API.Products.get() + rawWL;
+                return "http://api.livingspaces.com/api/v1/products/" + rawWL;//Services.API.Products.get() + rawWL;
             }
         });
     }

@@ -1,5 +1,7 @@
 package com.livingspaces.proshopper.interfaces;
 
+import org.json.JSONObject;
+
 /**
  * Created by rugvedambekar on 15-09-25.
  */

@@ -169,7 +169,7 @@ public class CreateAccountFrag extends BaseStackFrag implements DialogFrag.ICall
                 onOk();
                 if (rsp.contains("access_token")){
                     Token token = new Token(rsp);
-                    Global.Prefs.editToken(token.access_token, token.refresh_token);
+                    Global.Prefs.editToken(token.access_token, token.refresh_token, token.userName);
                     isCreatedAndLogged = true;
                     new Handler().postDelayed(() -> {
                         showDialog("createSuccess");

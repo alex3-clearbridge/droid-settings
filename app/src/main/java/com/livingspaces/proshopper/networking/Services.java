@@ -40,6 +40,7 @@ public class Services {
         Stores("store/getAllStores/"),
         StoresWithZip("store/getAllStoresByZip/"),
         Token("token"),
+        //AddToCart("api/Product/addToCart?"),
         CreateAccount("api/account/createAccount?"),
         ResetPassword("api/account/forgotPassword?");
 

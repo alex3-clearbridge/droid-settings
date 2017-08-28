@@ -12,7 +12,6 @@ import com.livingspaces.proshopper.data.Token;
 import com.livingspaces.proshopper.fragments.BaseStackFrag;
 import com.livingspaces.proshopper.fragments.LoginFrag;
 import com.livingspaces.proshopper.fragments.NavigationFrag;
-import com.livingspaces.proshopper.fragments.SettingsFrag;
 import com.livingspaces.proshopper.interfaces.IMainFragManager;
 import com.livingspaces.proshopper.interfaces.IREQCallback;
 import com.livingspaces.proshopper.networking.GpsManager;
@@ -31,6 +30,8 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager 
     private ActionBar actionBar;
     private Stack<BaseStackFrag> fragStack;
     private boolean hasToken = false;
+    private LocationCallback callback;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +81,7 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager 
 
                 if (rsp.contains("access_token") && (rsp.contains("refresh_token"))) {
                     Token token = new Token(rsp);
-                    Global.Prefs.editToken(token.access_token, token.refresh_token);
+                    Global.Prefs.editToken(token.access_token, token.refresh_token, token.userName);
                 }
                 else {
                     onRSPFail();
@@ -232,7 +233,28 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager 
         stackFrag(frag);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //callback.onActivityResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //callback.onActivityPause();
+    }
+
     private boolean hasToken(){
         return hasToken;
+    }
+
+    public void setCallback(LocationCallback cb) {
+        callback = cb;
+    }
+
+    public interface LocationCallback{
+        void onActivityResume();
+        void onActivityPause();
     }
 }

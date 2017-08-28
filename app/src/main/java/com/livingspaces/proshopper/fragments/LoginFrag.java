@@ -22,11 +22,6 @@ import com.livingspaces.proshopper.networking.Services;
 import com.livingspaces.proshopper.utilities.Global;
 import com.livingspaces.proshopper.views.LSTextView;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-
 /**
  * Created by alexeyredchets on 2017-08-14.
  */
@@ -121,11 +116,9 @@ public class LoginFrag extends BaseStackFrag implements DialogFrag.ICallback {
                         onOk();
                         isLoading = false;
                         Token token = new Token(rsp);
-                        Global.Prefs.editToken(token.access_token, token.refresh_token);
+                        Global.Prefs.editToken(token.access_token, token.refresh_token, token.userName);
                         isLogged = true;
-                        new Handler().postDelayed(() -> {
-                            showDialog("ok");
-                        }, 500);
+                        new Handler().postDelayed(() -> showDialog("ok"), 500);
                     } else {
                         onRSPFail();
                     }
@@ -135,9 +128,7 @@ public class LoginFrag extends BaseStackFrag implements DialogFrag.ICallback {
                 public void onRSPFail() {
                     onOk();
                     isLoading = false;
-                    new Handler().postDelayed(() -> {
-                        showDialog("createFailed");
-                    }, 500);
+                    new Handler().postDelayed(() -> showDialog("createFailed"), 500);
                     Log.d(TAG, "onRSPFail");
                 }
 
@@ -147,6 +138,31 @@ public class LoginFrag extends BaseStackFrag implements DialogFrag.ICallback {
                 }
             });
         }, 1000);
+
+           /* Network.makeLoginREQ(name, pass, new IRequestCallback<TokenResponse>() {
+
+                @Override
+                public void onSuccess(int code, TokenResponse rsp) {
+                    Log.d(TAG, "onSuccess: " + code);
+                    onOk();
+                    isLoading = false;
+                    Global.Prefs.editToken(rsp.getAccess_token(), rsp.getRefresh_token(), rsp.getUsername());
+                    isLogged = true;
+                    new Handler().postDelayed(() -> {
+                        showDialog("ok");
+                    }, 500);
+                }
+
+                @Override
+                public void onFailure(String message) {
+
+                }
+
+                @Override
+                public void getUrl() {
+
+                }
+            });*/
     }
 
     private boolean isEmpty(EditText ed) {
@@ -183,7 +199,7 @@ public class LoginFrag extends BaseStackFrag implements DialogFrag.ICallback {
 
         if (isLogged) {
             isLogged = false;
-            Global.FragManager.popToHome();
+            Global.FragManager.onBackPressed();
         }
     }
 

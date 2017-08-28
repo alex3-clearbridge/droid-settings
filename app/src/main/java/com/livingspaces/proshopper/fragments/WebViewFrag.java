@@ -3,8 +3,10 @@ package com.livingspaces.proshopper.fragments;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +18,7 @@ import android.widget.Toast;
 
 import com.livingspaces.proshopper.R;
 import com.livingspaces.proshopper.data.Item;
+import com.livingspaces.proshopper.interfaces.IREQCallback;
 import com.livingspaces.proshopper.interfaces.IWishlistCallback;
 import com.livingspaces.proshopper.networking.NetworkManager;
 import com.livingspaces.proshopper.networking.Services;
@@ -102,19 +105,57 @@ public class WebViewFrag extends BaseStackFrag {
         topRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Global.FragManager.popToHome();
-                Global.FragManager.stackFrag(WebViewFrag.newInstance("Cart", Services.URL.Cart.get()));
 
+                if (!Global.Prefs.hasToken()){
+                    Log.d(TAG, "onClick: has no Token");
+                    Global.FragManager.stackFrag(LoginFrag.newInstance());
+                    Toast.makeText(getContext(), "You need to login first", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else if (!Global.Prefs.hasStore()){
+                    Log.d(TAG, "onClick: has no store");
+                    Global.FragManager.stackFrag(AccountFrag.newInstance());
+                    Toast.makeText(getContext(), "You need to choose store first", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                else {
+                    Global.FragManager.popToHome();
+                    Global.FragManager.stackFrag(WebViewFrag.newInstance("Cart", Services.URL.Cart.get()));
                 /* Google Analytics -- home_button_click */
-                Utility.gaTracker.send(new HitBuilders.EventBuilder()
-                        .setCategory("ui_action")
-                        .setAction("cart_button_click")
-                        .setLabel("View Cart")
-                        .build()
-                );
+                    Utility.gaTracker.send(new HitBuilders.EventBuilder()
+                            .setCategory("ui_action")
+                            .setAction("cart_button_click")
+                            .setLabel("View Cart")
+                            .build()
+                    );
+                    return;
+                }
+
             }
         });
         return true;
+    }
+
+    private void addItemToCart(){
+        String customerId = Global.Prefs.getUserId();
+        String storeId = Global.Prefs.getStore().getId();
+
+        /*NetworkManager.addItemToCartREQ(new IREQCallback() {
+            @Override
+            public void onRSPSuccess(String rsp) {
+
+            }
+
+            @Override
+            public void onRSPFail() {
+
+            }
+
+            @Override
+            public String getURL() {
+                return Services.API.AddToCart + "customerId=" + customerId + "&itemId=" + item.sku + "&storeId=" + storeId;
+            }
+        });*/
     }
 
     @Override

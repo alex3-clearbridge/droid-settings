@@ -15,7 +15,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.livingspaces.proshopper.R;
+import com.livingspaces.proshopper.fragments.AccountFrag;
 import com.livingspaces.proshopper.fragments.BaseStackFrag;
+import com.livingspaces.proshopper.fragments.LoginFrag;
 import com.livingspaces.proshopper.fragments.NavigationFrag;
 import com.livingspaces.proshopper.fragments.WebViewFrag;
 import com.livingspaces.proshopper.networking.Services;
@@ -223,49 +225,52 @@ public class ActionBar extends RelativeLayout {
         Log.d(TAG, "setCartAndWeb: ");
         iv_topRight.setClickable(false);
         iv_topRight.setRotation(0);
-        iv_topRight.animate().alpha(0).setDuration(250).withEndAction(new Runnable() {
-            @Override
-            public void run() {
-                iv_topRight.setImageDrawable(d_cart);
-                iv_topRight.animate().alpha(1).setDuration(250).start();
-            }
+        iv_topRight.animate().alpha(0).setDuration(250).withEndAction(() -> {
+            iv_topRight.setImageDrawable(d_cart);
+            iv_topRight.animate().alpha(1).setDuration(250).start();
         }).start();
-        iv_topRight.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Global.FragManager.stackFrag(WebViewFrag.newInstance("Cart", Services.URL.Cart.get()));
 
-                /* Google Analytics -- home_button_click */
-                Utility.gaTracker.send(new HitBuilders.EventBuilder()
-                        .setCategory("ui_action")
-                        .setAction("cart_button_click")
-                        .setLabel("View Cart")
-                        .build()
-                );
+        iv_topRight.setOnClickListener(view -> {
+
+            if (!Global.Prefs.hasToken()){
+                Log.d(TAG, "onClick: has no Token");
+                Global.FragManager.stackFrag(LoginFrag.newInstance());
+                Toast.makeText(getContext(), "You need to login first", Toast.LENGTH_SHORT).show();
+                return;
             }
+            else if (!Global.Prefs.hasStore()){
+                Log.d(TAG, "onClick: has no store");
+                Global.FragManager.stackFrag(AccountFrag.newInstance());
+                Toast.makeText(getContext(), "You need to choose store first", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Global.FragManager.stackFrag(WebViewFrag.newInstance("Cart", Services.URL.Cart.get()));
+
+            /* Google Analytics -- home_button_click */
+            Utility.gaTracker.send(new HitBuilders.EventBuilder()
+                    .setCategory("ui_action")
+                    .setAction("cart_button_click")
+                    .setLabel("View Cart")
+                    .build()
+            );
         });
         iv_topRightEx.setClickable(false);
         iv_topRightEx.setRotation(0);
-        iv_topRightEx.animate().alpha(0).setDuration(250).withEndAction(new Runnable() {
-            @Override
-            public void run() {
-                iv_topRightEx.setImageDrawable(d_web);
-                iv_topRightEx.animate().alpha(1).setDuration(250).start();
-            }
+        iv_topRightEx.animate().alpha(0).setDuration(250).withEndAction(() -> {
+            iv_topRightEx.setImageDrawable(d_web);
+            iv_topRightEx.animate().alpha(1).setDuration(250).start();
         }).start();
-        iv_topRightEx.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Global.FragManager.stackFrag(WebViewFrag.newInstance("LivingSpaces", Services.URL.Website.get()));
+        iv_topRightEx.setOnClickListener(view -> {
+            Global.FragManager.stackFrag(WebViewFrag.newInstance("LivingSpaces", Services.URL.Website.get()));
 
-                /* Google Analytics -- home_button_click */
-                Utility.gaTracker.send(new HitBuilders.EventBuilder()
-                        .setCategory("ui_action")
-                        .setAction("home_button_click")
-                        .setLabel("View Website")
-                        .build()
-                );
-            }
+            /* Google Analytics -- home_button_click */
+            Utility.gaTracker.send(new HitBuilders.EventBuilder()
+                    .setCategory("ui_action")
+                    .setAction("home_button_click")
+                    .setLabel("View Website")
+                    .build()
+            );
         });
     }
 }

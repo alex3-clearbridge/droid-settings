@@ -89,6 +89,11 @@ public class NetworkManager {
         _networkManager.sendCreateAccRequest(fname, lname, email, pass, confPass, REQcb);
     }
 
+    /*public static void addItemToCartREQ(IREQCallback REQcb) {
+        if (_networkManager == null) return;
+        _networkManager.addToCartRequest(REQcb);
+    }*/
+
     public static ImageLoader getIMGLoader() {
         if (_networkManager == null) return null;
         return _networkManager.getImageLoader();
@@ -150,7 +155,7 @@ public class NetworkManager {
                 return params;
             }
 
-            @Override
+            /*@Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String>  headers = new HashMap<String, String>();
                 headers.put("grant_type", "password");
@@ -160,12 +165,41 @@ public class NetworkManager {
                 headers.put("Client_secret", "lsfsecret");
 
                 return headers;
-            }
+            }*/
         };
 
         Log.d(TAG, "REQ: " + stringRequest.toString() + " end");
         addToRequestQueue(stringRequest);
     }
+
+    /*protected void addToCartRequest (final IREQCallback REQcb) {
+        if (REQcb == null) return;
+
+        JsonRequest<String> request = new JsonRequest<String>(Request.Method.GET, REQcb.getURL(), "",
+                data -> {
+                    Log.d(TAG, "RSP Success :: " + data);
+                    REQcb.onRSPSuccess(data);
+                },
+                error -> REQcb.onRSPFail()) {
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                try {
+                    String dataString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                    return Response.success(dataString, HttpHeaderParser.parseCacheHeaders(response));
+                } catch (UnsupportedEncodingException e) {
+                    return Response.error(new ParseError(e));
+                }
+            }
+
+            @Override
+            public Map<String, String> getHeaders() {
+                return getDefHeaders(true);
+            }
+        };
+
+        Log.d(TAG, "REQ: " + request.getUrl());
+        addToRequestQueue(request);
+    }*/
 
     protected void refreshTokenRequest (final IREQCallback REQcb) {
         if (REQcb == null) return;
@@ -281,6 +315,8 @@ public class NetworkManager {
 
 
     protected void sendRequest(final IREQCallback REQcb) {
+        Log.d(TAG, "sendRequest: " + REQcb.getURL());
+
         if (REQcb == null) return;
 
         JsonRequest<String> request = new JsonRequest<String>(Request.Method.GET, REQcb.getURL(), "",
@@ -315,9 +351,6 @@ public class NetworkManager {
             Log.d(TAG, "getDefHeaders: X_AUTH");
             headers.put(KeyValues.X_AUTH.first, KeyValues.X_AUTH.second) ;
 
-            if (Global.Prefs.hasToken()){
-                headers.put(KeyValues.TOKEN.first, KeyValues.TOKEN.second);
-            }
         }
         else {
             Log.d(TAG, "getDefHeaders: MOB_APP");
@@ -337,7 +370,8 @@ public class NetworkManager {
     public static class KeyValues {
         public static Pair<String, String> MOB_APP = new Pair<>("mobileApp", "android");
         public static Pair<String, String> X_AUTH = new Pair<>("X-Auth-Token", "3CCE9BEB-AC66-4F12-BF37-B3FA66E08325");
-        public static Pair<String, String> TOKEN = new Pair<>("token", Global.Prefs.getAccessToken());
-
+        public static Pair<String, String> TOKEN = new Pair<>("Token", Global.Prefs.getAccessToken());
+        public static Pair<String, String> STORE_ID = new Pair<>("CustomerUserName", Global.Prefs.getUserId());
+        public static Pair<String, String> USERNAME = new Pair<>("StoreId", Global.Prefs.getStore().getId());
     }
 }

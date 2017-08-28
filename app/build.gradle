@@ -39,4 +39,7 @@ dependencies {
     compile 'com.android.support:support-v13:+'
     compile 'com.google.android.gms:play-services-maps:8.1.0'
     compile 'com.google.android.gms:play-services-analytics:8.1.0'
+
+    compile 'com.google.android.gms:play-services-location:8.1.0'
+
 }

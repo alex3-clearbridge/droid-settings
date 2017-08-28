@@ -19,6 +19,7 @@ import com.livingspaces.proshopper.interfaces.IEditTextImeBackListener;
 import com.livingspaces.proshopper.interfaces.IREQCallback;
 import com.livingspaces.proshopper.networking.NetworkManager;
 import com.livingspaces.proshopper.networking.Services;
+import com.livingspaces.proshopper.utilities.Global;
 import com.livingspaces.proshopper.utilities.Utility;
 import com.livingspaces.proshopper.views.ActionBar;
 import com.livingspaces.proshopper.views.LSEditText;
@@ -51,6 +52,7 @@ public class FindStoreFrag extends BaseStackFrag implements IEditTextImeBackList
     }
 
     private void makeStoreRequests() {
+
         NetworkManager.makeREQ(new IREQCallback() {
             @Override
             public void onRSPFail() {
@@ -59,8 +61,8 @@ public class FindStoreFrag extends BaseStackFrag implements IEditTextImeBackList
             @Override
             public String getURL() {
                 Log.e(TAG, "getURL: " + zipCode);
-                if (zipCode != null && !zipCode.equals("")) {
-                    return "http://api.livingspaces.com/api/v1/store/getAllStoresByZip/" + Integer.parseInt(zipCode);//Services.API.StoresWithZip.getByZip(zipCode);
+                if ((zipCode != null && !zipCode.equals(""))) {// || (zipCode != null && Global.Prefs.hasStore()))) {
+                    return "http://api.livingspaces.com/api/v1/store/getAllStoresByZip/" + Global.Prefs.getStore().getZipCode();//Services.API.StoresWithZip.getByZip(zipCode);
                 } else {
                     return "http://api.livingspaces.com/api/v1/store/getAllStores/";//Services.API.Stores.get();
                 }

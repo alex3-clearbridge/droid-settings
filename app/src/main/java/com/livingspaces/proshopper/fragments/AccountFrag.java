@@ -116,6 +116,8 @@ public class AccountFrag extends BaseStackFrag implements StoreDialog.ICallback{
     @Override
     public boolean setTopRight(TextView topRight) {
 
+        if (!Global.Prefs.hasToken()) return false;
+
         topRight.setText("Logout");
         topRight.setOnClickListener(new View.OnClickListener() {
             @Override
