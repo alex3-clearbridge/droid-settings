@@ -354,7 +354,20 @@ public class NetworkManager {
         }
         else {
             Log.d(TAG, "getDefHeaders: MOB_APP");
+
             headers.put(KeyValues.MOB_APP.first, KeyValues.MOB_APP.second);
+            if (Global.Prefs.hasToken()) {
+                headers.put(KeyValues.TOKEN.first, KeyValues.TOKEN.second);
+                headers.put(KeyValues.USERNAME.first, KeyValues.USERNAME.second);
+            }
+            else {
+                headers.put(KeyValues.TOKEN.first, "");
+                headers.put(KeyValues.USERNAME.first, "");
+            }
+            if (Global.Prefs.hasStore()) headers.put(KeyValues.STORE_ID.first, KeyValues.STORE_ID.second);
+            else headers.put(KeyValues.STORE_ID.first, "");
+            if (Global.Prefs.hasUserZip()) headers.put(KeyValues.USERZIP.first, KeyValues.USERZIP.second);
+            else headers.put(KeyValues.USERZIP.first, "");
         }
         return headers;
     }
@@ -370,8 +383,10 @@ public class NetworkManager {
     public static class KeyValues {
         public static Pair<String, String> MOB_APP = new Pair<>("mobileApp", "android");
         public static Pair<String, String> X_AUTH = new Pair<>("X-Auth-Token", "3CCE9BEB-AC66-4F12-BF37-B3FA66E08325");
-        public static Pair<String, String> TOKEN = new Pair<>("Token", Global.Prefs.getAccessToken());
-        public static Pair<String, String> STORE_ID = new Pair<>("CustomerUserName", Global.Prefs.getUserId());
-        public static Pair<String, String> USERNAME = new Pair<>("StoreId", Global.Prefs.getStore().getId());
+        public static Pair<String, String> TOKEN = new Pair<>("Authorization", "Bearer " + Global.Prefs.getAccessToken());
+        public static Pair<String, String> USERNAME = new Pair<>("CustomerUsername", Global.Prefs.getUserId());
+        public static Pair<String, String> STORE_ID = new Pair<>("StoreId", Global.Prefs.getStore().getId());
+        public static Pair<String, String> USERZIP = new Pair<>("Zipcode", Global.Prefs.getUserZip());
+
     }
 }

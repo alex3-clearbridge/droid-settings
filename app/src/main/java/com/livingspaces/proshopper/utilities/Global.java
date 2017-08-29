@@ -41,7 +41,8 @@ public class Global {
         private static final String KEY_wishlist = "wishlist";
         private static final String KEY_access_token = "accessToken",
                 KEY_refresh_token = "refreshToken",
-                KEY_userName = "userName";
+                KEY_userName = "userName",
+                KEY_userZip = "userZip";
 
         private static final String KEY_storeName = "storeName",
                 KEY_storeId = "storeId",
@@ -183,6 +184,22 @@ public class Global {
             store.setState(store_state);
 
             return store;
+        }
+
+        public static boolean hasUserZip(){
+            return sharedPrefs != null && sharedPrefs.contains(KEY_userZip);
+        }
+
+        public static void saveUserZip(String zip){
+            if (sharedPrefs == null) return;
+
+            sharedPrefs.edit().putString(KEY_userZip, zip).apply();
+        }
+
+        public static String getUserZip(){
+            if (sharedPrefs == null || !sharedPrefs.contains(KEY_userZip)) return null;
+
+            return sharedPrefs.getString(KEY_userZip, "");
         }
     }
 }

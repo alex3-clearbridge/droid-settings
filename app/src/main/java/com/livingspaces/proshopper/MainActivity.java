@@ -1,14 +1,33 @@
 package com.livingspaces.proshopper;
 
+import android.*;
+import android.Manifest;
+import android.content.Context;
+import android.content.IntentSender;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.WindowManager;
+import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.livingspaces.proshopper.analytics.AnalyticsApplication;
+import com.livingspaces.proshopper.data.DataModel;
+import com.livingspaces.proshopper.data.Store;
 import com.livingspaces.proshopper.data.Token;
+import com.livingspaces.proshopper.fragments.AccountFrag;
 import com.livingspaces.proshopper.fragments.BaseStackFrag;
 import com.livingspaces.proshopper.fragments.LoginFrag;
 import com.livingspaces.proshopper.fragments.NavigationFrag;
@@ -22,15 +41,21 @@ import com.livingspaces.proshopper.utilities.Layout;
 import com.livingspaces.proshopper.utilities.Utility;
 import com.livingspaces.proshopper.views.ActionBar;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 import java.util.Stack;
 
-public class MainActivity extends AppCompatActivity implements IMainFragManager {
+public class MainActivity extends AppCompatActivity implements IMainFragManager, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private ActionBar actionBar;
     private Stack<BaseStackFrag> fragStack;
     private boolean hasToken = false;
-    private LocationCallback callback;
+
+    private GoogleApiClient mGoogleApiClient;
+    private LocationRequest mLocationRequest;
+    private int LOCATION_SERVICES_ACCESS_CODE;
 
 
     @Override
@@ -42,6 +67,25 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager 
         Global.Init(this);
         Layout.Init(this);
         Init();
+        InitLocationServices();
+    }
+
+    private void InitLocationServices(){
+
+        if (!isGpsAvailable()) return;
+
+        Log.d(TAG, "InitLocationServices: GPS is available");
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(10000) // 10 sec
+                .setFastestInterval(5000); // 5 sec
     }
 
     private void Init() {
@@ -51,6 +95,11 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager 
         hasToken = Global.Prefs.hasToken();
 
         getSupportFragmentManager().beginTransaction().add(R.id.container_main, NavigationFrag.newInstance()).commit();
+
+        if (!isGpsAvailable() && !Global.Prefs.hasStore()){
+            Log.d(TAG, "No GPS and no saved store --> Call Account Page to choose store");
+            Global.FragManager.stackFrag(AccountFrag.newInstance());
+        }
 
         if (!hasToken) {
             // Not logged yet
@@ -118,8 +167,29 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         Log.e(TAG, "onRequestPermissionsResult: " + Integer.toString(requestCode));
-        if (!fragStack.isEmpty())
+        if (!fragStack.isEmpty() && requestCode != 161)
             fragStack.peek().onRequestPermissionsResult(requestCode, permissions, grantResults);
+        else {
+            if (requestCode == LOCATION_SERVICES_ACCESS_CODE){
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    Log.e(TAG, "onRequestPermissionsResult GRANTED");
+                    // permission was granted, yay! Do the
+                    // camera-related task you need to do.
+
+
+                } else {
+                    Log.e(TAG, "onRequestPermissionsResult DENIED");
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+
+            }
+        }
     }
 
     @Override
@@ -236,25 +306,180 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager 
     @Override
     protected void onResume() {
         super.onResume();
-        //callback.onActivityResume();
+        if (mGoogleApiClient != null) mGoogleApiClient.connect();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        //callback.onActivityPause();
+        if (mGoogleApiClient != null) mGoogleApiClient.disconnect();
     }
 
-    private boolean hasToken(){
-        return hasToken;
+    @Override
+    public void onConnected(Bundle bundle) {
+        Log.d(TAG, "onConnected: Location services connected");
+
+        if (canAccessLocation()){
+            Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+
+            if (location == null){
+                Log.d(TAG, "onConnected: location == null");
+                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
+                        mLocationRequest,
+                        this);
+            }
+            else {
+                handleNewLocation(location);
+            }
+        }
+        else {
+            requestPermission();
+        }
     }
 
-    public void setCallback(LocationCallback cb) {
-        callback = cb;
+    private boolean isGpsAvailable(){
+        final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        return manager != null && manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 
-    public interface LocationCallback{
-        void onActivityResume();
-        void onActivityPause();
+    private boolean canAccessLocation(){
+        return ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    private void requestPermission(){
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION)){
+            LOCATION_SERVICES_ACCESS_CODE = 161;
+            Toast.makeText(this, "Should have access to location Services", Toast.LENGTH_SHORT).show();
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    LOCATION_SERVICES_ACCESS_CODE);
+        }
+        else {
+            LOCATION_SERVICES_ACCESS_CODE = 161;
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    LOCATION_SERVICES_ACCESS_CODE);
+        }
+    }
+
+    private void handleNewLocation(Location location){
+        Double currentLatitude = location.getLatitude();
+        Double currentLongitude = location.getLongitude();
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+
+        List<Address> addressList = null;
+
+        try {
+            addressList = geocoder.getFromLocation(currentLatitude, currentLongitude, 1);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String zip = "";
+
+        if (addressList != null && addressList.size() != 0){
+            Address address = addressList.get(0);
+            zip = address.getPostalCode();
+            zip = zip.replaceAll("\\s+", "");
+            Global.Prefs.saveUserZip(zip);
+        }
+
+        Global.Prefs.saveUserZip(zip);
+
+        findClosestStore(location);
+    }
+
+    private void findClosestStore(Location location){
+        Log.d(TAG, "findClosestStore: ");
+
+        NetworkManager.makeREQ(new IREQCallback() {
+            @Override
+            public void onRSPSuccess(String rsp) {
+                Log.d(TAG, "onRSPSuccess: ");
+                Store[] stores = DataModel.parseStores(rsp);
+                if (stores == null) {
+                    onRSPFail();
+                    return;
+                }
+                double currentDis;
+                double min = 7000;
+                Store closestStore = new Store();
+
+                for (Store store : stores) {
+                    Location storeLocation = new Location("");
+                    storeLocation.setLatitude(Double.parseDouble(store.getLatitude()));
+                    storeLocation.setLongitude(Double.parseDouble(store.getLongitude()));
+
+                    currentDis = location.distanceTo(storeLocation)/1000;
+
+                    if (currentDis < min) {
+                        min = currentDis;
+                        closestStore = store;
+                        Log.d(TAG, "onRSPSuccess: Current min distance :: " + store.getName() + String.valueOf(currentDis));
+                    }
+                }
+
+                Global.Prefs.saveStore(closestStore);
+            }
+
+            @Override
+            public void onRSPFail() {
+                Log.d(TAG, "onRSPFail: ");
+            }
+
+            @Override
+            public String getURL() {
+                return "http://api.livingspaces.com/api/v1/store/getAllStores";
+            }
+        });
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+         /*
+         * Google Play services can resolve some errors it detects.
+         * If the error has a resolution, try sending an Intent to
+         * start a Google Play services activity that can resolve
+         * error.
+         */
+        if (connectionResult.hasResolution()) {
+            try {
+                // Start an Activity that tries to resolve the error
+                connectionResult.startResolutionForResult(this,
+                        9000);
+                /*
+                 * Thrown if Google Play services canceled the original
+                 * PendingIntent
+                 */
+            } catch (IntentSender.SendIntentException e) {
+                // Log the error
+                e.printStackTrace();
+                Log.e(TAG, "onConnectionFailed: ", e);
+            }
+        } else {
+            /*
+             * If no resolution is available, display a dialog to the
+             * user with the error.
+             */
+            Log.i(TAG,"Location services connection failed with code "
+                    + connectionResult.getErrorCode());
+        }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d(TAG, "onLocationChanged: ");
+        handleNewLocation(location);
     }
 }

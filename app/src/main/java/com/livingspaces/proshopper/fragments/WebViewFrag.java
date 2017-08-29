@@ -3,6 +3,7 @@ package com.livingspaces.proshopper.fragments;
 
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -75,6 +76,7 @@ public class WebViewFrag extends BaseStackFrag {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        Log.d(TAG, "onCreateView: ");
         d_cart = ContextCompat.getDrawable(getContext(), R.drawable.ls_h_btn_cart);
 
         rootView = (WebView) inflater.inflate(R.layout.fragment_webview, container, false);
@@ -88,12 +90,44 @@ public class WebViewFrag extends BaseStackFrag {
             }
         });
         if (item != null && item.sku != null && !item.sku.equals("")) {
+            Log.d(TAG, "onCreateView: load url with false");
             rootView.loadUrl(url + item.sku, NetworkManager.getDefHeaders(false));
         } else {
-            rootView.loadUrl(url, NetworkManager.getDefHeaders(true));
+            Log.d(TAG, "onCreateView: load url with true");
+            rootView.loadUrl(url, NetworkManager.getDefHeaders(false));
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        rootView.setWebViewClient(new WebViewClient(){
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url1) {
+                Log.d(TAG, "shouldOverrideUrlLoading: ");
+                view.loadUrl(url1, NetworkManager.getDefHeaders(false));
+                /*if (url1.equals("http://dev.livingspaces.com/VerifyZip.aspx?productId=")){
+
+                    if (!Global.Prefs.hasToken()){
+                        Log.d(TAG, "onClick: has no Token");
+                        Global.FragManager.stackFrag(LoginFrag.newInstance());
+                        Toast.makeText(getContext(), "You need to login first", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                    else if (!Global.Prefs.hasStore()){
+                        Log.d(TAG, "onClick: has no store");
+                        Global.FragManager.stackFrag(AccountFrag.newInstance());
+                        Toast.makeText(getContext(), "You need to choose store first", Toast.LENGTH_SHORT).show();
+                        return false;
+                    }
+                    return true;
+                }*/
+
+                Log.e(TAG, "shouldOverrideUrlLoading: " + url1);
+                return super.shouldOverrideUrlLoading(view, url1);
+            }
+        });
     }
 
     @Override
@@ -102,60 +136,35 @@ public class WebViewFrag extends BaseStackFrag {
 
         topRight.setRotation(0);
         topRight.setImageDrawable(d_cart);
-        topRight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        topRight.setOnClickListener(v -> {
 
-                if (!Global.Prefs.hasToken()){
-                    Log.d(TAG, "onClick: has no Token");
-                    Global.FragManager.stackFrag(LoginFrag.newInstance());
-                    Toast.makeText(getContext(), "You need to login first", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                else if (!Global.Prefs.hasStore()){
-                    Log.d(TAG, "onClick: has no store");
-                    Global.FragManager.stackFrag(AccountFrag.newInstance());
-                    Toast.makeText(getContext(), "You need to choose store first", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                else {
-                    Global.FragManager.popToHome();
-                    Global.FragManager.stackFrag(WebViewFrag.newInstance("Cart", Services.URL.Cart.get()));
-                /* Google Analytics -- home_button_click */
-                    Utility.gaTracker.send(new HitBuilders.EventBuilder()
-                            .setCategory("ui_action")
-                            .setAction("cart_button_click")
-                            .setLabel("View Cart")
-                            .build()
-                    );
-                    return;
-                }
-
+            if (!Global.Prefs.hasToken()){
+                Log.d(TAG, "onClick: has no Token");
+                Global.FragManager.stackFrag(LoginFrag.newInstance());
+                Toast.makeText(getContext(), "You need to login first", Toast.LENGTH_SHORT).show();
+                return;
             }
+            else if (!Global.Prefs.hasStore()){
+                Log.d(TAG, "onClick: has no store");
+                Global.FragManager.stackFrag(AccountFrag.newInstance());
+                Toast.makeText(getContext(), "You need to choose store first", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            else {
+                Global.FragManager.popToHome();
+                Global.FragManager.stackFrag(WebViewFrag.newInstance("Cart", Services.URL.Cart.get()));
+            /* Google Analytics -- home_button_click */
+                Utility.gaTracker.send(new HitBuilders.EventBuilder()
+                        .setCategory("ui_action")
+                        .setAction("cart_button_click")
+                        .setLabel("View Cart")
+                        .build()
+                );
+                return;
+            }
+
         });
         return true;
-    }
-
-    private void addItemToCart(){
-        String customerId = Global.Prefs.getUserId();
-        String storeId = Global.Prefs.getStore().getId();
-
-        /*NetworkManager.addItemToCartREQ(new IREQCallback() {
-            @Override
-            public void onRSPSuccess(String rsp) {
-
-            }
-
-            @Override
-            public void onRSPFail() {
-
-            }
-
-            @Override
-            public String getURL() {
-                return Services.API.AddToCart + "customerId=" + customerId + "&itemId=" + item.sku + "&storeId=" + storeId;
-            }
-        });*/
     }
 
     @Override

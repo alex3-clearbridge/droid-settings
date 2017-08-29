@@ -75,7 +75,7 @@ public class GpsManager implements LocationListener {
     }
 
     public Location getLastLocation() {
-        Log.e(TAG, "getLastLocation" + lastLocation);
+        Log.e(TAG, "getLastLocation");
         return lastLocation;
     }
 
