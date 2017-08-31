@@ -18,9 +18,14 @@ import com.livingspaces.proshopper.adapters.WishlistAdapter;
 import com.livingspaces.proshopper.data.DataModel;
 import com.livingspaces.proshopper.data.Item;
 import com.livingspaces.proshopper.interfaces.IREQCallback;
+import com.livingspaces.proshopper.interfaces.IRequestCallback;
 import com.livingspaces.proshopper.interfaces.IWishlistCallback;
+import com.livingspaces.proshopper.networking.Network;
 import com.livingspaces.proshopper.networking.NetworkManager;
 import com.livingspaces.proshopper.networking.Services;
+import com.livingspaces.proshopper.networking.response.MessageResponse;
+import com.livingspaces.proshopper.networking.response.Product;
+import com.livingspaces.proshopper.networking.response.ProductResponse;
 import com.livingspaces.proshopper.swipelistview.BaseSwipeListViewListener;
 import com.livingspaces.proshopper.swipelistview.SwipeListView;
 import com.livingspaces.proshopper.utilities.Global;
@@ -36,6 +41,8 @@ import java.util.List;
  */
 public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, WishlistFAB.ICallback {
 
+    private static final String TAG = WishlistFrag.class.getSimpleName();
+
     private RelativeLayout rootView;
     private SwipeListView rv_wishlist;
     private WishlistAdapter wlAdapter;
@@ -45,7 +52,9 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
     private int currentOpenPos = -1;
 
     private String rawWL;
-    private List<Item> wishlist;
+    //private List<Item> wishlist;
+    private List<Product> wishlist;
+    private List<String> onlineWishlist;
 
     private WishlistFAB wishlistFAB;
 
@@ -66,32 +75,99 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        checkOnlineWishList();
+
         rawWL = Global.Prefs.getWishListRAW();
         if (rawWL == null) rawWL = "";
 
-        if (!rawWL.isEmpty()) NetworkManager.makeREQ(new IREQCallback() {
-            @Override
-            public void onRSPSuccess(String rsp) {
-                wishlist.addAll(DataModel.parseItems(rsp));
-                updateView();
-                wlAdapter.notifyDataSetChanged();
-            }
+        if (!rawWL.isEmpty()) {
+            String[] arr = rawWL.split(",");
+            for (int i = 0; i < arr.length; i++){
+                Network.makeGetProductREQ(arr[i], new IRequestCallback.Product() {
+                    @Override
+                    public void onSuccess(ProductResponse product) {
+                        Log.d(TAG, "onSuccess: ");
+                        wishlist.add(product.getProduct());
+                    }
 
-            @Override
-            public void onRSPFail() {
-                Log.d("FAIL", "FAIL");
-            }
+                    @Override
+                    public void onFailure(String message) {
 
-            @Override
-            public String getURL() {
-                return "http://api.livingspaces.com/api/v1/products/" + rawWL;//Services.API.Products.get() + rawWL;
+                    }
+                });
+
+
+
+
+                /*NetworkManager.makeREQ(new IREQCallback() {
+                    @Override
+                    public void onRSPSuccess(String rsp) {
+                        wishlist.addAll(DataModel.parseItems(rsp));
+                        updateView();
+                        wlAdapter.notifyDataSetChanged();
+                    }
+
+                    @Override
+                    public void onRSPFail() {
+                        Log.d("FAIL", "FAIL");
+                    }
+
+                    @Override
+                    public String getURL() {
+                        return "http://api.livingspaces.com/api/v1/products/" + rawWL;//Services.API.Products.get() + rawWL;
+                    }
+                });*/
             }
-        });
+        }
+        updateView();
+        wlAdapter.notifyDataSetChanged();
+
+    }
+
+    private void checkOnlineWishList(){
+
+        if (Global.Prefs.hasToken()){
+            Log.d(TAG, "checkOnlineWishList: ");
+            Network.makeGetWishlistREQ(Global.Prefs.getUserId(), new IRequestCallback.Wishlist() {
+                @Override
+                public void onSuccess(List<String> wishlist) {
+                    onlineWishlist = wishlist;
+                }
+
+                @Override
+                public void onFailure(String message) {
+                    Log.d(TAG, "onFailure: No online wishlist");
+                }
+            });
+
+            /*NetworkManager.makeWishlistREQ(Global.Prefs.getUserId(), new IREQCallback() {
+                @Override
+                public void onRSPSuccess(String rsp) {
+
+                    Log.d(TAG, "onRSPSuccess: ");
+                }
+
+                @Override
+                public void onRSPFail() {
+
+                    Log.d("FAIL", "FAIL");
+                }
+
+                @Override
+                public String getURL() {
+                    return "http://mobileapidev.livingspaces.com/api/Product/getWishlist?customerId=";//Services.API.Products.get() + rawWL;
+                }
+            });*/
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = (RelativeLayout) inflater.inflate(R.layout.fragment_wishlist, container, false);
+
+        if (wishlist != null && onlineWishlist != null){
+            syncWishLists();
+        }
 
         if (wishlist == null) wishlist = new ArrayList<>();
 
@@ -180,6 +256,14 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
             wishlistFAB.setVisibility(View.GONE);
         }
         return rootView;
+    }
+
+    private void syncWishLists(){
+        for (int i = 0; i < wishlist.size(); i++){
+            for (int j = 0; j < onlineWishlist.size(); j++){
+
+            }
+        }
     }
 
 

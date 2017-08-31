@@ -97,29 +97,34 @@
     </content>
     <orderEntry type="jdk" jdkName="Android API 23 Platform" jdkType="Android SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="okio-1.8.0" level="project" />
     <orderEntry type="library" name="support-core-ui-26.0.0-alpha1" level="project" />
-    <orderEntry type="library" name="library-2.4.0" level="project" />
-    <orderEntry type="library" name="support-fragment-26.0.0-alpha1" level="project" />
     <orderEntry type="library" name="play-services-appindexing-8.1.0" level="project" />
-    <orderEntry type="library" name="support-core-utils-26.0.0-alpha1" level="project" />
-    <orderEntry type="library" name="constraint-layout-solver-1.0.2" level="project" />
-    <orderEntry type="library" name="play-services-ads-8.1.0" level="project" />
+    <orderEntry type="library" name="support-fragment-26.0.0-alpha1" level="project" />
     <orderEntry type="library" name="play-services-base-8.1.0" level="project" />
     <orderEntry type="library" name="play-services-location-8.1.0" level="project" />
     <orderEntry type="library" name="constraint-layout-1.0.2" level="project" />
-    <orderEntry type="library" name="support-v4-26.0.0-alpha1" level="project" />
     <orderEntry type="library" name="support-media-compat-26.0.0-alpha1" level="project" />
+    <orderEntry type="library" name="support-v4-26.0.0-alpha1" level="project" />
+    <orderEntry type="library" name="zbar-1.8.3" level="project" />
+    <orderEntry type="library" name="core-1.8.3" level="project" />
+    <orderEntry type="library" name="play-services-analytics-8.1.0" level="project" />
+    <orderEntry type="library" name="appcompat-v7-23.1.1" level="project" />
+    <orderEntry type="library" name="support-v13-26.0.0-alpha1" level="project" />
+    <orderEntry type="library" name="library-2.4.0" level="project" />
+    <orderEntry type="library" name="support-core-utils-26.0.0-alpha1" level="project" />
+    <orderEntry type="library" name="constraint-layout-solver-1.0.2" level="project" />
+    <orderEntry type="library" name="play-services-ads-8.1.0" level="project" />
+    <orderEntry type="library" name="retrofit-2.1.0" level="project" />
+    <orderEntry type="library" name="gson-2.7" level="project" />
+    <orderEntry type="library" name="converter-gson-2.1.0" level="project" />
     <orderEntry type="library" name="design-23.1.1" level="project" />
     <orderEntry type="library" name="play-services-maps-8.1.0" level="project" />
     <orderEntry type="library" name="play-services-basement-8.1.0" level="project" />
-    <orderEntry type="library" name="zbar-1.8.3" level="project" />
-    <orderEntry type="library" name="core-1.8.3" level="project" />
     <orderEntry type="library" name="library-aar-1.0.0" level="project" />
-    <orderEntry type="library" name="play-services-analytics-8.1.0" level="project" />
+    <orderEntry type="library" name="okhttp-3.3.0" level="project" />
     <orderEntry type="library" name="recyclerview-v7-26.0.0-alpha1" level="project" />
     <orderEntry type="library" name="support-compat-26.0.0-alpha1" level="project" />
     <orderEntry type="library" name="support-annotations-26.0.0-alpha1" level="project" />
-    <orderEntry type="library" name="appcompat-v7-23.1.1" level="project" />
-    <orderEntry type="library" name="support-v13-26.0.0-alpha1" level="project" />
   </component>
 </module>

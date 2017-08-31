@@ -175,7 +175,7 @@ public class ActionBar extends RelativeLayout {
     private void animateForStackChange(final boolean isStack) {
         Log.d(TAG, "animateForStackChange :: " + isStack);
 
-        if (fragTitle.isEmpty() || !fragTitle.equals("Login")){
+        if (fragTitle.isEmpty() || !fragTitle.equals("LoginResponse")){
             Log.d(TAG, "not login frag ");
             iv_topLeft.setClickable(isStack);
             iv_topLeft.animate().alpha(0).setDuration(250).withEndAction(new Runnable() {

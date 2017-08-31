@@ -33,9 +33,12 @@ import com.livingspaces.proshopper.fragments.LoginFrag;
 import com.livingspaces.proshopper.fragments.NavigationFrag;
 import com.livingspaces.proshopper.interfaces.IMainFragManager;
 import com.livingspaces.proshopper.interfaces.IREQCallback;
+import com.livingspaces.proshopper.interfaces.IRequestCallback;
 import com.livingspaces.proshopper.networking.GpsManager;
+import com.livingspaces.proshopper.networking.Network;
 import com.livingspaces.proshopper.networking.NetworkManager;
 import com.livingspaces.proshopper.networking.Services;
+import com.livingspaces.proshopper.networking.response.LoginResponse;
 import com.livingspaces.proshopper.utilities.Global;
 import com.livingspaces.proshopper.utilities.Layout;
 import com.livingspaces.proshopper.utilities.Utility;
@@ -64,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
         setContentView(R.layout.activity_main);
 
         NetworkManager.Init(this);
+        Network.Init(this);
         Global.Init(this);
         Layout.Init(this);
         Init();
@@ -123,7 +127,31 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
 
     private void updateToken(){
         Log.d(TAG, "updateToken: ");
-        NetworkManager.refreshTokenREQ(new IREQCallback() {
+
+        Network.makeRefreshTokenREQ(new IRequestCallback.Login() {
+            @Override
+            public void onSuccess(LoginResponse response) {
+                Log.d(TAG, "onRSPSuccess");
+
+                if (response.getAccess_token() != null
+                        && response.getRefresh_token() != null
+                        && response.getUser_name() != null) {
+                    Global.Prefs.editToken(response.getAccess_token(), response.getRefresh_token(), response.getUser_name());
+                }
+                else {
+                    onFailure("null message");
+                }
+            }
+
+            @Override
+            public void onFailure(String message) {
+                // Probably refresh token is expired. Ask user to login
+                Log.d(TAG, "onRSPFail " + message);
+                callLogin();
+            }
+        });
+
+        /*NetworkManager.refreshTokenREQ(new IREQCallback() {
             @Override
             public void onRSPSuccess(String rsp) {
                 Log.d(TAG, "onRSPSuccess");
@@ -148,7 +176,7 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
             public String getURL() {
                 return Services.API.Token.get();
             }
-        });
+        });*/
     }
 
     private void updateViewsForFrag() {

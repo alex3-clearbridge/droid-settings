@@ -79,6 +79,11 @@ public class NetworkManager {
         _networkManager.refreshTokenRequest(REQcb);
     }
 
+    public static void makeWishlistREQ(String name, IREQCallback REQcb) {
+        if (_networkManager == null) return;
+        _networkManager.sendWishListRequest(name, REQcb);
+    }
+
     public static void makeCreateAccREQ(String fname,
                                    String lname,
                                    String email,
@@ -312,7 +317,46 @@ public class NetworkManager {
         addToRequestQueue(stringRequest);
     }
 
+    protected void sendWishListRequest(String user, final IREQCallback REQcb) {
+        Log.d(TAG, "sendRequest: " + REQcb.getURL());
 
+        if (REQcb == null) return;
+
+        JsonRequest<String> request = new JsonRequest<String>(Request.Method.GET, REQcb.getURL() + user, "",
+                data -> {
+                    Log.d(TAG, "RSP Success :: " + data);
+                    REQcb.onRSPSuccess(data);
+                },
+                error -> REQcb.onRSPFail()) {
+            @Override
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
+                try {
+                    String dataString = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+                    return Response.success(dataString, HttpHeaderParser.parseCacheHeaders(response));
+                } catch (UnsupportedEncodingException e) {
+                    return Response.error(new ParseError(e));
+                }
+            }
+
+           /* @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new Hashtable<>();
+                params.put("customerId", user);
+                return params;
+            }*/
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> header = new Hashtable<>();
+                header.put(KeyValues.X_AUTH.first, KeyValues.X_AUTH.second);
+                header.put(KeyValues.TOKEN.first, KeyValues.TOKEN.second);
+                return header;
+            }
+        };
+
+        Log.d(TAG, "REQ: " + request.getUrl());
+        addToRequestQueue(request);
+    }
 
     protected void sendRequest(final IREQCallback REQcb) {
         Log.d(TAG, "sendRequest: " + REQcb.getURL());

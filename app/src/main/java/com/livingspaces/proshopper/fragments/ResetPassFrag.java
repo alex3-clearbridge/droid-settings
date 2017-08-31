@@ -16,8 +16,11 @@ import android.widget.EditText;
 
 import com.livingspaces.proshopper.R;
 import com.livingspaces.proshopper.interfaces.IREQCallback;
+import com.livingspaces.proshopper.interfaces.IRequestCallback;
+import com.livingspaces.proshopper.networking.Network;
 import com.livingspaces.proshopper.networking.NetworkManager;
 import com.livingspaces.proshopper.networking.Services;
+import com.livingspaces.proshopper.networking.response.MessageResponse;
 import com.livingspaces.proshopper.utilities.Global;
 import com.livingspaces.proshopper.views.LSTextView;
 
@@ -89,6 +92,38 @@ public class ResetPassFrag extends BaseStackFrag implements DialogFrag.ICallback
         isLoading = true;
 
         new Handler().postDelayed(() -> {
+            Network.makeResetPassREQ(email, new IRequestCallback.Message() {
+                @Override
+                public void onSuccess(MessageResponse response) {
+                    Log.d(TAG, "onRSPSuccess");
+
+                    Log.d(TAG, "RESPONSE :: " + response.getMessage());
+
+                    if (response.getMessage().equals("Your email containing instructions to reset your password has been sent!")){
+                        onOk();
+                        isLoading = false;
+                        isResetSuccess = true;
+                        new Handler().postDelayed(() -> {
+                            showDialog("emailSent");
+                        }, 500);
+                    }
+                    else onFailure("null message");
+                }
+
+                @Override
+                public void onFailure(String message) {
+                    Log.d(TAG, "onRSPFail " + message);
+                    onOk();
+                    isLoading = false;
+                    new Handler().postDelayed(() -> {
+                        showDialog("invalidEmail");
+                    }, 500);
+                }
+            });
+
+
+            }, 1000);
+        /*new Handler().postDelayed(() -> {
             NetworkManager.makeResetPassREQ(email, new IREQCallback() {
                 @Override
                 public void onRSPSuccess(String rsp) {
@@ -122,7 +157,7 @@ public class ResetPassFrag extends BaseStackFrag implements DialogFrag.ICallback
                     return Services.API.ResetPassword.get();
                 }
             });
-        }, 1000);
+        }, 1000);*/
     }
 
     @Override

@@ -17,8 +17,11 @@ import android.widget.EditText;
 import com.livingspaces.proshopper.R;
 import com.livingspaces.proshopper.data.Token;
 import com.livingspaces.proshopper.interfaces.IREQCallback;
+import com.livingspaces.proshopper.interfaces.IRequestCallback;
+import com.livingspaces.proshopper.networking.Network;
 import com.livingspaces.proshopper.networking.NetworkManager;
 import com.livingspaces.proshopper.networking.Services;
+import com.livingspaces.proshopper.networking.response.LoginResponse;
 import com.livingspaces.proshopper.utilities.Global;
 import com.livingspaces.proshopper.views.LSTextView;
 
@@ -68,7 +71,7 @@ public class LoginFrag extends BaseStackFrag implements DialogFrag.ICallback {
         super.onViewCreated(view, savedInstanceState);
 
         tv_login.setOnClickListener(view1 -> {
-            Log.d(TAG, "Login button Clicked");
+            Log.d(TAG, "LoginResponse button Clicked");
 
             if (!isConnectedToNetwork()){
                 showDialog("noNetwork");
@@ -107,6 +110,37 @@ public class LoginFrag extends BaseStackFrag implements DialogFrag.ICallback {
         isLoading = true;
 
         new Handler().postDelayed(() -> {
+            Network.makeLoginREQ(name, pass, new IRequestCallback.Login() {
+                @Override
+                public void onSuccess(LoginResponse response) {
+                    Log.d(TAG, "onRSPSuccess");
+
+                    if (response.getAccess_token() != null
+                            && response.getRefresh_token() != null
+                            && response.getUser_name() != null) {
+                        onOk();
+                        isLoading = false;
+                        Global.Prefs.editToken(response.getAccess_token(),
+                                response.getRefresh_token(),
+                                response.getUser_name());
+                        isLogged = true;
+                        new Handler().postDelayed(() -> showDialog("ok"), 500);
+                    } else {
+                        onFailure("null message");
+                    }
+                }
+
+                @Override
+                public void onFailure(String message) {
+                    onOk();
+                    isLoading = false;
+                    new Handler().postDelayed(() -> showDialog("createFailed"), 500);
+                    Log.d(TAG, "onRSPFail :: " + message);
+                }
+            });
+        }, 1000);
+
+        /*new Handler().postDelayed(() -> {
             NetworkManager.makeLoginREQ(name, pass, new IREQCallback() {
                 @Override
                 public void onRSPSuccess(String rsp) {
@@ -137,32 +171,7 @@ public class LoginFrag extends BaseStackFrag implements DialogFrag.ICallback {
                     return Services.API.Token.get();
                 }
             });
-        }, 1000);
-
-           /* Network.makeLoginREQ(name, pass, new IRequestCallback<TokenResponse>() {
-
-                @Override
-                public void onSuccess(int code, TokenResponse rsp) {
-                    Log.d(TAG, "onSuccess: " + code);
-                    onOk();
-                    isLoading = false;
-                    Global.Prefs.editToken(rsp.getAccess_token(), rsp.getRefresh_token(), rsp.getUsername());
-                    isLogged = true;
-                    new Handler().postDelayed(() -> {
-                        showDialog("ok");
-                    }, 500);
-                }
-
-                @Override
-                public void onFailure(String message) {
-
-                }
-
-                @Override
-                public void getUrl() {
-
-                }
-            });*/
+        }, 1000);*/
     }
 
     private boolean isEmpty(EditText ed) {

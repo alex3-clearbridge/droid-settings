@@ -22,15 +22,13 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.livingspaces.proshopper.R;
-import com.livingspaces.proshopper.data.Token;
-import com.livingspaces.proshopper.interfaces.IREQCallback;
-import com.livingspaces.proshopper.networking.NetworkManager;
+import com.livingspaces.proshopper.interfaces.IRequestCallback;
+import com.livingspaces.proshopper.networking.Network;
 import com.livingspaces.proshopper.networking.Services;
+import com.livingspaces.proshopper.networking.response.MessageResponse;
+import com.livingspaces.proshopper.networking.response.LoginResponse;
 import com.livingspaces.proshopper.utilities.Global;
 import com.livingspaces.proshopper.views.LSTextView;
-
-import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by alexeyredchets on 2017-08-14.
@@ -46,8 +44,6 @@ public class CreateAccountFrag extends BaseStackFrag implements DialogFrag.ICall
     private Bundle args;
     private boolean isDialogShowing = false;
     private boolean isCreatedAndLogged = false, isLoading = false;
-
-    private Date firstTime, secondTime;
 
     public static CreateAccountFrag newInstance(){
         return new CreateAccountFrag();
@@ -122,7 +118,6 @@ public class CreateAccountFrag extends BaseStackFrag implements DialogFrag.ICall
         String lname = ed_lastName.getText().toString();
         String email = ed_email.getText().toString();
         String pass = ed_pass.getText().toString();
-        String confPass = ed_confirmPass.getText().toString();
 
         if (isLoading) return;
 
@@ -130,6 +125,28 @@ public class CreateAccountFrag extends BaseStackFrag implements DialogFrag.ICall
         showDialog("loading");
 
         new Handler().postDelayed(() -> {
+            Network.makeCreateAccREQ(fname, lname, email, pass, new IRequestCallback.Message() {
+
+                @Override
+                public void onSuccess(MessageResponse response) {
+                    Log.d(TAG, "RESPONSE :: " + response.getMessage());
+
+                    if (response.getMessage().contains("User account Created Successfully")){
+                        tokenRequest();
+                    }
+                    else onFailure("error");
+                }
+
+                @Override
+                public void onFailure(String message) {
+                    onOk();
+                    new Handler().postDelayed(() -> {
+                        showDialog("createFailed");
+                    }, 500);
+            }
+        });
+        }, 1000);
+        /*new Handler().postDelayed(() -> {
             NetworkManager.makeCreateAccREQ(fname, lname, email, pass, confPass, new IREQCallback() {
                 @Override
                 public void onRSPSuccess(String rsp) {
@@ -157,11 +174,40 @@ public class CreateAccountFrag extends BaseStackFrag implements DialogFrag.ICall
                     return Services.API.CreateAccount.get();
                 }
             });
-        }, 1000);
+        }, 1000);*/
     }
 
     private void tokenRequest(){
-        NetworkManager.makeLoginREQ(ed_email.getText().toString(), ed_pass.getText().toString(), new IREQCallback() {
+
+        Network.makeLoginREQ(ed_email.getText().toString(), ed_pass.getText().toString(), new IRequestCallback.Login() {
+            @Override
+            public void onSuccess(LoginResponse response) {
+                Log.d(TAG, "onRSPSuccess");
+
+                if (response.getAccess_token() != null
+                        && response.getRefresh_token() != null
+                        && response.getUser_name() != null) {
+                    onOk();
+                    Global.Prefs.editToken(response.getAccess_token(),
+                            response.getRefresh_token(),
+                            response.getUser_name());
+                    isCreatedAndLogged = true;
+                    new Handler().postDelayed(() -> showDialog("createSuccess"), 500);
+                } else {
+                    onFailure("null message");
+                }
+            }
+
+            @Override
+            public void onFailure(String message) {
+                Log.d(TAG, "onRSPFail:: " + message);
+                onOk();
+                new Handler().postDelayed(() -> {
+                    showDialog("notInSystem");
+                }, 500);
+            }
+        });
+        /*NetworkManager.makeLoginREQ(ed_email.getText().toString(), ed_pass.getText().toString(), new IREQCallback() {
             @Override
             public void onRSPSuccess(String rsp) {
                 Log.d(TAG, "onRSPSuccess");
@@ -195,7 +241,7 @@ public class CreateAccountFrag extends BaseStackFrag implements DialogFrag.ICall
             public String getURL() {
                 return Services.API.Token.get();
             }
-        });
+        });*/
     }
 
     private void showDialog(String choice){

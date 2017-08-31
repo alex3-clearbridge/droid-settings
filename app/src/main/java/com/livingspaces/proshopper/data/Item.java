@@ -1,11 +1,14 @@
+/*
 package com.livingspaces.proshopper.data;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+*/
 /**
  * Created by rugvedambekar on 15-09-21.
- */
+ *//*
+
 public class Item {
     public String title, sku, imgUrl;
     public int price;
@@ -37,3 +40,4 @@ public class Item {
         rowId, product, mediumUrl, description, price, signatureImage
     }
 }
+*/
