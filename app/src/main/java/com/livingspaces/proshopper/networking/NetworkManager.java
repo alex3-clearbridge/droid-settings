@@ -59,10 +59,10 @@ public class NetworkManager {
         _networkManager = new NetworkManager(context);
     }
 
-    public static void makeREQ(IREQCallback REQcb) {
+    /*public static void makeREQ(IREQCallback REQcb) {
         if (_networkManager == null) return;
         _networkManager.sendRequest(REQcb);
-    }
+    }*/
 
     public static void makeLoginREQ(String name, String pass, IREQCallback REQcb) {
         if (_networkManager == null) return;
@@ -99,10 +99,10 @@ public class NetworkManager {
         _networkManager.addToCartRequest(REQcb);
     }*/
 
-    public static ImageLoader getIMGLoader() {
+    /*public static ImageLoader getIMGLoader() {
         if (_networkManager == null) return null;
         return _networkManager.getImageLoader();
-    }
+    }*/
 
     protected RequestQueue getRequestQueue() {
         if (_requestQueue == null) _requestQueue = Volley.newRequestQueue(_context);
@@ -381,15 +381,14 @@ public class NetworkManager {
 
             @Override
             public Map<String, String> getHeaders() {
-                return getDefHeaders(true);
+                return Network.getDefHeaders(false);
             }
         };
 
         Log.d(TAG, "REQ: " + request.getUrl());
         addToRequestQueue(request);
     }
-
-    public static Map<String, String> getDefHeaders(boolean forAPI) {
+    /*public static Map<String, String> getDefHeaders(boolean forAPI) {
         Map<String, String> headers = new Hashtable<>();
         if (forAPI) {
             Log.d(TAG, "getDefHeaders: X_AUTH");
@@ -414,7 +413,7 @@ public class NetworkManager {
             else headers.put(KeyValues.USERZIP.first, "");
         }
         return headers;
-    }
+    }*/
 
     public boolean isConnectedToNetwork() {
         return connected;

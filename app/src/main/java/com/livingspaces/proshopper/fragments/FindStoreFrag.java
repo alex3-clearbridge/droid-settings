@@ -13,17 +13,16 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 
 import com.livingspaces.proshopper.R;
-import com.livingspaces.proshopper.data.DataModel;
 import com.livingspaces.proshopper.data.Store;
 import com.livingspaces.proshopper.interfaces.IEditTextImeBackListener;
-import com.livingspaces.proshopper.interfaces.IREQCallback;
-import com.livingspaces.proshopper.networking.NetworkManager;
-import com.livingspaces.proshopper.networking.Services;
-import com.livingspaces.proshopper.utilities.Global;
+import com.livingspaces.proshopper.interfaces.IRequestCallback;
+import com.livingspaces.proshopper.networking.Network;
 import com.livingspaces.proshopper.utilities.Utility;
 import com.livingspaces.proshopper.views.ActionBar;
 import com.livingspaces.proshopper.views.LSEditText;
 import com.google.android.gms.analytics.HitBuilders;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -31,7 +30,7 @@ import com.google.android.gms.analytics.HitBuilders;
 public class FindStoreFrag extends BaseStackFrag implements IEditTextImeBackListener {
     private final String TAG = "[FindStoreFrag]";
 
-    private Store[] allStores;
+    private List<Store> allStores;
     private DoubleSidedFrag doubleFrag;
     private String zipCode = "";
     private LSEditText editText;
@@ -52,8 +51,40 @@ public class FindStoreFrag extends BaseStackFrag implements IEditTextImeBackList
     }
 
     private void makeStoreRequests() {
+        Log.d(TAG, "makeStoreRequests: ");
 
-        NetworkManager.makeREQ(new IREQCallback() {
+        if ((zipCode != null && !zipCode.equals(""))){
+            Network.makeGetStoreByZip(zipCode, new IRequestCallback.StoreByZip() {
+                @Override
+                public void onSuccess(Store store) {
+                    Log.e(TAG, "onRSPSuccess: " + doubleFrag.isFrontUp());
+                    if (doubleFrag.frontFrag != null) doubleFrag.getFrontFrag().setStore(store);
+                }
+
+                @Override
+                public void onFailure(String message) {
+
+                }
+            });
+        }
+        else {
+            Network.makeGetStoresREQ(new IRequestCallback.Stores() {
+                @Override
+                public void onSuccess(List<Store> storeList) {
+                    Log.e(TAG, "onRSPSuccess: " + doubleFrag.isFrontUp());
+
+                    allStores = storeList;
+                    if (doubleFrag.backFrag != null) doubleFrag.getBackFrag().setStores(allStores);
+                }
+
+                @Override
+                public void onFailure(String message) {
+
+                }
+            });
+        }
+
+        /*NetworkManager.makeREQ(new IREQCallback() {
             @Override
             public void onRSPFail() {
             }
@@ -78,7 +109,7 @@ public class FindStoreFrag extends BaseStackFrag implements IEditTextImeBackList
                 if (doubleFrag.backFrag != null) doubleFrag.getBackFrag().setStores(allStores);
             }
 
-        });
+        });*/
     }
 
     @Override

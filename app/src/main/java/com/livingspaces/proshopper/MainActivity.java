@@ -1,6 +1,5 @@
 package com.livingspaces.proshopper;
 
-import android.*;
 import android.Manifest;
 import android.content.Context;
 import android.content.IntentSender;
@@ -9,6 +8,8 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
@@ -24,21 +25,17 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.livingspaces.proshopper.analytics.AnalyticsApplication;
-import com.livingspaces.proshopper.data.DataModel;
 import com.livingspaces.proshopper.data.Store;
-import com.livingspaces.proshopper.data.Token;
 import com.livingspaces.proshopper.fragments.AccountFrag;
 import com.livingspaces.proshopper.fragments.BaseStackFrag;
 import com.livingspaces.proshopper.fragments.LoginFrag;
 import com.livingspaces.proshopper.fragments.NavigationFrag;
 import com.livingspaces.proshopper.interfaces.IMainFragManager;
-import com.livingspaces.proshopper.interfaces.IREQCallback;
 import com.livingspaces.proshopper.interfaces.IRequestCallback;
 import com.livingspaces.proshopper.networking.GpsManager;
 import com.livingspaces.proshopper.networking.Network;
 import com.livingspaces.proshopper.networking.NetworkManager;
-import com.livingspaces.proshopper.networking.Services;
-import com.livingspaces.proshopper.networking.response.LoginResponse;
+import com.livingspaces.proshopper.data.response.LoginResponse;
 import com.livingspaces.proshopper.utilities.Global;
 import com.livingspaces.proshopper.utilities.Layout;
 import com.livingspaces.proshopper.utilities.Utility;
@@ -110,7 +107,9 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
             callLogin();
         }
         else {
-            updateToken();
+            if (isConnectedToNetwork()) {
+                updateToken();
+            }
         }
 
         Utility.activity = this;
@@ -131,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
         Network.makeRefreshTokenREQ(new IRequestCallback.Login() {
             @Override
             public void onSuccess(LoginResponse response) {
-                Log.d(TAG, "onRSPSuccess");
+                Log.d(TAG, "updateToken::onRSPSuccess" + response.toString());
 
                 if (response.getAccess_token() != null
                         && response.getRefresh_token() != null
@@ -146,37 +145,10 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
             @Override
             public void onFailure(String message) {
                 // Probably refresh token is expired. Ask user to login
-                Log.d(TAG, "onRSPFail " + message);
+                Log.d(TAG, "updateToken::onRSPFail " + message);
                 callLogin();
             }
         });
-
-        /*NetworkManager.refreshTokenREQ(new IREQCallback() {
-            @Override
-            public void onRSPSuccess(String rsp) {
-                Log.d(TAG, "onRSPSuccess");
-
-                if (rsp.contains("access_token") && (rsp.contains("refresh_token"))) {
-                    Token token = new Token(rsp);
-                    Global.Prefs.editToken(token.access_token, token.refresh_token, token.userName);
-                }
-                else {
-                    onRSPFail();
-                }
-            }
-
-            @Override
-            public void onRSPFail() {
-                // Probably refresh token is expired. Ask user to login
-                Log.d(TAG, "onRSPFail");
-                callLogin();
-            }
-
-            @Override
-            public String getURL() {
-                return Services.API.Token.get();
-            }
-        });*/
     }
 
     private void updateViewsForFrag() {
@@ -426,7 +398,43 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
     private void findClosestStore(Location location){
         Log.d(TAG, "findClosestStore: ");
 
-        NetworkManager.makeREQ(new IREQCallback() {
+        Network.makeGetStoresREQ(new IRequestCallback.Stores() {
+            @Override
+            public void onSuccess(List<Store> storeList) {
+                Log.d(TAG, "makeGetStoresREQ::onSuccess: ");
+                if (storeList == null) {
+                    onFailure("null message");
+                    return;
+                }
+                double currentDis;
+                double min = 7000;
+                Store closestStore = new Store();
+
+                for (Store store : storeList) {
+                    Location storeLocation = new Location("");
+                    storeLocation.setLatitude(Double.parseDouble(store.getLatitude()));
+                    storeLocation.setLongitude(Double.parseDouble(store.getLongitude()));
+
+                    currentDis = location.distanceTo(storeLocation)/1000;
+
+                    if (currentDis < min) {
+                        min = currentDis;
+                        closestStore = store;
+                        Log.d(TAG, "onRSPSuccess: Current min distance :: " + store.getName() + String.valueOf(currentDis));
+                    }
+                }
+
+                Global.Prefs.saveStore(closestStore);
+
+            }
+
+            @Override
+            public void onFailure(String message) {
+                Log.d(TAG, "makeGetStoresREQ::onFailure: ");
+            }
+        });
+
+        /*NetworkManager.makeREQ(new IREQCallback() {
             @Override
             public void onRSPSuccess(String rsp) {
                 Log.d(TAG, "onRSPSuccess: ");
@@ -465,7 +473,7 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
             public String getURL() {
                 return "http://api.livingspaces.com/api/v1/store/getAllStores";
             }
-        });
+        });*/
     }
 
     @Override
@@ -509,5 +517,11 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
     public void onLocationChanged(Location location) {
         Log.d(TAG, "onLocationChanged: ");
         handleNewLocation(location);
+    }
+
+    private boolean isConnectedToNetwork(){
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isAvailable() && activeNetwork.isConnected();
     }
 }

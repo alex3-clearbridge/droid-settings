@@ -15,13 +15,9 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.livingspaces.proshopper.R;
-import com.livingspaces.proshopper.data.Token;
-import com.livingspaces.proshopper.interfaces.IREQCallback;
 import com.livingspaces.proshopper.interfaces.IRequestCallback;
 import com.livingspaces.proshopper.networking.Network;
-import com.livingspaces.proshopper.networking.NetworkManager;
-import com.livingspaces.proshopper.networking.Services;
-import com.livingspaces.proshopper.networking.response.LoginResponse;
+import com.livingspaces.proshopper.data.response.LoginResponse;
 import com.livingspaces.proshopper.utilities.Global;
 import com.livingspaces.proshopper.views.LSTextView;
 

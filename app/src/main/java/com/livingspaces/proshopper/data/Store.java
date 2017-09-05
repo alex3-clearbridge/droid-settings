@@ -1,16 +1,28 @@
 package com.livingspaces.proshopper.data;
 
-import android.util.Log;
+import com.google.gson.annotations.SerializedName;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import java.util.List;
 
 /**
  * Created by rugvedambekar on 15-09-21.
  */
 public class Store {
-    private String id, name, zipCode, address, city, state;
-    private String latitude, longitude;
+
+    @SerializedName("storeId")
+    private String id;
+    @SerializedName("storeName")
+    private String name;
+    @SerializedName("zipCode")
+    private String zipCode;
+    @SerializedName("address")
+    private StoreAddress storeAddresses;
+    @SerializedName("latitude")
+    private String latitude;
+    @SerializedName("longitude")
+    private String longitude;
+    @SerializedName("distance")
+    private String distance;
 
     public String currDist;
 
@@ -41,28 +53,12 @@ public class Store {
         this.zipCode = zipCode;
     }
 
-    public String getAddress() {
-        return address;
+    public StoreAddress getStoreAddresses() {
+        return storeAddresses;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public void setState(String state) {
-        this.state = state;
+    public void setStoreAddresses(StoreAddress storeAddresses) {
+        this.storeAddresses = storeAddresses;
     }
 
     public String getLatitude() {
@@ -89,7 +85,15 @@ public class Store {
         this.currDist = currDist;
     }
 
-    public Store(JSONObject jOBJ) {
+    public String getDistance() {
+        return distance;
+    }
+
+    public void setDistance(String distance) {
+        this.distance = distance;
+    }
+
+    /*public Store(JSONObject jOBJ) {
         if (jOBJ == null) return;
 
         try {
@@ -123,5 +127,5 @@ public class Store {
     public enum JSONKey {
         storeId, storeName, zipCode, latitude, longitude,
         address, city, state, actualDistance
-    }
+    }*/
 }

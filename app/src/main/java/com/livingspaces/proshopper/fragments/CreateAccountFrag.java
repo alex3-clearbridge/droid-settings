@@ -25,8 +25,8 @@ import com.livingspaces.proshopper.R;
 import com.livingspaces.proshopper.interfaces.IRequestCallback;
 import com.livingspaces.proshopper.networking.Network;
 import com.livingspaces.proshopper.networking.Services;
-import com.livingspaces.proshopper.networking.response.MessageResponse;
-import com.livingspaces.proshopper.networking.response.LoginResponse;
+import com.livingspaces.proshopper.data.response.MessageResponse;
+import com.livingspaces.proshopper.data.response.LoginResponse;
 import com.livingspaces.proshopper.utilities.Global;
 import com.livingspaces.proshopper.views.LSTextView;
 

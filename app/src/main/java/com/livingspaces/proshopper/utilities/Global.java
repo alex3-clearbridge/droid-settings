@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.livingspaces.proshopper.MainActivity;
 import com.livingspaces.proshopper.data.Store;
+import com.livingspaces.proshopper.data.StoreAddress;
 import com.livingspaces.proshopper.interfaces.IMainFragManager;
 
 /**
@@ -71,7 +72,7 @@ public class Global {
             return d_wishList != null ? d_wishList : (d_wishList = sharedPrefs.getString(KEY_wishlist, ""));
         }
 
-        public static void clear() {
+        public static void clearWishList() {
             if (sharedPrefs == null) return;
             sharedPrefs.edit().putString(KEY_wishlist, d_wishList = "").apply();
 
@@ -79,7 +80,7 @@ public class Global {
         }
 
         public static void editWishItem(String wishId, boolean add) {
-            Toast.makeText(context, (add ? "Added to" : "Removed from") + " Wishlist", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(context, (add ? "Added to" : "Removed from") + " Wishlist", Toast.LENGTH_SHORT).show();
             if (sharedPrefs == null) return;
 
             wishId =   wishId + ","  ;
@@ -116,7 +117,7 @@ public class Global {
             if (sharedPrefs == null) return;
 
             sharedPrefs.edit()
-                    .putString(KEY_access_token, access_token)
+                    .putString(KEY_access_token, "Bearer " + access_token)
                     .putString(KEY_refresh_token, refresh_token)
                     .putString(KEY_userName, user_name)
                     .apply();
@@ -156,9 +157,9 @@ public class Global {
                     .putString(KEY_storeId, store.getId())
                     .putString(KEY_storeName, store.getName())
                     .putString(KEY_storeZipcode, store.getZipCode())
-                    .putString(KEY_storeAddress, store.getAddress())
-                    .putString(KEY_storeCity, store.getCity())
-                    .putString(KEY_storeState, store.getState())
+                    .putString(KEY_storeAddress, store.getStoreAddresses().getAddress())
+                    .putString(KEY_storeCity, store.getStoreAddresses().getCity())
+                    .putString(KEY_storeState, store.getStoreAddresses().getState())
                     .apply();
 
 
@@ -179,9 +180,7 @@ public class Global {
             store.setId(store_id);
             store.setName(store_name);
             store.setZipCode(store_zip);
-            store.setAddress(store_address);
-            store.setCity(store_city);
-            store.setState(store_state);
+            store.setStoreAddresses(new StoreAddress(store_address, store_city, store_state));
 
             return store;
         }

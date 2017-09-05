@@ -21,6 +21,7 @@ import com.google.android.gms.analytics.HitBuilders;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by rugvedambekar on 15-09-26.
@@ -35,7 +36,7 @@ public class StoreAdapter extends BaseAdapter {
     private LayoutInflater inflater;
     private Context context;
     private Callback callback;
-    private ArrayList<Store> storeList;
+    private List<Store> storeList;
     private ArrayList<Boolean> storeShowingHrs;
 
     public StoreAdapter(Context context, Callback callback) {
@@ -47,12 +48,12 @@ public class StoreAdapter extends BaseAdapter {
         storeShowingHrs = new ArrayList<>();
     }
 
-    public void setStoreList(Store[] objects) {
+    public void setStoreList(List<Store> objects) {
         if (objects == null) return;
         storeList.clear();
         storeShowingHrs.clear();
 
-        Collections.addAll(storeList, objects);
+        storeList = objects;
         storeShowingHrs = new ArrayList<>(Collections.nCopies(storeList.size(), Boolean.FALSE));
 
         notifyDataSetChanged();
@@ -187,9 +188,9 @@ public class StoreAdapter extends BaseAdapter {
             this.store = s;
 
             tv_title.setText(store.getName());
-            tv_addr.setText(store.getAddress());
-            tv_dist.setText(store.distance());
-            tv_cityStateZip.setText(store.cityStateZip());
+            tv_addr.setText(store.getStoreAddresses().getAddress());;
+            tv_dist.setText(store.getDistance());
+            tv_cityStateZip.setText(store.getZipCode());
             storeHrsView.clearAnimation();
 
             addClickEvents();
@@ -220,7 +221,7 @@ public class StoreAdapter extends BaseAdapter {
                 tv_storeDir.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Utility.openGoogleMaps(store.getLatitude(), store.getLongitude(), store.getAddress());
+                        Utility.openGoogleMaps(store.getLatitude(), store.getLongitude(), store.getStoreAddresses().getAddress());
 
                         /** Google Analytics -- store_directions */
                         Utility.gaTracker.send(new HitBuilders.EventBuilder().

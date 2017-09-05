@@ -1,6 +1,5 @@
 package com.livingspaces.proshopper.views;
 
-import android.content.Context;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,20 +7,17 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.livingspaces.proshopper.R;
 import com.livingspaces.proshopper.adapters.StoreDialogAdapter;
-import com.livingspaces.proshopper.data.DataModel;
 import com.livingspaces.proshopper.data.Store;
-import com.livingspaces.proshopper.fragments.DialogFrag;
-import com.livingspaces.proshopper.interfaces.IREQCallback;
-import com.livingspaces.proshopper.networking.NetworkManager;
+import com.livingspaces.proshopper.interfaces.IRequestCallback;
+import com.livingspaces.proshopper.networking.Network;
+
+import java.util.List;
 
 /**
  * Created by alexeyredchets on 2017-08-21.
@@ -80,7 +76,28 @@ public class StoreDialog extends DialogFragment implements StoreDialogAdapter.Cl
         mRecyclerView.setVisibility(View.GONE);
         pd_loading.setVisibility(View.VISIBLE);
 
-        NetworkManager.makeREQ(new IREQCallback() {
+        Network.makeGetStoresREQ(new IRequestCallback.Stores() {
+            @Override
+            public void onSuccess(List<Store> storeList) {
+                if (storeList == null) {
+                    onFailure("null message");
+                    return;
+                }
+                isLoading = false;
+                pd_loading.setVisibility(View.GONE);
+                mRecyclerView.setVisibility(View.VISIBLE);
+                mStoreDialogAdapter.updateAdapter(storeList);
+            }
+
+            @Override
+            public void onFailure(String message) {
+                isLoading = false;
+                pd_loading.setVisibility(View.GONE);
+                mRecyclerView.setVisibility(View.VISIBLE);
+            }
+        });
+
+        /*NetworkManager.makeREQ(new IREQCallback() {
             @Override
             public void onRSPSuccess(String rsp) {
 
@@ -106,7 +123,7 @@ public class StoreDialog extends DialogFragment implements StoreDialogAdapter.Cl
             public String getURL() {
                 return "http://api.livingspaces.com/api/v1/store/getAllStores";
             }
-        });
+        });*/
     }
 
 

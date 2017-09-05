@@ -13,24 +13,25 @@ import android.widget.Toast;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.livingspaces.proshopper.R;
-import com.livingspaces.proshopper.data.Item;
+//import com.livingspaces.proshopper.data.Item;
 import com.livingspaces.proshopper.interfaces.IWishlistCallback;
-import com.livingspaces.proshopper.networking.NetworkManager;
 import com.livingspaces.proshopper.networking.Services;
+import com.livingspaces.proshopper.data.response.Product;
 import com.livingspaces.proshopper.utilities.Global;
 import com.livingspaces.proshopper.utilities.Utility;
 import com.google.android.gms.analytics.HitBuilders;
+import com.squareup.picasso.Picasso;
 
 /**
  * A simple {@link Fragment} subclass.
  */
 public class ItemDetailFrag extends BaseStackFrag {
 
-    private Item item;
+    private Product item;
     private boolean forWishlist, fromWishlist;
     private IWishlistCallback WLCallback;
 
-    public static ItemDetailFrag newInstance(Item i) {
+    public static ItemDetailFrag newInstance(Product i) {
         ItemDetailFrag idFrag = new ItemDetailFrag();
         idFrag.item = i;
         return idFrag;
@@ -56,11 +57,13 @@ public class ItemDetailFrag extends BaseStackFrag {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_item_detail, container, false);
 
-        ((TextView) rootView.findViewById(R.id.tv_itemTitle)).setText(item.title);
-        ((TextView) rootView.findViewById(R.id.tv_itemPrice)).setText("$ " + item.price);
-        ((TextView) rootView.findViewById(R.id.tv_itemSKU)).setText(item.sku);
-        if (item.imgUrl != null) {
-            ((NetworkImageView) rootView.findViewById(R.id.niv_itemImg)).setImageUrl(item.imgUrl, NetworkManager.getIMGLoader());
+        ((TextView) rootView.findViewById(R.id.tv_itemTitle)).setText(item.getTitle());
+        ((TextView) rootView.findViewById(R.id.tv_itemPrice)).setText("$ " + item.getPrice());
+        ((TextView) rootView.findViewById(R.id.tv_itemSKU)).setText(item.getSku());
+        if (item.getImages() != null && item.getImages().size() > 0 && item.getImages().get(0) != null && item.getImages().get(0).getImgUrl() != null) {
+            Picasso.with(getContext()).load(item.getImages().get(0).getImgUrl()).into(((NetworkImageView) rootView.findViewById(R.id.niv_itemImg)));
+
+            //((NetworkImageView) rootView.findViewById(R.id.niv_itemImg)).setImageUrl(item.getImages().get(0).getImgUrl(), NetworkManager.getIMGLoader());
         } else {
             ((NetworkImageView) rootView.findViewById(R.id.niv_itemImg)).setDefaultImageResId(R.drawable.ls_w_img_default);
         }
@@ -79,7 +82,7 @@ public class ItemDetailFrag extends BaseStackFrag {
                 Utility.gaTracker.send(new HitBuilders.EventBuilder()
                                 .setCategory("ui_action")
                                 .setAction("more_details")
-                                .setLabel(item.sku)
+                                .setLabel(item.getSku())
                                 .build()
                 );
             }
@@ -113,9 +116,9 @@ public class ItemDetailFrag extends BaseStackFrag {
         });
 
         if (forWishlist) {
-            final boolean inWishlist = Global.Prefs.hasWishItem(item.sku);
+            final boolean inWishlist = Global.Prefs.hasWishItem(item.getSku());
             if (!inWishlist) {
-                Global.Prefs.editWishItem(item.sku, true);
+                Global.Prefs.editWishItem(item.getSku(), true);
                 if (WLCallback != null) WLCallback.getWishlist().add(item);
             }
 
@@ -133,7 +136,7 @@ public class ItemDetailFrag extends BaseStackFrag {
         topRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Global.Prefs.editWishItem(item.sku, false);
+                Global.Prefs.editWishItem(item.getSku(), false);
                 if (WLCallback != null) WLCallback.getWishlist().remove(item);
 
                 if (fromWishlist) Global.FragManager.popToFrag("WISHLIST");

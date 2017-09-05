@@ -4,7 +4,6 @@ package com.livingspaces.proshopper.fragments;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -18,11 +17,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.livingspaces.proshopper.R;
-import com.livingspaces.proshopper.data.Item;
-import com.livingspaces.proshopper.interfaces.IREQCallback;
 import com.livingspaces.proshopper.interfaces.IWishlistCallback;
-import com.livingspaces.proshopper.networking.NetworkManager;
+import com.livingspaces.proshopper.networking.Network;
 import com.livingspaces.proshopper.networking.Services;
+import com.livingspaces.proshopper.data.response.Product;
 import com.livingspaces.proshopper.utilities.Global;
 import com.livingspaces.proshopper.utilities.Utility;
 import com.google.android.gms.analytics.HitBuilders;
@@ -36,7 +34,7 @@ public class WebViewFrag extends BaseStackFrag {
     private Drawable d_cart;
     private String title, url;
 
-    private Item item;
+    private Product item;
     private boolean fromWishlist;
     private IWishlistCallback WLCallback;
 
@@ -57,7 +55,7 @@ public class WebViewFrag extends BaseStackFrag {
     public WebViewFrag() {
     }
 
-    public WebViewFrag withProduct(Item i) {
+    public WebViewFrag withProduct(Product i) {
         title = "Product";
         item = i;
         return this;
@@ -89,12 +87,12 @@ public class WebViewFrag extends BaseStackFrag {
                 Toast.makeText(getActivity(), description, Toast.LENGTH_SHORT).show();
             }
         });
-        if (item != null && item.sku != null && !item.sku.equals("")) {
+        if (item != null && item.getSku() != null && !item.getSku().equals("")) {
             Log.d(TAG, "onCreateView: load url with false");
-            rootView.loadUrl(url + item.sku, NetworkManager.getDefHeaders(false));
+            rootView.loadUrl(url + item.getSku(), Network.getDefHeaders(false));
         } else {
             Log.d(TAG, "onCreateView: load url with true");
-            rootView.loadUrl(url, NetworkManager.getDefHeaders(false));
+            rootView.loadUrl(url, Network.getDefHeaders(false));
         }
 
         return rootView;
@@ -106,7 +104,10 @@ public class WebViewFrag extends BaseStackFrag {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url1) {
                 Log.d(TAG, "shouldOverrideUrlLoading: ");
-                view.loadUrl(url1, NetworkManager.getDefHeaders(false));
+
+
+
+                view.loadUrl(url1, Network.getDefHeaders(false));
                 /*if (url1.equals("http://dev.livingspaces.com/VerifyZip.aspx?productId=")){
 
                     if (!Global.Prefs.hasToken()){
@@ -171,7 +172,7 @@ public class WebViewFrag extends BaseStackFrag {
     public boolean setTopRightEx(final ImageView topRightEx) {
         if (item == null) return false;
 
-        final boolean inWishlist = Global.Prefs.hasWishItem(item.sku);
+        final boolean inWishlist = Global.Prefs.hasWishItem(item.getSku());
         topRightEx.setRotation(inWishlist ? 135 : 0);
         topRightEx.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ls_s_btn_remove_00));
         topRightEx.setOnClickListener(new View.OnClickListener() {
@@ -183,7 +184,7 @@ public class WebViewFrag extends BaseStackFrag {
                 added = !added;
                 if (!added && WLCallback != null) {
                     WLCallback.getWishlist().remove(item);
-                    Global.Prefs.editWishItem(item.sku, false);
+                    Global.Prefs.editWishItem(item.getSku(), false);
                     //Toast.makeText(getActivity(), "Removed from WishList", Toast.LENGTH_SHORT).show();
                     Global.FragManager.popToFrag(fromWishlist ? "WISHLIST" : NavigationFrag.NavItem.SCAN.title());
                 } else {
@@ -192,7 +193,7 @@ public class WebViewFrag extends BaseStackFrag {
                     topRightEx.animate().setDuration(250).rotationBy(added ? 135 : -135).withEndAction(new Runnable() {
                         @Override
                         public void run() {
-                            Global.Prefs.editWishItem(item.sku, added);
+                            Global.Prefs.editWishItem(item.getSku(), added);
                             getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                         }
                     }).start();
@@ -202,7 +203,7 @@ public class WebViewFrag extends BaseStackFrag {
                             new HitBuilders.EventBuilder()
                                     .setCategory("ui_action")
                                     .setAction("product_details_add_wishlist")
-                                    .setLabel(item.sku)
+                                    .setLabel(item.getSku())
                                     .build()
                     );
                 }

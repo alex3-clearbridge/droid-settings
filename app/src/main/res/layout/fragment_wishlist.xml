@@ -37,7 +37,7 @@
         android:drawableTop="@drawable/ls_w_img_empty_wishlist"
         android:text="Your Wishlist is Empty"
         android:textSize="17sp"
-        android:visibility="gone"
+        android:visibility="visible"
         android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

@@ -22,12 +22,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.livingspaces.proshopper.R;
-import com.livingspaces.proshopper.data.DataModel;
-import com.livingspaces.proshopper.data.Item;
-import com.livingspaces.proshopper.interfaces.IREQCallback;
+//import com.livingspaces.proshopper.data.Item;
+import com.livingspaces.proshopper.interfaces.IRequestCallback;
 import com.livingspaces.proshopper.interfaces.IWishlistCallback;
-import com.livingspaces.proshopper.networking.NetworkManager;
+import com.livingspaces.proshopper.networking.Network;
 import com.livingspaces.proshopper.networking.Services;
+import com.livingspaces.proshopper.data.response.Product;
+import com.livingspaces.proshopper.data.response.ProductResponse;
 import com.livingspaces.proshopper.utilities.Global;
 import com.livingspaces.proshopper.utilities.Layout;
 import com.livingspaces.proshopper.utilities.Utility;
@@ -315,10 +316,57 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
 
     @Override
     public void onSubmit(final String input) {
-        Log.d(TAG, "onSubmit: ");
+        Log.d(TAG, "onSubmit: " + dialogBarcode.getInput());
         if (reqInProgress) return;
 
         reqInProgress = true;
+
+        Network.makeGetProductREQ(dialogBarcode.getInput(), new IRequestCallback.Product() {
+            @Override
+            public void onSuccess(ProductResponse product) {
+                Log.d(TAG, "onSubmit::onSuccess: ");
+                reqInProgress = false;
+                if (getActivity() == null) return;
+
+                Product item = product.getProduct();
+                if (item == null) {
+                    Log.d(TAG, "onSubmit::onSuccess: item == null");
+                    onFailure("null message");
+                    return;
+                }
+
+                dialogBarcode.hide();
+                startFragForItem(item);
+
+                /* Google Analytics - enter_barcode_success */
+
+                Utility.gaTracker.send(new HitBuilders.EventBuilder()
+                                .setCategory("ui_action")
+                                .setAction("enter_barcode_success")
+                                .setLabel(input)
+                                .build()
+                );
+            }
+
+            @Override
+            public void onFailure(String message) {
+                Log.d(TAG, "onSubmit::onFailure: " + message);
+                reqInProgress = false;
+                if (getActivity() == null || dialogBarcode.reqWasCanceled()) return;
+
+                dialogBarcode.showError();
+
+                /* Google Analytics - enter_barcode_fail */
+
+                Utility.gaTracker.send(new HitBuilders.EventBuilder()
+                                .setCategory("ui_action")
+                                .setAction("enter_barcode_fail")
+                                .setLabel(input)
+                                .build()
+                );
+            }
+        });
+/*
         NetworkManager.makeREQ(new IREQCallback() {
             @Override
             public void onRSPSuccess(String rsp) {
@@ -334,7 +382,9 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
                 dialogBarcode.hide();
                 startFragForItem(item);
 
-                /* Google Analytics - enter_barcode_success */
+                */
+/* Google Analytics - enter_barcode_success *//*
+
                 Utility.gaTracker.send(new HitBuilders.EventBuilder()
                                 .setCategory("ui_action")
                                 .setAction("enter_barcode_success")
@@ -350,7 +400,9 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
 
                 dialogBarcode.showError();
 
-                /* Google Analytics - enter_barcode_fail */
+                */
+/* Google Analytics - enter_barcode_fail *//*
+
                 Utility.gaTracker.send(new HitBuilders.EventBuilder()
                                 .setCategory("ui_action")
                                 .setAction("enter_barcode_fail")
@@ -364,9 +416,10 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
                 return Services.API.Product.get() + dialogBarcode.getInput();
             }
         });
+*/
     }
 
-    private void startFragForItem(Item item) {
+    private void startFragForItem(Product item) {
 
         Log.d(TAG, item.toString());
         if (forWishlist)
@@ -391,19 +444,91 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
     public void onBarcodeFound(final String barcodeData) {
         if (reqInProgress) return;
 
+        Log.d(TAG, "onBarcodeFound: " + barcodeData);
+
         reqInProgress = true;
         dialogBarcode.show(true);
         overlay(true);
 
         new Handler().postDelayed(new Runnable() {
             public void run() {
+
+                Network.makeGetProductREQ(barcodeData, new IRequestCallback.Product() {
+                    @Override
+                    public void onSuccess(ProductResponse product) {
+                        reqInProgress = false;
+                        if (getActivity() == null || dialogBarcode.reqWasCanceled()) return;
+
+                        Product item = product.getProduct();
+                        if (item == null) {
+                            onFailure("null message");
+                            return;
+                        }
+
+                        overlay(false);
+                        dialogBarcode.hide();
+                        startFragForItem(item);
+
+                        if (forWishlist) {
+                                /** Google Analytics - scan_wishlist_success */
+
+                            Utility.gaTracker.send(new HitBuilders.EventBuilder()
+                                            .setCategory("ui_action")
+                                            .setAction("scan_wishlist_success")
+                                            .setLabel(barcodeData)
+                                            .build()
+                            );
+                        } else {
+                                /** Google Analytics - scan_success */
+
+                            Utility.gaTracker.send(new HitBuilders.EventBuilder()
+                                            .setCategory("ui_action")
+                                            .setAction("scan_success")
+                                            .setLabel(barcodeData)
+                                            .build()
+                            );
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(String message) {
+                        reqInProgress = false;
+                        if (getActivity() == null || dialogBarcode.reqWasCanceled()) return;
+                        dialogBarcode.showError();
+                        overlay(false);
+                        showError();
+
+                        if (forWishlist) {
+
+                                /** Google Analytics - scan_wishlist_fail */
+
+                            Utility.gaTracker.send(new HitBuilders.EventBuilder()
+                                            .setCategory("ui_action")
+                                            .setAction("scan_wishlist_fail")
+                                            .setLabel(barcodeData)
+                                            .build()
+                            );
+                        } else {
+
+                            /** Google Analytics - scan_fail */
+
+                            Utility.gaTracker.send(new HitBuilders.EventBuilder()
+                                            .setCategory("ui_action")
+                                            .setAction("scan_fail")
+                                            .setLabel(barcodeData)
+                                            .build()
+                            );
+                        }
+                    }
+                });
+/*
                 NetworkManager.makeREQ(new IREQCallback() {
                     @Override
                     public void onRSPSuccess(String rsp) {
                         reqInProgress = false;
                         if (getActivity() == null || dialogBarcode.reqWasCanceled()) return;
 
-                        Item item = DataModel.parseItem(rsp);
+                        Product item = DataModel.parseItem(rsp);
                         if (item == null) {
                             onRSPFail();
                             return;
@@ -414,7 +539,9 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
                         startFragForItem(item);
 
                         if (forWishlist) {
-                            /** Google Analytics - scan_wishlist_success */
+                            */
+/** Google Analytics - scan_wishlist_success *//*
+
                             Utility.gaTracker.send(new HitBuilders.EventBuilder()
                                             .setCategory("ui_action")
                                             .setAction("scan_wishlist_success")
@@ -422,7 +549,9 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
                                             .build()
                             );
                         } else {
-                            /** Google Analytics - scan_success */
+                            */
+/** Google Analytics - scan_success *//*
+
                             Utility.gaTracker.send(new HitBuilders.EventBuilder()
                                             .setCategory("ui_action")
                                             .setAction("scan_success")
@@ -441,7 +570,9 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
                         showError();
 
                         if (forWishlist) {
-                            /** Google Analytics - scan_wishlist_fail */
+                            */
+/** Google Analytics - scan_wishlist_fail *//*
+
                             Utility.gaTracker.send(new HitBuilders.EventBuilder()
                                             .setCategory("ui_action")
                                             .setAction("scan_wishlist_fail")
@@ -449,7 +580,9 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
                                             .build()
                             );
                         } else {
-                            /** Google Analytics - scan_fail */
+                            */
+/** Google Analytics - scan_fail *//*
+
                             Utility.gaTracker.send(new HitBuilders.EventBuilder()
                                             .setCategory("ui_action")
                                             .setAction("scan_fail")
@@ -465,6 +598,7 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
                         return Services.API.Product.get() + barcodeData;
                     }
                 });
+*/
             }
         }, 1000);
 

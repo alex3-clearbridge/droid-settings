@@ -17,6 +17,8 @@ import com.livingspaces.proshopper.R;
 import com.livingspaces.proshopper.adapters.StoreAdapter;
 import com.livingspaces.proshopper.data.Store;
 
+import java.util.List;
+
 /**
  * A simple {@link Fragment} subclass.
  */
@@ -28,14 +30,14 @@ public class StoreListFrag extends BaseStackFrag implements StoreAdapter.Callbac
     }
 
     private Callback callback;
-    private Store[] stores;
+    private List<Store> stores;
 
     private FrameLayout rootView;
     private View loadingView;
     private ListView lv_stores;
     private StoreAdapter sAdapter;
 
-    public static StoreListFrag newInstance(Store[] s, Callback callback) {
+    public static StoreListFrag newInstance(List<Store> s, Callback callback) {
         StoreListFrag slf = new StoreListFrag(callback);
         slf.stores = s;
         return slf;
@@ -69,8 +71,8 @@ public class StoreListFrag extends BaseStackFrag implements StoreAdapter.Callbac
     }
 
     private void makeStoresList() {
-        if (stores == null) return;
         Log.e(TAG, "makeStoresList");
+        if (stores == null) return;
 
         sAdapter = new StoreAdapter(getActivity(), this);
         lv_stores.setAdapter(sAdapter);
@@ -96,7 +98,7 @@ public class StoreListFrag extends BaseStackFrag implements StoreAdapter.Callbac
         if (loadingView != null) loadingView.setVisibility(View.VISIBLE);
     }
 
-    public void setStores(Store[] s) {
+    public void setStores(List<Store> s) {
         stores = s;
         if (sAdapter != null) sAdapter.setStoreList(s);
     }

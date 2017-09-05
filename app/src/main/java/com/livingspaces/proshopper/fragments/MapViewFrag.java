@@ -429,12 +429,12 @@ public class MapViewFrag extends BaseStackFrag {
         return "Find A Store";
     }
 
-    public void setStore(Store[] stores) {
-        if (stores != null && stores.length > 0) {
-            myStore.Init(stores[0]);
+    public void setStore(Store store) {
+        if (store != null) {
+            myStore.Init(store);
 
             all_stores.clear();
-            Collections.addAll(all_stores, stores);
+            //all_stores = store;
 
             if (isFirstLaunch) {
                 centerOnCurrentLocation();
@@ -485,12 +485,12 @@ public class MapViewFrag extends BaseStackFrag {
             if (storeView == null) return;
 
             tv_storeTitle.setText(currStore.getName());
-            ((TextView) storeView.findViewById(R.id.tv_storeAddr)).setText(currStore.getAddress());
-            ((TextView) storeView.findViewById(R.id.tv_storeCityStateZIP)).setText(currStore.cityStateZip());
+            ((TextView) storeView.findViewById(R.id.tv_storeAddr)).setText(currStore.getStoreAddresses().getAddress());
+            ((TextView) storeView.findViewById(R.id.tv_storeCityStateZIP)).setText(currStore.getStoreAddresses().getZipCode());
 
             TextView tv_storeDist = ((TextView) storeView.findViewById(R.id.tv_storeDist));
-            if (currStore.distance() == null) tv_storeDist.setVisibility(View.GONE);
-            else tv_storeDist.setText(currStore.distance());
+            if (currStore.getDistance() == null) tv_storeDist.setVisibility(View.GONE);
+            else tv_storeDist.setText(currStore.getDistance());
 
 
             // Store Hour Message
@@ -521,7 +521,7 @@ public class MapViewFrag extends BaseStackFrag {
                 tv_storeDir.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Utility.openGoogleMaps(currStore.getLatitude(), currStore.getLongitude(), currStore.getAddress());
+                        Utility.openGoogleMaps(currStore.getLatitude(), currStore.getLongitude(), currStore.getStoreAddresses().getAddress());
                     }
                 });
             }

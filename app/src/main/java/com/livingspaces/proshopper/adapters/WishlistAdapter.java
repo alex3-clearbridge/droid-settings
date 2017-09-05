@@ -14,13 +14,14 @@ import android.widget.TextView;
 
 import com.android.volley.toolbox.NetworkImageView;
 import com.livingspaces.proshopper.R;
-import com.livingspaces.proshopper.data.Item;
+//import com.livingspaces.proshopper.data.Item;
 import com.livingspaces.proshopper.fragments.ItemDetailFrag;
 import com.livingspaces.proshopper.interfaces.IWishlistCallback;
-import com.livingspaces.proshopper.networking.NetworkManager;
+import com.livingspaces.proshopper.data.response.Product;
 import com.livingspaces.proshopper.utilities.Global;
 import com.livingspaces.proshopper.utilities.Layout;
 import com.livingspaces.proshopper.utilities.sizes.PhoneSizes;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +32,8 @@ import java.util.List;
 public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.WishHolder> {
     private static final String TAG = WishlistAdapter.class.getSimpleName();
 
-    private final List<Item> items;
-    private final List<Item> itemsToDelete;
+    private List<Product> items;
+    private final List<Product> itemsToDelete;
 
     private IWishlistCallback WLCallback;
     private boolean inEditMode;
@@ -41,13 +42,18 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.WishHo
 
     private long mLastClickTime = 0;
 
-    public WishlistAdapter(Context context, IWishlistCallback cb, List<Item> wItems) {
+    public WishlistAdapter(Context context, IWishlistCallback cb, List<Product> wItems) {
         this.context = context;
-        this.items = wItems == null ? new ArrayList<Item>() : wItems;
+        this.items = wItems;// == null ? new ArrayList<Product>() : wItems;
         this.itemsToDelete = new ArrayList<>();
         this.WLCallback = cb;
         this.itemOpen = false;
 
+    }
+
+    public void updateAdapter(List<Product> productList){
+        this.items = productList;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -72,7 +78,7 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.WishHo
         itemOpen =false;
         items.clear();
         itemsToDelete.clear();
-        Global.Prefs.clear();
+        Global.Prefs.clearWishList();
         notifyDataSetChanged();
         WLCallback.updateView();
     }
@@ -94,7 +100,7 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.WishHo
         inEditMode = false;
         WLCallback.onEditStateChanged(inEditMode);
 
-        for (Item item : itemsToDelete) Global.Prefs.editWishItem(item.sku, false);
+        for (Product item : itemsToDelete) Global.Prefs.editWishItem(item.getSku(), false);
         items.removeAll(itemsToDelete);
         itemsToDelete.clear();
         WLCallback.updateView();
@@ -104,7 +110,7 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.WishHo
 
     public class WishHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        private Item item;
+        private Product item;
         private int index;
 
         private final RelativeLayout container, itemFooter;
@@ -164,15 +170,17 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.WishHo
             this.index = i;
 
 
-            if(item.imgUrl != null) {
-                iv_item.setImageUrl(item.imgUrl, NetworkManager.getIMGLoader());
+            if (item.getImages() != null && item.getImages().size() > 0 && item.getImages().get(0) != null && item.getImages().get(0).getImgUrl() != null) {
+                Picasso.with(context).load(item.getImages().get(0).getImgUrl()).into(iv_item);
+
+                //iv_item.setImageUrl(item.getImages().get(0).getImgUrl(), NetworkManager.getIMGLoader());
             }
             else {
                 iv_item.setDefaultImageResId(R.drawable.ls_w_img_default);
             }
-            tv_title.setText(item.title);
-            tv_cost.setText("$ " + item.price);
-            tv_sku.setText(item.sku);
+            tv_title.setText(item.getTitle());
+            tv_cost.setText("$ " + item.getPrice());
+            tv_sku.setText(item.getSku());
 
             if(items.size()-1 == i) {
                 itemFooter.setVisibility(View.VISIBLE);
@@ -194,7 +202,7 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.WishHo
                 }
                 mLastClickTime = SystemClock.elapsedRealtime();
                 items.remove(index);
-                Global.Prefs.editWishItem(item.sku, false);
+                Global.Prefs.editWishItem(item.getSku(), false);
                 notifyItemRemoved(index);
                 notifyDataSetChanged();
                 WLCallback.updateView();

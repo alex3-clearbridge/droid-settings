@@ -18,9 +18,10 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.livingspaces.proshopper.R;
-import com.livingspaces.proshopper.data.Item;
+//import com.livingspaces.proshopper.data.Item;
 import com.livingspaces.proshopper.networking.Services;
 import com.google.android.gms.analytics.Tracker;
+import com.livingspaces.proshopper.data.response.Product;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -127,19 +128,19 @@ public class Utility {
         }
     }
 
-    public static void shareUrl(Context context, List<Item> items) {
+    public static void shareUrl(Context context, List<Product> items) {
         Resources resources = context.getResources();
         String itemListString = "";
         String urlBody = "";
-        for (Item item : items) {
+        for (Product item : items) {
             if (itemListString.isEmpty()) {
-                itemListString += item.sku;
+                itemListString += item.getSku();
             } else {
-                itemListString += "," + item.sku;
+                itemListString += "," + item.getSku();
             }
-            urlBody += "<br>Item: <a href=\"" + Services.URL.Product.get() + item.sku + "\">" + item.title + "</a><br>" +
-                    "Sku: " + item.sku + "<br>" +
-                    "Price: " + item.price + "<br>";
+            urlBody += "<br>Item: <a href=\"" + Services.URL.Product.get() + item.getSku() + "\">" + item.getSku() + "</a><br>" +
+                    "Sku: " + item.getSku() + "<br>" +
+                    "Price: " + item.getPrice() + "<br>";
         }
 
         String shareWishListBody = resources.getString(R.string.shareMsgText1)

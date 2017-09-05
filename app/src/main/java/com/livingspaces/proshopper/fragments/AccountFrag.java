@@ -1,8 +1,11 @@
 package com.livingspaces.proshopper.fragments;
 
 import android.animation.Animator;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -98,9 +101,9 @@ public class AccountFrag extends BaseStackFrag implements StoreDialog.ICallback{
         tv_storeZip.setTypeface(fontLight);
 
         tv_storeName.setText(mStore.getName());
-        tv_storeAddress.setText(mStore.getAddress());
-        tv_storeCity.setText(mStore.getCity() + ", ");
-        tv_storeState.setText(mStore.getState() + " ");
+        tv_storeAddress.setText(mStore.getStoreAddresses().getAddress());
+        tv_storeCity.setText(mStore.getStoreAddresses().getCity() + ", ");
+        tv_storeState.setText(mStore.getStoreAddresses().getState() + " ");
         tv_storeZip.setText(mStore.getZipCode());
 
         tv_callBtn.setOnClickListener(onCallBtnCLicked);
@@ -123,6 +126,7 @@ public class AccountFrag extends BaseStackFrag implements StoreDialog.ICallback{
             @Override
             public void onClick(View view) {
                 Global.Prefs.clearToken();
+                //Global.Prefs.clearWishList();
                 Global.FragManager.popToHome();
             }
         });
@@ -134,6 +138,10 @@ public class AccountFrag extends BaseStackFrag implements StoreDialog.ICallback{
     private View.OnClickListener onSelectStoreClicked = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+            if (!isConnectedToNetwork()) {
+                Toast.makeText(getContext(), "No Internet connection", Toast.LENGTH_SHORT).show();
+                return;
+            }
             isDialogShowing = true;
             mStoreDialog.show(getFragmentManager(), "storeDialogFragment");
         }
@@ -177,5 +185,11 @@ public class AccountFrag extends BaseStackFrag implements StoreDialog.ICallback{
             mStoreDialog.dismiss();
         }
         return super.handleBackPress();
+    }
+
+    private boolean isConnectedToNetwork(){
+        ConnectivityManager cm = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isAvailable() && activeNetwork.isConnected();
     }
 }

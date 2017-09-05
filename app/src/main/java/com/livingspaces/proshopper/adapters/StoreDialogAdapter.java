@@ -15,6 +15,8 @@ import com.livingspaces.proshopper.R;
 import com.livingspaces.proshopper.data.Store;
 import com.livingspaces.proshopper.views.LSTextView;
 
+import java.util.List;
+
 /**
  * Created by alexeyredchets on 2017-08-21.
  */
@@ -22,7 +24,7 @@ import com.livingspaces.proshopper.views.LSTextView;
 public class StoreDialogAdapter extends RecyclerView.Adapter<StoreDialogAdapter.ViewHolder> {
 
     private static final String TAG = StoreDialogAdapter.class.getSimpleName();
-    private Store[] storeList;
+    private List<Store> storeList;
     private Context context;
     private ClickListener clickListener;
     private Drawable d_add;
@@ -34,7 +36,7 @@ public class StoreDialogAdapter extends RecyclerView.Adapter<StoreDialogAdapter.
         d_add = ContextCompat.getDrawable(context, R.drawable.ls_g_btn_add);
     }
 
-    public void updateAdapter(Store[] storeList){
+    public void updateAdapter(List<Store> storeList){
         Log.d(TAG, "updateAdapter: ");
         this.storeList = storeList;
         notifyDataSetChanged();
@@ -51,12 +53,12 @@ public class StoreDialogAdapter extends RecyclerView.Adapter<StoreDialogAdapter.
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         Log.d(TAG, "onBindViewHolder: ");
-        Store store = storeList[position];
+        Store store = storeList.get(position);
 
         holder.tv_storeName.setText(store.getName());
-        holder.tv_storeAddress.setText(store.getAddress());
-        holder.tv_storeCity.setText(store.getCity() + ", ");
-        holder.tv_storeState.setText(store.getState() + " ");
+        holder.tv_storeAddress.setText(store.getStoreAddresses().getAddress());
+        holder.tv_storeCity.setText(store.getStoreAddresses().getCity() + ", ");
+        holder.tv_storeState.setText(store.getStoreAddresses().getState() + " ");
         holder.tv_storeZip.setText(store.getZipCode());
         holder.iv_add.setImageDrawable(d_add);
 
@@ -65,7 +67,7 @@ public class StoreDialogAdapter extends RecyclerView.Adapter<StoreDialogAdapter.
     @Override
     public int getItemCount() {
         Log.d(TAG, "getItemCount: ");
-        return storeList != null ? storeList.length : 0;
+        return storeList != null ? storeList.size() : 0;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -97,7 +99,7 @@ public class StoreDialogAdapter extends RecyclerView.Adapter<StoreDialogAdapter.
 
         @Override
         public void onClick(View view) {
-            clickListener.onClick(storeList[getAdapterPosition()]);
+            clickListener.onClick(storeList.get(getAdapterPosition()));
         }
     }
 

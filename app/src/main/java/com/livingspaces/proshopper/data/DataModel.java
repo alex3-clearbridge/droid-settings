@@ -14,7 +14,7 @@ import java.util.List;
 public class DataModel {
     private static final String TAG = DataModel.class.getSimpleName();
 
-    public static Item parseItem(String jsonSTR) {
+  /*  public static Item parseItem(String jsonSTR) {
         Item item = null;
 
         try {
@@ -38,9 +38,9 @@ public class DataModel {
 
         Log.d(TAG, "Items Parsed: " + items.size());
         return items;
-    }
+    }*/
 
-    public static Store[] parseStores(String jsonSTR) {
+    /*public static Store[] parseStores(String jsonSTR) {
         Store[] stores = null;
 
         try {
@@ -54,5 +54,5 @@ public class DataModel {
         Log.d(TAG, "Stores Parsed: " + (stores == null ? "NULL" : stores.length));
         return stores;
 
-    }
+    }*/
 }
