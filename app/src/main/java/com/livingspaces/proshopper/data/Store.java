@@ -92,40 +92,4 @@ public class Store {
     public void setDistance(String distance) {
         this.distance = distance;
     }
-
-    /*public Store(JSONObject jOBJ) {
-        if (jOBJ == null) return;
-
-        try {
-            setId(jOBJ.getString(JSONKey.storeId.name()));
-            setName(jOBJ.getString(JSONKey.storeName.name()));
-            setZipCode(jOBJ.getString(JSONKey.zipCode.name()));
-            setLatitude(jOBJ.getString(JSONKey.latitude.name()));
-            setLongitude(jOBJ.getString(JSONKey.longitude.name()));
-            setCurrDist(jOBJ.getString(JSONKey.actualDistance.name()));
-
-            JSONObject addressOBJ = jOBJ.getJSONObject(JSONKey.address.name());
-            setAddress(addressOBJ.getString(JSONKey.address.name()));
-            setCity(addressOBJ.getString(JSONKey.city.name()));
-            setState(addressOBJ.getString(JSONKey.state.name()));
-
-        } catch (JSONException e) {
-            Log.e("[STORE]", e.toString());
-        }
-    }
-
-    public String cityStateZip() {
-        return city + ", " + state + " " + zipCode;
-    }
-
-    public String distance() {
-        if (currDist.equals("") || currDist.equals("null") || currDist.equals("9999")) return "";
-
-        return currDist + " miles";
-    }
-
-    public enum JSONKey {
-        storeId, storeName, zipCode, latitude, longitude,
-        address, city, state, actualDistance
-    }*/
 }

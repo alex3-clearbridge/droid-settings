@@ -352,7 +352,8 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
             public void onFailure(String message) {
                 Log.d(TAG, "onSubmit::onFailure: " + message);
                 reqInProgress = false;
-                if (getActivity() == null || dialogBarcode.reqWasCanceled()) return;
+                if (getActivity() == null) //|| dialogBarcode.reqWasCanceled())
+                    return;
 
                 dialogBarcode.showError();
 

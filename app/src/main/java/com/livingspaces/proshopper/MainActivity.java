@@ -34,7 +34,7 @@ import com.livingspaces.proshopper.interfaces.IMainFragManager;
 import com.livingspaces.proshopper.interfaces.IRequestCallback;
 import com.livingspaces.proshopper.networking.GpsManager;
 import com.livingspaces.proshopper.networking.Network;
-import com.livingspaces.proshopper.networking.NetworkManager;
+//import com.livingspaces.proshopper.networking.NetworkManager;
 import com.livingspaces.proshopper.data.response.LoginResponse;
 import com.livingspaces.proshopper.utilities.Global;
 import com.livingspaces.proshopper.utilities.Layout;
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        NetworkManager.Init(this);
+        //NetworkManager.Init(this);
         Network.Init(this);
         Global.Init(this);
         Layout.Init(this);
@@ -146,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
             public void onFailure(String message) {
                 // Probably refresh token is expired. Ask user to login
                 Log.d(TAG, "updateToken::onRSPFail " + message);
+                Global.Prefs.clearToken();
                 callLogin();
             }
         });

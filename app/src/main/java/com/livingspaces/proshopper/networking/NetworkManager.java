@@ -33,9 +33,7 @@ import java.util.Map;
 
 import javax.microedition.khronos.opengles.GL;
 
-/**
- * Created by brandenwilson on 2015-02-09.
- */
+
 public class NetworkManager {
     private static final String TAG = NetworkManager.class.getSimpleName();
 
@@ -59,10 +57,11 @@ public class NetworkManager {
         _networkManager = new NetworkManager(context);
     }
 
-    /*public static void makeREQ(IREQCallback REQcb) {
+public static void makeREQ(IREQCallback REQcb) {
         if (_networkManager == null) return;
         _networkManager.sendRequest(REQcb);
-    }*/
+    }
+
 
     public static void makeLoginREQ(String name, String pass, IREQCallback REQcb) {
         if (_networkManager == null) return;
@@ -94,15 +93,17 @@ public class NetworkManager {
         _networkManager.sendCreateAccRequest(fname, lname, email, pass, confPass, REQcb);
     }
 
-    /*public static void addItemToCartREQ(IREQCallback REQcb) {
+public static void addItemToCartREQ(IREQCallback REQcb) {
         if (_networkManager == null) return;
         _networkManager.addToCartRequest(REQcb);
-    }*/
+    }
 
-    /*public static ImageLoader getIMGLoader() {
+
+public static ImageLoader getIMGLoader() {
         if (_networkManager == null) return null;
         return _networkManager.getImageLoader();
-    }*/
+    }
+
 
     protected RequestQueue getRequestQueue() {
         if (_requestQueue == null) _requestQueue = Volley.newRequestQueue(_context);
@@ -160,7 +161,7 @@ public class NetworkManager {
                 return params;
             }
 
-            /*@Override
+@Override
             public Map<String, String> getHeaders() throws AuthFailureError {
                 Map<String, String>  headers = new HashMap<String, String>();
                 headers.put("grant_type", "password");
@@ -170,14 +171,15 @@ public class NetworkManager {
                 headers.put("Client_secret", "lsfsecret");
 
                 return headers;
-            }*/
+            }
+
         };
 
         Log.d(TAG, "REQ: " + stringRequest.toString() + " end");
         addToRequestQueue(stringRequest);
     }
 
-    /*protected void addToCartRequest (final IREQCallback REQcb) {
+protected void addToCartRequest (final IREQCallback REQcb) {
         if (REQcb == null) return;
 
         JsonRequest<String> request = new JsonRequest<String>(Request.Method.GET, REQcb.getURL(), "",
@@ -204,7 +206,8 @@ public class NetworkManager {
 
         Log.d(TAG, "REQ: " + request.getUrl());
         addToRequestQueue(request);
-    }*/
+    }
+
 
     protected void refreshTokenRequest (final IREQCallback REQcb) {
         if (REQcb == null) return;
@@ -338,12 +341,13 @@ public class NetworkManager {
                 }
             }
 
-           /* @Override
+ @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new Hashtable<>();
                 params.put("customerId", user);
                 return params;
-            }*/
+            }
+
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
@@ -388,7 +392,7 @@ public class NetworkManager {
         Log.d(TAG, "REQ: " + request.getUrl());
         addToRequestQueue(request);
     }
-    /*public static Map<String, String> getDefHeaders(boolean forAPI) {
+public static Map<String, String> getDefHeaders(boolean forAPI) {
         Map<String, String> headers = new Hashtable<>();
         if (forAPI) {
             Log.d(TAG, "getDefHeaders: X_AUTH");
@@ -413,7 +417,8 @@ public class NetworkManager {
             else headers.put(KeyValues.USERZIP.first, "");
         }
         return headers;
-    }*/
+    }
+
 
     public boolean isConnectedToNetwork() {
         return connected;

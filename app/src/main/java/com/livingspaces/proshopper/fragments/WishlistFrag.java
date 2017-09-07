@@ -108,7 +108,10 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
                 @Override
                 public void onSuccess(ProductResponse product) {
                     Log.d(TAG, "onSuccess: local");
+                    if (localWishlist == null) localWishlist = new ArrayList<>();
                     localWishlist.add(product.getProduct());
+                    wishlist = localWishlist;
+                    update();
                 }
 
                 @Override
@@ -118,8 +121,10 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
             });
 
             if (i+1 == arr.length) {
-                update();
-                if (localWishlist != null) this.wishlist = localWishlist;
+                if (localWishlist != null) {
+                    this.wishlist = localWishlist;
+                    update();
+                }
             }
         }
     }
@@ -177,74 +182,37 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
 
     private void update(){
         updateView();
-        if (wlAdapter != null) wlAdapter.updateAdapter(wishlist);
-    }
-
-
-            /*Log.d(TAG, "checkOnlineWishList: ");
-            Network.makeGetWishlistREQ(Global.Prefs.getUserId(), new IRequestCallback.Wishlist() {
-                @Override
-                public void onSuccess(List<Product> wishlist) {
-                    Log.d(TAG, "onSuccess: online");
-                    onlineWishlist = wishlist;
-                    checkLocalWishList();
-                }
-
-                @Override
-                public void onFailure(String message) {
-                    Log.d(TAG, "onFailure: No online wishlist");
-                    checkLocalWishList();
-                }
-            });
-        }
-        else {
-            checkLocalWishList();
-        }*/
-
-
-    /*private void checkLocalWishList(){
-
-        if (rawWL.isEmpty()) syncWishLists();
-        else {
-
-            if (onlineWishlist != null && !onlineWishlist.isEmpty()){
-                // compare local and online wishlists
-                for (int i = 0; i < onlineWishlist.size(); i++){
-                    if (rawWL.contains(onlineWishlist.get(i).getSku())){
-                        Log.d(TAG, "checkLocalWishList: has Duplicates");
-                        onlineWishlist.remove(i);
-                        i--;
-                    }
-                    else {
-                        Log.d(TAG, "checkLocalWishList: has not duplicates");
-                    }
-                }
+        if (wlAdapter != null) {
+            if (wishlist != null && wishlist.size() > 0){
+                wlAdapter.updateAdapter(wishlist);
             }
-
-            Log.d(TAG, "onCreate: !rawWL.isEmpty()");
-
-            localWishlist = new ArrayList<>();
-            String[] arr = rawWL.split(",");
-            // load product info for local wishlist
-            for (String anArr : arr) {
-                Network.makeGetProductREQ(anArr, new IRequestCallback.Product() {
-                    @Override
-                    public void onSuccess(ProductResponse product) {
-                        Log.d(TAG, "onSuccess: local");
-                        localWishlist.add(product.getProduct());
-                        if (localWishlist.size() == arr.length) {
-                            syncWishLists();
+            else if (localWishlist != null && localWishlist.size() > 0){
+                wlAdapter.updateAdapter(localWishlist);
+            }
+            else if (onlineWishlist != null && onlineWishlist.size() > 0){
+                wlAdapter.updateAdapter(onlineWishlist);
+            }
+            else if (!rawWL.isEmpty()){
+                String[] arr = rawWL.split(",");
+                for (int i = 0; i < arr.length; i++){
+                    Network.makeGetProductREQ(arr[i], new IRequestCallback.Product() {
+                        @Override
+                        public void onSuccess(ProductResponse product) {
+                            Log.d(TAG, "GetProduct::onSuccess: ");
+                            wishlist.add(product.getProduct());
+                            updateView();
+                            wlAdapter.updateAdapter(wishlist);
                         }
-                    }
 
-                    @Override
-                    public void onFailure(String message) {
-                        Log.d("FAIL", "FAIL");
-                    }
-                });
+                        @Override
+                        public void onFailure(String message) {
+                            Log.d(TAG, "GetProduct::onFailure: ");
+                        }
+                    });
+                }
             }
         }
-    }*/
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -340,61 +308,6 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
 
         return rootView;
     }
-
-
-   /* private void syncWishLists(){
-
-        if (localWishlist != null && onlineWishlist != null){
-            Set<Product> newWishlistSet = new HashSet<>(localWishlist);
-            newWishlistSet.addAll(onlineWishlist);
-
-            wishlist = new ArrayList<>(newWishlistSet);
-            wlAdapter.updateAdapter(wishlist);
-            Global.Prefs.clearWishList();
-            *//*for (int i = 0; i < wishlist.size(); i++){
-                Global.Prefs.editWishItem(wishlist.get(i).getSku(), true);
-            }*//*
-        }
-        else if (localWishlist == null){
-            if (onlineWishlist == null){
-                wishlist = new ArrayList<>();
-            }
-            else {
-                wishlist = onlineWishlist;
-            }
-        }
-        else {
-            wishlist = localWishlist;
-        }
-        if (!wishlist.isEmpty()) {
-            updateOnlineWishlist();
-            Global.Prefs.clearWishList();
-            for (int i = 0; i < wishlist.size(); i++){
-                Global.Prefs.editWishItem(wishlist.get(i).getSku(), true);
-            }
-            updateView();
-            if (wlAdapter != null) wlAdapter.updateAdapter(wishlist);
-        }
-
-    }*/
-
-    /*private void updateOnlineWishlist(){
-        if (!Global.Prefs.hasToken()) return;
-
-        for (int i = 0; i < wishlist.size(); i++){
-            Network.makeAddToWishREQ(wishlist.get(i).getSku(), new IRequestCallback.Message() {
-                @Override
-                public void onSuccess(MessageResponse response) {
-                    Log.d(TAG, "updateOnlineWishlist::onSuccess: " + response.getMessage());
-                }
-
-                @Override
-                public void onFailure(String message) {
-                    Log.d(TAG, "updateOnlineWishlist::onFailure: " + message);
-                }
-            });
-        }
-    }*/
 
     @Override
     public void onResurface() {
@@ -524,6 +437,31 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
         if(getActivity()!= null) {
             ((MainActivity) getActivity()).refreshActionBar();
         }
+    }
+
+    @Override
+    public void deleteItem(String itemId) {
+        Log.d(TAG, "deleteItem: " + itemId);
+
+        /*DELETE ITEM HERE*/
+
+        Network.makeDeleteItemWishlistREQ(itemId, new IRequestCallback.Message() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+                Log.d(TAG, "onSuccess: ");
+                updateView();
+            }
+
+            @Override
+            public void onFailure(String message) {
+                Log.d(TAG, "onFailure: ");
+            }
+        });
+
+        RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+        lp.setMargins(0, 0, 0, 0);
+        rv_wishlist.setLayoutParams(lp);
+
     }
 
     @Override

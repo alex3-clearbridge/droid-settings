@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.volley.Network;
 import com.android.volley.toolbox.NetworkImageView;
 import com.livingspaces.proshopper.R;
 //import com.livingspaces.proshopper.data.Item;
@@ -100,7 +101,10 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.WishHo
         inEditMode = false;
         WLCallback.onEditStateChanged(inEditMode);
 
-        for (Product item : itemsToDelete) Global.Prefs.editWishItem(item.getSku(), false);
+        for (Product item : itemsToDelete) {
+            WLCallback.deleteItem(item.getSku());
+            Global.Prefs.editWishItem(item.getSku(), false);
+        }
         items.removeAll(itemsToDelete);
         itemsToDelete.clear();
         WLCallback.updateView();
@@ -200,6 +204,7 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.WishHo
                 if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
                     return;
                 }
+                Log.d("Wish Adapter ::onDelete", "");
                 mLastClickTime = SystemClock.elapsedRealtime();
                 items.remove(index);
                 Global.Prefs.editWishItem(item.getSku(), false);

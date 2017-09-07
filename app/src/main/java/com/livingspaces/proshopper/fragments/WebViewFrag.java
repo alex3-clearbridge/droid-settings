@@ -31,7 +31,7 @@ import com.google.android.gms.analytics.HitBuilders;
 public class WebViewFrag extends BaseStackFrag {
     private static final String TAG = WebViewFrag.class.getSimpleName();
 
-    private Drawable d_cart;
+    private Drawable d_home;
     private String title, url;
 
     private Product item;
@@ -75,7 +75,7 @@ public class WebViewFrag extends BaseStackFrag {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         Log.d(TAG, "onCreateView: ");
-        d_cart = ContextCompat.getDrawable(getContext(), R.drawable.ls_h_btn_cart);
+        d_home = ContextCompat.getDrawable(getContext(), R.drawable.ls_s_btn_home);
 
         rootView = (WebView) inflater.inflate(R.layout.fragment_webview, container, false);
 
@@ -94,38 +94,38 @@ public class WebViewFrag extends BaseStackFrag {
             Log.d(TAG, "onCreateView: load url with true");
             rootView.loadUrl(url, Network.getDefHeaders(false));
         }
-
         return rootView;
     }
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         rootView.setWebViewClient(new WebViewClient(){
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url1) {
-                Log.d(TAG, "shouldOverrideUrlLoading: ");
+                Log.e(TAG, "shouldOverrideUrlLoading: " + url1);
 
-
-
-                view.loadUrl(url1, Network.getDefHeaders(false));
-                /*if (url1.equals("http://dev.livingspaces.com/VerifyZip.aspx?productId=")){
-
+                if (url1.equals("http://dev.livingspaces.com/VerifyZip.aspx?productId=")){
+                    //view.loadUrl("http://dev.livingspaces.com/Test/TestBrad.aspx", Network.getDefHeaders(false));
+                    //url1 = "http://dev.livingspaces.com/Views/Mobile/VerifyZip.aspx?productId=" + item.getSku();
+                    Log.d(TAG, "shouldOverrideUrlLoading: GOT IT");
                     if (!Global.Prefs.hasToken()){
-                        Log.d(TAG, "onClick: has no Token");
                         Global.FragManager.stackFrag(LoginFrag.newInstance());
-                        Toast.makeText(getContext(), "You need to login first", Toast.LENGTH_SHORT).show();
-                        return false;
+                        Toast.makeText(getContext(), "You have to login first", Toast.LENGTH_SHORT).show();
                     }
                     else if (!Global.Prefs.hasStore()){
-                        Log.d(TAG, "onClick: has no store");
                         Global.FragManager.stackFrag(AccountFrag.newInstance());
-                        Toast.makeText(getContext(), "You need to choose store first", Toast.LENGTH_SHORT).show();
-                        return false;
+                        Toast.makeText(getContext(), "You have to choose store first", Toast.LENGTH_SHORT).show();
                     }
-                    return true;
-                }*/
+                    else {
+                        view.loadUrl(url1, Network.getDefHeaders(false));
+                        Log.d(TAG, "shouldOverrideUrlLoading: " + url1);
+                        return super.shouldOverrideUrlLoading(view, url1);
+                    }
+                }
 
-                Log.e(TAG, "shouldOverrideUrlLoading: " + url1);
+                //view.loadUrl(url1, Network.getDefHeaders(false));
+
                 return super.shouldOverrideUrlLoading(view, url1);
             }
         });
@@ -136,33 +136,10 @@ public class WebViewFrag extends BaseStackFrag {
         if (item == null) return false;
 
         topRight.setRotation(0);
-        topRight.setImageDrawable(d_cart);
+        topRight.setImageDrawable(d_home);
         topRight.setOnClickListener(v -> {
 
-            if (!Global.Prefs.hasToken()){
-                Log.d(TAG, "onClick: has no Token");
-                Global.FragManager.stackFrag(LoginFrag.newInstance());
-                Toast.makeText(getContext(), "You need to login first", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            else if (!Global.Prefs.hasStore()){
-                Log.d(TAG, "onClick: has no store");
-                Global.FragManager.stackFrag(AccountFrag.newInstance());
-                Toast.makeText(getContext(), "You need to choose store first", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            else {
-                Global.FragManager.popToHome();
-                Global.FragManager.stackFrag(WebViewFrag.newInstance("Cart", Services.URL.Cart.get()));
-            /* Google Analytics -- home_button_click */
-                Utility.gaTracker.send(new HitBuilders.EventBuilder()
-                        .setCategory("ui_action")
-                        .setAction("cart_button_click")
-                        .setLabel("View Cart")
-                        .build()
-                );
-                return;
-            }
+            Global.FragManager.popToHome();
 
         });
         return true;

@@ -34,8 +34,12 @@ public class ActionBar extends RelativeLayout {
 
     private Drawable d_main, d_back, d_cart, d_web, d_close;
 
-    private ImageView iv_topLeft, iv_topLeftEx, iv_topRight, iv_topRightEx;
-    private TextView tv_topRight;
+    private ImageView iv_topLeft;
+    private ImageView iv_topLeftEx;
+    private ImageView iv_topRight;
+    private ImageView iv_topRightEx;
+    private View v_topRightUp;
+    private TextView tv_topRight, tv_topRightUp;
     private LSTextView tv_topCenter;
     private String fragTitle;
 
@@ -73,6 +77,9 @@ public class ActionBar extends RelativeLayout {
         iv_topRightEx = (ImageView) findViewById(R.id.iv_topRightExtra);
         tv_topRight = (TextView) findViewById(R.id.tv_topRight);
         tv_topCenter = (LSTextView) findViewById(R.id.tv_topCenter);
+        v_topRightUp = findViewById(R.id.view_topRightUp);
+        tv_topRightUp = (TextView) v_topRightUp.findViewById(R.id.tv_topRightUp);
+        v_topRightUp.setVisibility(GONE);
 
         // Setting font typeface here because the Layout.Font isn't ready yet
         Typeface fontBold = Typeface.createFromAsset(getContext().getAssets(), "SourceSansPro-Bold.otf");
@@ -114,12 +121,16 @@ public class ActionBar extends RelativeLayout {
             animate(iv_topRight, frag.setTopRight(iv_topRight));
             animate(iv_topRightEx, frag.setTopRightEx(iv_topRightEx));
 
+            animate(v_topRightUp, frag.setTopRightUp(v_topRightUp));
+
         } else {
             Log.d(TAG, "frag == null");
             animate(tv_topCenter, false);
             animate(tv_topRight, false);
             animate(iv_topRight, true);
             animate(iv_topRightEx,true);
+
+            animate(v_topRightUp, true);
             //setViewWebsite();
         }
 
@@ -210,12 +221,7 @@ public class ActionBar extends RelativeLayout {
 
         iv_topLeft.setClickable(false);
         iv_topLeft.setImageDrawable(d_main);
-        iv_topLeft.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Global.FragManager.onBackPressed();
-            }
-        });
+        iv_topLeft.setOnClickListener(v -> Global.FragManager.onBackPressed());
 
         setCartAndWeb();
     }
@@ -223,6 +229,7 @@ public class ActionBar extends RelativeLayout {
     private void setCartAndWeb(){
 
         Log.d(TAG, "setCartAndWeb: ");
+
         iv_topRight.setClickable(false);
         iv_topRight.setRotation(0);
         iv_topRight.animate().alpha(0).setDuration(250).withEndAction(() -> {
@@ -230,47 +237,59 @@ public class ActionBar extends RelativeLayout {
             iv_topRight.animate().alpha(1).setDuration(250).start();
         }).start();
 
-        iv_topRight.setOnClickListener(view -> {
+        v_topRightUp.animate().alpha(0).setDuration(450).withEndAction(() -> {
+            v_topRightUp.animate().alpha(1).setDuration(450).start();
+        }).start();
 
-            if (!Global.Prefs.hasToken()){
-                Log.d(TAG, "onClick: has no Token");
-                Global.FragManager.stackFrag(LoginFrag.newInstance());
-                Toast.makeText(getContext(), "You need to login first", Toast.LENGTH_SHORT).show();
-                return;
-            }
-            else if (!Global.Prefs.hasStore()){
-                Log.d(TAG, "onClick: has no store");
-                Global.FragManager.stackFrag(AccountFrag.newInstance());
-                Toast.makeText(getContext(), "You need to choose store first", Toast.LENGTH_SHORT).show();
-                return;
-            }
+        tv_topRightUp.setText("0");
 
-            Global.FragManager.stackFrag(WebViewFrag.newInstance("Cart", Services.URL.Cart.get()));
+        iv_topRight.setOnClickListener(onCartClicked);
+        v_topRightUp.setOnClickListener(onCartClicked);
 
-            /* Google Analytics -- home_button_click */
-            Utility.gaTracker.send(new HitBuilders.EventBuilder()
-                    .setCategory("ui_action")
-                    .setAction("cart_button_click")
-                    .setLabel("View Cart")
-                    .build()
-            );
-        });
         iv_topRightEx.setClickable(false);
         iv_topRightEx.setRotation(0);
         iv_topRightEx.animate().alpha(0).setDuration(250).withEndAction(() -> {
             iv_topRightEx.setImageDrawable(d_web);
             iv_topRightEx.animate().alpha(1).setDuration(250).start();
         }).start();
-        iv_topRightEx.setOnClickListener(view -> {
-            Global.FragManager.stackFrag(WebViewFrag.newInstance("LivingSpaces", Services.URL.Website.get()));
+
+        iv_topRightEx.setOnClickListener(onWebHomeClicked);
+    }
+
+    private View.OnClickListener onCartClicked = view -> {
+        if (!Global.Prefs.hasToken()){
+            Log.d(TAG, "onClick: has no Token");
+            Global.FragManager.stackFrag(LoginFrag.newInstance());
+            Toast.makeText(getContext(), "You need to login first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        else if (!Global.Prefs.hasStore()){
+            Log.d(TAG, "onClick: has no store");
+            Global.FragManager.stackFrag(AccountFrag.newInstance());
+            Toast.makeText(getContext(), "You need to choose store first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Global.FragManager.stackFrag(WebViewFrag.newInstance("Cart", Services.URL.Cart.get()));
 
             /* Google Analytics -- home_button_click */
-            Utility.gaTracker.send(new HitBuilders.EventBuilder()
-                    .setCategory("ui_action")
-                    .setAction("home_button_click")
-                    .setLabel("View Website")
-                    .build()
-            );
-        });
-    }
+        Utility.gaTracker.send(new HitBuilders.EventBuilder()
+                .setCategory("ui_action")
+                .setAction("cart_button_click")
+                .setLabel("View Cart")
+                .build()
+        );
+    };
+
+    private View.OnClickListener onWebHomeClicked = view -> {
+        Global.FragManager.stackFrag(WebViewFrag.newInstance("LivingSpaces", Services.URL.Website.get()));
+
+            /* Google Analytics -- home_button_click */
+        Utility.gaTracker.send(new HitBuilders.EventBuilder()
+                .setCategory("ui_action")
+                .setAction("home_button_click")
+                .setLabel("View Website")
+                .build()
+        );
+    };
 }

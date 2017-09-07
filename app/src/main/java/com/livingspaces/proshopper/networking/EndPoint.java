@@ -55,14 +55,14 @@ public interface EndPoint {
 
     @GET("api/Product/getWishlist")
     Call<WishlistResponse> getWishlist(
-            @Query("customerId") String email,
+            @Query("username") String email,
             @Header("X-Auth-Token") String authToken,
             @Header("Authorization") String token
     );
 
-    @GET("api/Product/addItemToWishlist")
+    @POST("api/Product/addItemToWishlist")
     Call<MessageResponse> addToWishlist(
-            @Query("customerId") String customerId,
+            @Query("username") String customerId,
             @Query("itemId") String itemId,
             @Header("X-Auth-Token") String authToken,
             @Header("Authorization") String token
@@ -74,6 +74,14 @@ public interface EndPoint {
             @Header("X-Auth-Token") String authToken
     );
 
+    @POST("api/Product/removeItemFromWishlist")
+    Call<MessageResponse> deleteItem(
+            @Header("X-Auth-Token") String authToken,
+            @Header("Authorization") String token,
+            @Query("username") String customerId,
+            @Query("itemId") String itemId
+    );
+
     @GET("api/Store/getAllStores")
     Call<List<Store>> getStorelist(
             @Header("X-Auth-Token") String authToken
@@ -81,6 +89,7 @@ public interface EndPoint {
 
     @GET("api/Store/getLocateByZip")
     Call<Store> getStoreByZip(
-            @Query("zipcode") String zip
+            @Query("zipcode") String zip,
+            @Header("X-Auth-Token") String authToken
     );
 }

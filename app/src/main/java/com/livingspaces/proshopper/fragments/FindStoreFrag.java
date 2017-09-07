@@ -53,7 +53,7 @@ public class FindStoreFrag extends BaseStackFrag implements IEditTextImeBackList
     private void makeStoreRequests() {
         Log.d(TAG, "makeStoreRequests: ");
 
-        if ((zipCode != null && !zipCode.equals(""))){
+        /*if ((zipCode != null && !zipCode.equals(""))){
             Network.makeGetStoreByZip(zipCode, new IRequestCallback.StoreByZip() {
                 @Override
                 public void onSuccess(Store store) {
@@ -67,14 +67,21 @@ public class FindStoreFrag extends BaseStackFrag implements IEditTextImeBackList
                 }
             });
         }
-        else {
+        else {*/
             Network.makeGetStoresREQ(new IRequestCallback.Stores() {
                 @Override
                 public void onSuccess(List<Store> storeList) {
                     Log.e(TAG, "onRSPSuccess: " + doubleFrag.isFrontUp());
 
                     allStores = storeList;
-                    if (doubleFrag.backFrag != null) doubleFrag.getBackFrag().setStores(allStores);
+                    if (doubleFrag.backFrag != null) {
+                        Log.d(TAG, "onSuccess: doubleFrag.backFrag != null");
+                        doubleFrag.getBackFrag().setStores(allStores);
+                    }
+                    if (doubleFrag.frontFrag != null) {
+                        Log.d(TAG, "onSuccess: doubleFrag.frontFrag != null");
+                        doubleFrag.getFrontFrag().setStore(allStores);
+                    }
                 }
 
                 @Override
@@ -82,7 +89,7 @@ public class FindStoreFrag extends BaseStackFrag implements IEditTextImeBackList
 
                 }
             });
-        }
+        //}
 
         /*NetworkManager.makeREQ(new IREQCallback() {
             @Override

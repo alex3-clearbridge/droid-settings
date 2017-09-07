@@ -1,9 +1,9 @@
 <component name="libraryTable">
   <library name="zbar-1.8.3">
     <CLASSES>
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/zbar-1.8.3.aar/37bfbc68aa8eda510d3337d182e59d73/jars/classes.jar!/" />
-      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/zbar-1.8.3.aar/37bfbc68aa8eda510d3337d182e59d73/res" />
-      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/zbar-1.8.3.aar/37bfbc68aa8eda510d3337d182e59d73/jars/libs/zbar.jar!/" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/zbar-1.8.3.aar/d9865aa8647c7852a5f14fef86ded6e5/jars/libs/zbar.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/zbar-1.8.3.aar/d9865aa8647c7852a5f14fef86ded6e5/res" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-1/files-1.1/zbar-1.8.3.aar/d9865aa8647c7852a5f14fef86ded6e5/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC />
     <SOURCES />

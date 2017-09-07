@@ -292,6 +292,7 @@ public class MapViewFrag extends BaseStackFrag {
     }
 
     private void setStoreMarkers() {
+        Log.d(TAG, "setStoreMarkers: ");
         if (mGoogleMap == null) return;  // Must have Google Maps
 
         if (all_stores != null && all_stores.size() > 0) {
@@ -429,13 +430,13 @@ public class MapViewFrag extends BaseStackFrag {
         return "Find A Store";
     }
 
-    public void setStore(Store store) {
+    public void setStore(List<Store> store) {
+        Log.d(TAG, "setStore: ");
         if (store != null) {
-            myStore.Init(store);
+            myStore.Init(store.get(0));
 
             all_stores.clear();
-            //all_stores = store;
-
+            all_stores = store;
             if (isFirstLaunch) {
                 centerOnCurrentLocation();
             } else {

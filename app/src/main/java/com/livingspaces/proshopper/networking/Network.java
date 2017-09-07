@@ -92,6 +92,11 @@ public class Network {
         mNetwork.sendAddToWishREQ(itemId, cb);
     }
 
+    public static void makeDeleteItemWishlistREQ(String itemId, IRequestCallback.Message cb){
+        if (mNetwork == null) return;
+        mNetwork.sendDeleteItemWishlistREQ(itemId, cb);
+    }
+
     public static void makeGetStoresREQ(IRequestCallback.Stores cb){
         if (mNetwork == null) return;
         mNetwork.sendGetStoresREQ(cb);
@@ -124,7 +129,8 @@ public class Network {
 
     private void sendRefreshTokenREQ(IRequestCallback.Login cb){
         Log.d(TAG, "sendRefreshTokenREQ: ");
-        RefreshTokenRequest body = new RefreshTokenRequest(Global.Prefs.getRefreshToken());
+        String refToken = Global.Prefs.getRefreshToken();
+        RefreshTokenRequest body = new RefreshTokenRequest(refToken);
         Call<LoginResponse> refresh = mApiService.refreshToken(body.refreshTokenMap());
         refresh.enqueue(new Callback<LoginResponse>() {
             @Override
@@ -186,8 +192,8 @@ public class Network {
 
     private void sendGetWishlistREQ(String email, IRequestCallback.Wishlist cb){
         Log.d(TAG, "sendGetWishlistREQ: ");
-        String token = "Bearer + ";
-        Call<WishlistResponse> getWishlist = mApiService.getWishlist(email, KeyValues.X_AUTH.second, KeyValues.TOKEN.second);
+        String token = Global.Prefs.getAccessToken();
+        Call<WishlistResponse> getWishlist = mApiService.getWishlist(email, KeyValues.X_AUTH.second, token);
         getWishlist.enqueue(new Callback<WishlistResponse>() {
 
             @Override
@@ -216,7 +222,9 @@ public class Network {
 
     private void sendAddToWishREQ(String itemId, IRequestCallback.Message cb){
         Log.d(TAG, "sendAddToWishREQ: ");
-        Call<MessageResponse> addWish = mApiService.addToWishlist(KeyValues.USERNAME.second, itemId, KeyValues.X_AUTH.second, KeyValues.TOKEN.second);
+        String username = Global.Prefs.getUserId();
+        String token = Global.Prefs.getAccessToken();
+        Call<MessageResponse> addWish = mApiService.addToWishlist(username, itemId, KeyValues.X_AUTH.second, token);
         addWish.enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
@@ -252,6 +260,24 @@ public class Network {
         });
     }
 
+    private void sendDeleteItemWishlistREQ(String itemId, IRequestCallback.Message cb){
+        Log.d(TAG, "sendDeleteItemWishlistREQ: ");
+        String token = Global.Prefs.getAccessToken();
+        String user = Global.Prefs.getUserId();
+        Call<MessageResponse> deleteItem = mApiService.deleteItem(KeyValues.X_AUTH.second, token, user, itemId);
+        deleteItem.enqueue(new Callback<MessageResponse>() {
+            @Override
+            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                Log.d(TAG, "sendDeleteItemWishlistREQ::onResponse: ");
+            }
+
+            @Override
+            public void onFailure(Call<MessageResponse> call, Throwable t) {
+                Log.d(TAG, "sendDeleteItemWishlistREQonFailure: ");
+            }
+        });
+    }
+
     private void sendGetStoresREQ(IRequestCallback.Stores cb){
         Log.d(TAG, "sendGetStoresREQ: ");
         Call<List<Store>> stores = mApiService.getStorelist("3CCE9BEB-AC66-4F12-BF37-B3FA66E08325");
@@ -273,7 +299,7 @@ public class Network {
 
     private void sendGetStoreByZipREQ(String zip, IRequestCallback.StoreByZip cb){
         Log.d(TAG, "sendGetStoreByZipREQ: ");
-        Call<Store> store = mApiService.getStoreByZip(zip);
+        Call<Store> store = mApiService.getStoreByZip(zip, KeyValues.X_AUTH.second);
         store.enqueue(new Callback<Store>() {
             @Override
             public void onResponse(Call<Store> call, Response<Store> response) {
@@ -316,8 +342,8 @@ public class Network {
         public static Pair<String, String> MOB_APP = new Pair<>("mobileApp", "android");
         public static Pair<String, String> TOKEN = new Pair<>("Authorization", Global.Prefs.getAccessToken());
         public static Pair<String, String> USERNAME = new Pair<>("username", Global.Prefs.getUserId());
-        public static Pair<String, String> STORE_ID = new Pair<>("StoreId", Global.Prefs.getStore().getId());
-        public static Pair<String, String> USERZIP = new Pair<>("Zipcode", "90803");//Global.Prefs.getUserZip());
+        public static Pair<String, String> STORE_ID = new Pair<>("storeId", Global.Prefs.getStore().getId());
+        public static Pair<String, String> USERZIP = new Pair<>("zipCode", "90803");//Global.Prefs.getUserZip());
 
     }
 }

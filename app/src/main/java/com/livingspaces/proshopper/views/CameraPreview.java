@@ -97,9 +97,11 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         @Override
         protected Void doInBackground(SurfaceHolder... params) {
             final SurfaceHolder finalHolder = params[0];
+            Log.d(TAG, "doInBackground: StartCamTask");
 
             try {
-                if (mCamera == null) mCamera = Global.getCameraInstance();
+                //if (mCamera == null)
+                mCamera = Global.getCameraInstance();
 
                 mCamera.setDisplayOrientation(90);
                 mCamera.setPreviewDisplay(finalHolder);
@@ -110,20 +112,25 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                     public void onPreviewFrame(byte[] data, Camera camera) {
                         if (paused) return;
 
-                        Camera.Parameters parameters = camera.getParameters();
-                        Camera.Size size = parameters.getPreviewSize();
+                        try {
+                            Camera.Parameters parameters = camera.getParameters();
+                            Camera.Size size = parameters.getPreviewSize();
 
-                        Image barcode = new Image(size.width, size.height, "Y800");
-                        barcode.setData(data);
+                            Image barcode = new Image(size.width, size.height, "Y800");
+                            barcode.setData(data);
 
-                        result = imageScanner.scanImage(barcode);
-                        if (result != 0) {
-                            pause();
+                            result = imageScanner.scanImage(barcode);
+                            if (result != 0) {
+                                pause();
 
-                            SymbolSet syms = imageScanner.getResults();
-                            final String barcodeData = syms.iterator().next().getData();
-                            if (callback != null) callback.onBarcodeFound(barcodeData);
-                        }
+                                SymbolSet syms = imageScanner.getResults();
+                                final String barcodeData = syms.iterator().next().getData();
+                                if (callback != null) callback.onBarcodeFound(barcodeData);
+                            }
+                        } catch (RuntimeException t){
+                            Log.e(TAG, "onPreviewFrame: " + t.getMessage());
+                            }
+
                     }
                 });
 
@@ -144,6 +151,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
         @Override
         protected Void doInBackground(Void... params) {
+            Log.d(TAG, "doInBackground: ReleaseCamTask");
             if (mCamera != null) {
                 mCamera.stopPreview();
                 mCamera.setPreviewCallback(null);

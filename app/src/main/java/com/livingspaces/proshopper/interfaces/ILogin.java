@@ -1,3 +1,4 @@
+/*
 package com.livingspaces.proshopper.interfaces;
 
 import android.support.v4.app.FragmentManager;
@@ -5,9 +6,11 @@ import android.support.v4.app.FragmentManager;
 import com.livingspaces.proshopper.fragments.BaseLoginFrag;
 import com.livingspaces.proshopper.fragments.BaseStackFrag;
 
+*/
 /**
  * Created by alexeyredchets on 2017-08-14.
- */
+ *//*
+
 
 public interface ILogin {
     FragmentManager getFragMan();
@@ -23,3 +26,4 @@ public interface ILogin {
 
     boolean popFrag(boolean quickPop);
 }
+*/

@@ -1,3 +1,4 @@
+/*
 package com.livingspaces.proshopper.fragments;
 
 import android.os.Bundle;
@@ -6,9 +7,11 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+*/
 /**
  * Created by alexeyredchets on 2017-08-14.
- */
+ *//*
+
 
 public abstract class BaseLoginFrag extends Fragment {
 
@@ -27,3 +30,4 @@ public abstract class BaseLoginFrag extends Fragment {
 
     public boolean handleBackPress() { return false; }
 }
+*/

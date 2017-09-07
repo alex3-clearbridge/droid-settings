@@ -58,6 +58,28 @@
         android:scaleType="fitCenter"
         android:visibility="visible" />
 
+    <RelativeLayout
+        android:id="@+id/view_topRightUp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/cart_round"
+        android:visibility="visible"
+        android:clickable="true">
+
+        <TextView
+            android:id="@+id/tv_topRightUp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#fff"
+            android:layout_centerInParent="true"
+            android:text="0"
+            android:textSize="12sp"
+            android:clickable="false" />
+    </RelativeLayout>
 
     <ImageView
         android:id="@+id/iv_topRightExtra"

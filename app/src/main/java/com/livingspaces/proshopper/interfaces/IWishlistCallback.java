@@ -13,4 +13,5 @@ public interface IWishlistCallback {
     void updateView();
     void onEditStateChanged(boolean edit);
     void closeItem();
+    void deleteItem(String itemId);
 }

@@ -10,13 +10,13 @@ public class Services {
 
     public enum URL {
         //Product("http://www.livingspaces.com/ProductView.aspx?productId="), // "http://dev.livingspaces.com/ProductView.aspx?productId="
-        Product("http://dev.livingspaces.com/ProductView.aspx?productId="),
+        Product("http://dev.livingspaces.com/Views/Mobile/productview.aspx?productId="),
         //SignIn("https://www.livingspaces.com/Secure/UserPortal/UserSignIn.aspx"),//"https://dev.livingspaces.com/Secure/UserPortal/UserSignIn.aspx"
         SignIn("https://dev.livingspaces.com/Secure/UserPortal/UserSignIn.aspx"),
         Subscribe("http://www.livingspaces.com/landingpage.aspx?fileName=app-email-sign-up"),
         Website("http://dev.livingspaces.com"),
         // ShareProduct("http://www.livingspaces.com/landingpage.aspx?fileName=wish-list&")
-        Cart("http://dev.livingspaces.com/viewcart.aspx"),
+        Cart("http://dev.livingspaces.com/Views/Mobile/ViewCart.aspx"),
         PrivacyPolicy("http://dev.livingspaces.com/privacy-policy-app"),
         StorePolicy("http://dev.livingspaces.com/store-policies-app"),
         Terms("http://dev.livingspaces.com/terms-of-use-app"),

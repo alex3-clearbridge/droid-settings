@@ -20,7 +20,7 @@ import com.livingspaces.proshopper.R;
 import com.livingspaces.proshopper.data.DataModel;
 import com.livingspaces.proshopper.data.Store;
 import com.livingspaces.proshopper.interfaces.IREQCallback;
-import com.livingspaces.proshopper.networking.NetworkManager;
+//import com.livingspaces.proshopper.networking.NetworkManager;
 import com.livingspaces.proshopper.utilities.Global;
 import com.livingspaces.proshopper.views.LSTextView;
 import com.livingspaces.proshopper.views.StoreDialog;
@@ -119,17 +119,18 @@ public class AccountFrag extends BaseStackFrag implements StoreDialog.ICallback{
     @Override
     public boolean setTopRight(TextView topRight) {
 
-        if (!Global.Prefs.hasToken()) return false;
-
-        topRight.setText("Logout");
-        topRight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        if (Global.Prefs.hasToken()){
+            topRight.setText("Logout");
+            topRight.setOnClickListener(view -> {
                 Global.Prefs.clearToken();
                 //Global.Prefs.clearWishList();
                 Global.FragManager.popToHome();
-            }
-        });
+            });
+        }
+        else {
+            topRight.setText("Log In");
+            topRight.setOnClickListener(view -> Global.FragManager.stackFrag(LoginFrag.newInstance()));
+        }
 
         return true;
 
