@@ -5,6 +5,7 @@ import android.util.Log;
 import android.util.Pair;
 
 import com.livingspaces.proshopper.data.Store;
+import com.livingspaces.proshopper.data.response.NetLocation;
 import com.livingspaces.proshopper.interfaces.IRequestCallback;
 import com.livingspaces.proshopper.data.request.LoginRequest;
 import com.livingspaces.proshopper.data.request.RefreshTokenRequest;
@@ -77,9 +78,9 @@ public class Network {
         mNetwork.sendResetPassREQ(email, cb);
     }
 
-    public static void makeGetWishlistREQ(String email, IRequestCallback.Wishlist cb){
+    public static void makeGetWishlistREQ(IRequestCallback.Wishlist cb){
         if (mNetwork == null) return;
-        mNetwork.sendGetWishlistREQ(email, cb);
+        mNetwork.sendGetWishlistREQ(cb);
     }
 
     public static void makeGetProductREQ(String id, IRequestCallback.Product cb){
@@ -102,9 +103,14 @@ public class Network {
         mNetwork.sendGetStoresREQ(cb);
     }
 
-    public static void makeGetStoreByZip(String zip, IRequestCallback.StoreByZip cb){
+    public static void makeGetStoreByZip(String zip, IRequestCallback.Stores cb){
         if (mNetwork == null) return;
         mNetwork.sendGetStoreByZipREQ(zip, cb);
+    }
+
+    public static void makeNetLocation(IRequestCallback.NetLocation cb){
+        if (mNetwork == null) return;
+        mNetwork.sendGetNetLocationREQ(cb);
     }
 
     private void sendLoginREQ(String user, String pass, IRequestCallback.Login cb){
@@ -190,10 +196,11 @@ public class Network {
         });
     }
 
-    private void sendGetWishlistREQ(String email, IRequestCallback.Wishlist cb){
+    private void sendGetWishlistREQ(IRequestCallback.Wishlist cb){
         Log.d(TAG, "sendGetWishlistREQ: ");
+        String username = Global.Prefs.getUserId();
         String token = Global.Prefs.getAccessToken();
-        Call<WishlistResponse> getWishlist = mApiService.getWishlist(email, KeyValues.X_AUTH.second, token);
+        Call<WishlistResponse> getWishlist = mApiService.getWishlist(username, KeyValues.X_AUTH.second, token);
         getWishlist.enqueue(new Callback<WishlistResponse>() {
 
             @Override
@@ -262,9 +269,9 @@ public class Network {
 
     private void sendDeleteItemWishlistREQ(String itemId, IRequestCallback.Message cb){
         Log.d(TAG, "sendDeleteItemWishlistREQ: ");
+        String username = Global.Prefs.getUserId();
         String token = Global.Prefs.getAccessToken();
-        String user = Global.Prefs.getUserId();
-        Call<MessageResponse> deleteItem = mApiService.deleteItem(KeyValues.X_AUTH.second, token, user, itemId);
+        Call<MessageResponse> deleteItem = mApiService.deleteItem(KeyValues.X_AUTH.second, token, username, itemId);
         deleteItem.enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
@@ -297,20 +304,39 @@ public class Network {
         });
     }
 
-    private void sendGetStoreByZipREQ(String zip, IRequestCallback.StoreByZip cb){
+    private void sendGetStoreByZipREQ(String zip, IRequestCallback.Stores cb){
         Log.d(TAG, "sendGetStoreByZipREQ: ");
-        Call<Store> store = mApiService.getStoreByZip(zip, KeyValues.X_AUTH.second);
-        store.enqueue(new Callback<Store>() {
+        Call<List<Store>> stores = mApiService.getStoreByZip(zip, KeyValues.X_AUTH.second);
+        stores.enqueue(new Callback<List<Store>>() {
             @Override
-            public void onResponse(Call<Store> call, Response<Store> response) {
+            public void onResponse(Call<List<Store>> call, Response<List<Store>> response) {
                 Log.d(TAG, "sendGetStoreByZipREQ::onResponse: " + response.body());
                 if (response.code() == 200)cb.onSuccess(response.body());
                 else cb.onFailure(String.valueOf(response.code()));
             }
 
             @Override
-            public void onFailure(Call<Store> call, Throwable t) {
+            public void onFailure(Call<List<Store>> call, Throwable t) {
                 Log.d(TAG, "sendGetStoreByZipREQ::onFailure: " + t.getMessage());
+                cb.onFailure(t.getMessage());
+            }
+        });
+    }
+
+    private void sendGetNetLocationREQ(IRequestCallback.NetLocation cb){
+        Log.d(TAG, "sendGetNetLocationREQ: ");
+        Call<NetLocation> getLoc = mApiService.getLoc();
+        getLoc.enqueue(new Callback<NetLocation>() {
+            @Override
+            public void onResponse(Call<NetLocation> call, Response<NetLocation> response) {
+                Log.d(TAG, "sendGetNetLocationREQ::onResponse: " + response.body());
+                if (response.code() == 200)cb.onSuccess(response.body());
+                else cb.onFailure(String.valueOf(response.code()));
+            }
+
+            @Override
+            public void onFailure(Call<NetLocation> call, Throwable t) {
+                Log.d(TAG, "sendGetNetLocationREQ::onFailure: " + t.getMessage());
                 cb.onFailure(t.getMessage());
             }
         });
@@ -324,14 +350,26 @@ public class Network {
 
         headers.put(KeyValues.X_AUTH.first, KeyValues.X_AUTH.second);
         headers.put(KeyValues.MOB_APP.first, KeyValues.MOB_APP.second);
-        if (Global.Prefs.hasToken()) headers.put(KeyValues.TOKEN.first, KeyValues.TOKEN.second);
-        else headers.put(KeyValues.TOKEN.first, "");
-        if (Global.Prefs.hasToken()) headers.put(KeyValues.USERNAME.first, KeyValues.USERNAME.second);
-        else headers.put(KeyValues.USERNAME.first, "");
-        if (Global.Prefs.hasStore()) headers.put(KeyValues.STORE_ID.first, KeyValues.STORE_ID.second);
-        else headers.put(KeyValues.STORE_ID.first, "");
-        if (Global.Prefs.hasUserZip()) headers.put(KeyValues.USERZIP.first, KeyValues.USERZIP.second);
-        else headers.put(KeyValues.USERZIP.first, "");
+        if (Global.Prefs.hasToken()) {
+            String token = Global.Prefs.getAccessToken();
+            headers.put("Authorization", token);
+        }
+        else headers.put("Authorization", "");
+        if (Global.Prefs.hasToken()) {
+            String username = Global.Prefs.getUserId();
+            headers.put("username", username);
+        }
+        else headers.put("username", "");
+        if (Global.Prefs.hasStore()) {
+            String storeId = Global.Prefs.getStore().getId();
+            headers.put("storeId", storeId);
+        }
+        else headers.put("storeId", "");
+        if (Global.Prefs.hasUserZip()) {
+            String zip = Global.Prefs.getUserZip();
+            headers.put("zipCode", "90803");
+        }
+        else headers.put("zipCode", "");
 
         return headers;
     }
@@ -340,10 +378,5 @@ public class Network {
     public static class KeyValues {
         public static Pair<String, String> X_AUTH = new Pair<>("X-Auth-Token", "3CCE9BEB-AC66-4F12-BF37-B3FA66E08325");
         public static Pair<String, String> MOB_APP = new Pair<>("mobileApp", "android");
-        public static Pair<String, String> TOKEN = new Pair<>("Authorization", Global.Prefs.getAccessToken());
-        public static Pair<String, String> USERNAME = new Pair<>("username", Global.Prefs.getUserId());
-        public static Pair<String, String> STORE_ID = new Pair<>("storeId", Global.Prefs.getStore().getId());
-        public static Pair<String, String> USERZIP = new Pair<>("zipCode", "90803");//Global.Prefs.getUserZip());
-
     }
 }

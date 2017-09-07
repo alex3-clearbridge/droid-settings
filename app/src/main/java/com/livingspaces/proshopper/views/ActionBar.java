@@ -79,7 +79,6 @@ public class ActionBar extends RelativeLayout {
         tv_topCenter = (LSTextView) findViewById(R.id.tv_topCenter);
         v_topRightUp = findViewById(R.id.view_topRightUp);
         tv_topRightUp = (TextView) v_topRightUp.findViewById(R.id.tv_topRightUp);
-        v_topRightUp.setVisibility(GONE);
 
         // Setting font typeface here because the Layout.Font isn't ready yet
         Typeface fontBold = Typeface.createFromAsset(getContext().getAssets(), "SourceSansPro-Bold.otf");
@@ -237,8 +236,9 @@ public class ActionBar extends RelativeLayout {
             iv_topRight.animate().alpha(1).setDuration(250).start();
         }).start();
 
-        v_topRightUp.animate().alpha(0).setDuration(450).withEndAction(() -> {
-            v_topRightUp.animate().alpha(1).setDuration(450).start();
+        v_topRightUp.animate().alpha(0).setDuration(250).withEndAction(() -> {
+            v_topRightUp.setVisibility(VISIBLE);
+            v_topRightUp.animate().alpha(1).setDuration(250).start();
         }).start();
 
         tv_topRightUp.setText("0");

@@ -3,6 +3,7 @@ package com.livingspaces.proshopper.networking;
 import com.livingspaces.proshopper.data.Store;
 import com.livingspaces.proshopper.data.response.MessageResponse;
 import com.livingspaces.proshopper.data.response.LoginResponse;
+import com.livingspaces.proshopper.data.response.NetLocation;
 import com.livingspaces.proshopper.data.response.ProductResponse;
 import com.livingspaces.proshopper.data.response.WishlistResponse;
 
@@ -87,9 +88,12 @@ public interface EndPoint {
             @Header("X-Auth-Token") String authToken
     );
 
-    @GET("api/Store/getLocateByZip")
-    Call<Store> getStoreByZip(
+    @GET("api/Store/getAllStoresByZip")
+    Call<List<Store>> getStoreByZip(
             @Query("zipcode") String zip,
             @Header("X-Auth-Token") String authToken
     );
+
+    @GET("http://ip-api.com/json")
+    Call<NetLocation> getLoc();
 }

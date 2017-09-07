@@ -7,17 +7,27 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 
+import com.google.android.gms.analytics.HitBuilders;
 import com.livingspaces.proshopper.R;
 import com.livingspaces.proshopper.adapters.StoreDialogAdapter;
 import com.livingspaces.proshopper.data.Store;
+import com.livingspaces.proshopper.interfaces.IEditTextImeBackListener;
 import com.livingspaces.proshopper.interfaces.IRequestCallback;
 import com.livingspaces.proshopper.networking.Network;
+import com.livingspaces.proshopper.utilities.Utility;
 
 import java.util.List;
+
+import static android.content.Context.INPUT_METHOD_SERVICE;
 
 /**
  * Created by alexeyredchets on 2017-08-21.
@@ -28,8 +38,10 @@ public class StoreDialog extends DialogFragment implements StoreDialogAdapter.Cl
     private RecyclerView mRecyclerView;
     private StoreDialogAdapter mStoreDialogAdapter;
     private LSTextView tv_header;
+    private LSEditText et_zip;
     private View pd_loading;
     private ICallback callback;
+    private String zipCode;
 
     private boolean isLoading = false;
 
@@ -44,6 +56,33 @@ public class StoreDialog extends DialogFragment implements StoreDialogAdapter.Cl
         View view = inflater.inflate(R.layout.dialog_storelist, container, false);
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.rv_storelist);
+        et_zip = (LSEditText) view.findViewById(R.id.et_choose_zip);
+        et_zip.setText("");
+        et_zip.setOnClickListener(v -> et_zip.setCursorVisible(true));
+
+        et_zip.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                et_zip.setCursorVisible(false);
+                if (actionId == EditorInfo.IME_ACTION_DONE
+                        || actionId == EditorInfo.IME_NULL
+                        || (event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))) {
+
+                    zipCode = et_zip.getText().toString();
+                    makeStoreRequests(zipCode);
+
+                    /** Google Analytics -- search_by_zip */
+                    Utility.gaTracker.send(new HitBuilders.EventBuilder().
+                            setCategory("ui_action")
+                            .setAction("search_by_zip")
+                            .setLabel(zipCode)
+                            .build()
+                    );
+                }
+                return false;
+            }
+        });
+
         mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
         mRecyclerView.setRecycledViewPool(new RecyclerView.RecycledViewPool());
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -58,6 +97,32 @@ public class StoreDialog extends DialogFragment implements StoreDialogAdapter.Cl
         tv_header.setTypeface(fontBold);
 
         return view;
+    }
+
+    private void makeStoreRequests(String zip){
+        mRecyclerView.setVisibility(View.GONE);
+        pd_loading.setVisibility(View.VISIBLE);
+
+        Network.makeGetStoreByZip(zip, new IRequestCallback.Stores() {
+            @Override
+            public void onSuccess(List<Store> storeList) {
+                if (storeList == null) {
+                    onFailure("null message");
+                    return;
+                }
+                isLoading = false;
+                pd_loading.setVisibility(View.GONE);
+                mRecyclerView.setVisibility(View.VISIBLE);
+                mStoreDialogAdapter.updateAdapter(storeList);
+            }
+
+            @Override
+            public void onFailure(String message) {
+                isLoading = false;
+                pd_loading.setVisibility(View.GONE);
+                mRecyclerView.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     @Override

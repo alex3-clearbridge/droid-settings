@@ -26,6 +26,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.livingspaces.proshopper.analytics.AnalyticsApplication;
 import com.livingspaces.proshopper.data.Store;
+import com.livingspaces.proshopper.data.response.NetLocation;
 import com.livingspaces.proshopper.fragments.AccountFrag;
 import com.livingspaces.proshopper.fragments.BaseStackFrag;
 import com.livingspaces.proshopper.fragments.LoginFrag;
@@ -34,7 +35,6 @@ import com.livingspaces.proshopper.interfaces.IMainFragManager;
 import com.livingspaces.proshopper.interfaces.IRequestCallback;
 import com.livingspaces.proshopper.networking.GpsManager;
 import com.livingspaces.proshopper.networking.Network;
-//import com.livingspaces.proshopper.networking.NetworkManager;
 import com.livingspaces.proshopper.data.response.LoginResponse;
 import com.livingspaces.proshopper.utilities.Global;
 import com.livingspaces.proshopper.utilities.Layout;
@@ -73,20 +73,35 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
 
     private void InitLocationServices(){
 
-        if (!isGpsAvailable()) return;
+        if (isGpsAvailable()){
+            Log.d(TAG, "InitLocationServices: GPS is available");
 
-        Log.d(TAG, "InitLocationServices: GPS is available");
+            mGoogleApiClient = new GoogleApiClient.Builder(this)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
 
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
+            mLocationRequest = LocationRequest.create()
+                    .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                    .setInterval(10000) // 10 sec
+                    .setFastestInterval(5000); // 5 sec
+        }
+        else if (isConnectedToNetwork()){
+            Network.makeNetLocation(new IRequestCallback.NetLocation() {
+                @Override
+                public void onSuccess(NetLocation location) {
+                    if (location != null && location.getLat() != null && location.getLon() != null){
+                        handleNewLocation(null, location.getLat(), location.getLon());
+                    }
+                }
 
-        mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(10000) // 10 sec
-                .setFastestInterval(5000); // 5 sec
+                @Override
+                public void onFailure(String message) {
+                    Log.d(TAG, "makeNetLocation::onFailure: ");
+                }
+            });
+        }
     }
 
     private void Init() {
@@ -330,7 +345,7 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
                         this);
             }
             else {
-                handleNewLocation(location);
+                handleNewLocation(location, 0.0, 0.0);
             }
         }
         else {
@@ -369,15 +384,17 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
         }
     }
 
-    private void handleNewLocation(Location location){
-        Double currentLatitude = location.getLatitude();
-        Double currentLongitude = location.getLongitude();
+    private void handleNewLocation(Location location, Double lat, Double lon){
+        if (lat == 0 && lon ==0){
+            lat = location.getLatitude();
+            lon = location.getLongitude();
+        }
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
 
         List<Address> addressList = null;
 
         try {
-            addressList = geocoder.getFromLocation(currentLatitude, currentLongitude, 1);
+            addressList = geocoder.getFromLocation(lat, lon, 1);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -391,15 +408,15 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
             Global.Prefs.saveUserZip(zip);
         }
 
-        Global.Prefs.saveUserZip(zip);
+        //Global.Prefs.saveUserZip(zip);
 
-        findClosestStore(location);
+        findClosestStore(zip);
     }
 
-    private void findClosestStore(Location location){
+    private void findClosestStore(String zip){
         Log.d(TAG, "findClosestStore: ");
 
-        Network.makeGetStoresREQ(new IRequestCallback.Stores() {
+        Network.makeGetStoreByZip(zip, new IRequestCallback.Stores() {
             @Override
             public void onSuccess(List<Store> storeList) {
                 Log.d(TAG, "makeGetStoresREQ::onSuccess: ");
@@ -407,26 +424,8 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
                     onFailure("null message");
                     return;
                 }
-                double currentDis;
-                double min = 7000;
-                Store closestStore = new Store();
 
-                for (Store store : storeList) {
-                    Location storeLocation = new Location("");
-                    storeLocation.setLatitude(Double.parseDouble(store.getLatitude()));
-                    storeLocation.setLongitude(Double.parseDouble(store.getLongitude()));
-
-                    currentDis = location.distanceTo(storeLocation)/1000;
-
-                    if (currentDis < min) {
-                        min = currentDis;
-                        closestStore = store;
-                        Log.d(TAG, "onRSPSuccess: Current min distance :: " + store.getName() + String.valueOf(currentDis));
-                    }
-                }
-
-                Global.Prefs.saveStore(closestStore);
-
+                Global.Prefs.saveStore(storeList.get(0));
             }
 
             @Override
@@ -434,47 +433,6 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
                 Log.d(TAG, "makeGetStoresREQ::onFailure: ");
             }
         });
-
-        /*NetworkManager.makeREQ(new IREQCallback() {
-            @Override
-            public void onRSPSuccess(String rsp) {
-                Log.d(TAG, "onRSPSuccess: ");
-                Store[] stores = DataModel.parseStores(rsp);
-                if (stores == null) {
-                    onRSPFail();
-                    return;
-                }
-                double currentDis;
-                double min = 7000;
-                Store closestStore = new Store();
-
-                for (Store store : stores) {
-                    Location storeLocation = new Location("");
-                    storeLocation.setLatitude(Double.parseDouble(store.getLatitude()));
-                    storeLocation.setLongitude(Double.parseDouble(store.getLongitude()));
-
-                    currentDis = location.distanceTo(storeLocation)/1000;
-
-                    if (currentDis < min) {
-                        min = currentDis;
-                        closestStore = store;
-                        Log.d(TAG, "onRSPSuccess: Current min distance :: " + store.getName() + String.valueOf(currentDis));
-                    }
-                }
-
-                Global.Prefs.saveStore(closestStore);
-            }
-
-            @Override
-            public void onRSPFail() {
-                Log.d(TAG, "onRSPFail: ");
-            }
-
-            @Override
-            public String getURL() {
-                return "http://api.livingspaces.com/api/v1/store/getAllStores";
-            }
-        });*/
     }
 
     @Override
@@ -517,7 +475,7 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
     @Override
     public void onLocationChanged(Location location) {
         Log.d(TAG, "onLocationChanged: ");
-        handleNewLocation(location);
+        handleNewLocation(location, 0.0, 0.0);
     }
 
     private boolean isConnectedToNetwork(){

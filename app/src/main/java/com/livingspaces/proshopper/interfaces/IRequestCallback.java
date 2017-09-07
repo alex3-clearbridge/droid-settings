@@ -3,6 +3,7 @@ package com.livingspaces.proshopper.interfaces;
 import com.livingspaces.proshopper.data.Store;
 import com.livingspaces.proshopper.data.response.MessageResponse;
 import com.livingspaces.proshopper.data.response.LoginResponse;
+import com.livingspaces.proshopper.data.response.NetLocation;
 import com.livingspaces.proshopper.data.response.ProductResponse;
 
 import java.util.List;
@@ -38,9 +39,8 @@ public interface IRequestCallback {
         void onFailure(String message);
     }
 
-    interface StoreByZip {
-        void onSuccess(Store store);
+    interface NetLocation {
+        void onSuccess(com.livingspaces.proshopper.data.response.NetLocation location);
         void onFailure(String message);
-
     }
 }

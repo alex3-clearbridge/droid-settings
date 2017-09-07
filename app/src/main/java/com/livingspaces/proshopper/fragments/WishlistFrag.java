@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -52,6 +53,9 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
     private List<Product> wishlist;
     private List<Product> localWishlist;
     private List<Product> onlineWishlist;
+
+    private View pd_loading;
+    private boolean isLoading;
 
     private WishlistFAB wishlistFAB;
 
@@ -154,7 +158,7 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
 
     private void getOnlineList(){
 
-        Network.makeGetWishlistREQ(Global.Prefs.getUserId(), new IRequestCallback.Wishlist() {
+        Network.makeGetWishlistREQ(new IRequestCallback.Wishlist() {
             @Override
             public void onSuccess(List<Product> wishlist) {
                 Log.d(TAG, "onSuccess: online");
@@ -212,6 +216,10 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
                 }
             }
         }
+        if (isLoading) {
+            pd_loading.setVisibility(View.GONE);
+            isLoading = false;
+        }
     }
 
     @Override
@@ -220,6 +228,10 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
         Log.d(TAG, "onCreateView: ");
 
         //if (wishlist == null) wishlist = new ArrayList<>();
+
+        pd_loading = (View) rootView.findViewById(R.id.pBar_wishlist);
+        pd_loading.setVisibility(View.VISIBLE);
+        isLoading = true;
 
         scanProduct = (TextView) rootView.findViewById(R.id.tv_enterCode);
         scanProduct.setOnClickListener(new View.OnClickListener() {

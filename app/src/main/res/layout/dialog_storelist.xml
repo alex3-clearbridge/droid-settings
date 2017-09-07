@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -20,17 +20,47 @@
         android:textColor="@color/MainLog_txt"/>
 
     <View
-        android:id="@+id/v_line_storelist"
+        android:id="@+id/v_fline_storelist"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_below="@+id/tv_head_storelist_dialog"
+        android:background="@color/DarkLine_SelectStore_Header" />
+
+    <com.livingspaces.proshopper.views.LSEditText
+        android:id="@+id/et_choose_zip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/edit_text_box"
+        android:layout_below="@+id/v_fline_storelist"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:hint="Enter ZIP Code"
+        android:imeOptions="actionDone"
+        android:inputType="number"
+        android:maxLength="5"
+        android:paddingBottom="5dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="8dp"
+        android:singleLine="true"
+        android:textColor="#3F3F3F"
+        android:cursorVisible="false"
+        app:font="regular" />
+
+    <View
+        android:id="@+id/v_sline_storelist"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/et_choose_zip"
         android:background="@color/DarkLine_SelectStore_Header" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_storelist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/v_line_storelist"/>
+        android:layout_below="@id/v_sline_storelist"/>
 
     <ProgressBar
         android:id="@+id/pBar_dialog_store"
