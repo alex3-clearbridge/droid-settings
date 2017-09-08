@@ -276,11 +276,14 @@ public class Network {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
                 Log.d(TAG, "sendDeleteItemWishlistREQ::onResponse: ");
+                if (response.code() == 200)cb.onSuccess(response.body());
+                else cb.onFailure(String.valueOf(response.code()));
             }
 
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
                 Log.d(TAG, "sendDeleteItemWishlistREQonFailure: ");
+                cb.onFailure(t.getMessage());
             }
         });
     }

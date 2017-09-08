@@ -421,11 +421,28 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
     @Override
     public void onDeleteAll() {
         Log.d("WISHLIST FAB", "onDeleteAll");
+        if (wishlist == null || wishlist.size() == 0) return;
+
+        for (int i = 0; i < wishlist.size(); i++){
+            Network.makeDeleteItemWishlistREQ(wishlist.get(i).getSku(), new IRequestCallback.Message() {
+                @Override
+                public void onSuccess(MessageResponse response) {
+                    Log.d(TAG, "onDeleteAll::onSuccess: ");
+                    if (response.getMessage().contains("Wishlist item removed successfully")) updateView();
+                    else onFailure(response.getMessage());
+                }
+
+                @Override
+                public void onFailure(String message) {
+                    Log.d(TAG, "onDeleteAll::onFailure: " + message);
+                }
+            });
+        }
         RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
         lp.setMargins(0, 0, 0, 0);
         rv_wishlist.setLayoutParams(lp);
         wlAdapter.deleteAll();
-        updateView();
+        //updateView();
     }
 
     @Override
@@ -461,12 +478,13 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
             @Override
             public void onSuccess(MessageResponse response) {
                 Log.d(TAG, "onSuccess: ");
-                updateView();
+                if (response.getMessage().contains("Wishlist item removed successfully")) updateView();
+                else onFailure(response.getMessage());
             }
 
             @Override
             public void onFailure(String message) {
-                Log.d(TAG, "onFailure: ");
+                Log.d(TAG, "onFailure: " + message);
             }
         });
 

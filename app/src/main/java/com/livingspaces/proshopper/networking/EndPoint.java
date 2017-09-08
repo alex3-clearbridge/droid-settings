@@ -75,12 +75,12 @@ public interface EndPoint {
             @Header("X-Auth-Token") String authToken
     );
 
-    @POST("api/Product/removeItemFromWishlist")
+    @POST("api/Product/removeItemsFromWishlist")
     Call<MessageResponse> deleteItem(
             @Header("X-Auth-Token") String authToken,
             @Header("Authorization") String token,
             @Query("username") String customerId,
-            @Query("itemId") String itemId
+            @Query("itemIds") String itemId
     );
 
     @GET("api/Store/getAllStores")
