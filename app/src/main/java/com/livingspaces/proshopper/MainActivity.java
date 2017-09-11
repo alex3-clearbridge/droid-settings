@@ -112,8 +112,8 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
 
         getSupportFragmentManager().beginTransaction().add(R.id.container_main, NavigationFrag.newInstance()).commit();
 
-        if (!isGpsAvailable() && !Global.Prefs.hasStore()){
-            Log.d(TAG, "No GPS and no saved store --> Call Account Page to choose store");
+        if (!isGpsAvailable() && !isConnectedToNetwork()){
+            Log.d(TAG, "No GPS and no Internet connection --> Call Account Page to choose store");
             Global.FragManager.stackFrag(AccountFrag.newInstance());
         }
 

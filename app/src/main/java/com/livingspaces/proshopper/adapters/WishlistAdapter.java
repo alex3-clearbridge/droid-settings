@@ -12,7 +12,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.android.volley.Network;
 import com.android.volley.toolbox.NetworkImageView;
 import com.livingspaces.proshopper.R;
 //import com.livingspaces.proshopper.data.Item;

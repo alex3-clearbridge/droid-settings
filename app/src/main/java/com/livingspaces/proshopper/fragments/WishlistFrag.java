@@ -1,6 +1,7 @@
 package com.livingspaces.proshopper.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -89,6 +90,7 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
             }
             else {
                 localWishlist = null;
+                wishlist = null;
             }
         }
         else {
@@ -105,6 +107,7 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
     }
 
     private void getProduct(){
+
         String[] arr = rawWL.split(",");
 
         for (int i = 0; i < arr.length; i++){
@@ -203,7 +206,7 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
                         @Override
                         public void onSuccess(ProductResponse product) {
                             Log.d(TAG, "GetProduct::onSuccess: ");
-                            wishlist.add(product.getProduct());
+                            if (wishlist != null) wishlist.add(product.getProduct());
                             updateView();
                             wlAdapter.updateAdapter(wishlist);
                         }
@@ -229,7 +232,7 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
 
         //if (wishlist == null) wishlist = new ArrayList<>();
 
-        pd_loading = (View) rootView.findViewById(R.id.pBar_wishlist);
+        pd_loading = rootView.findViewById(R.id.pBar_wishlist);
         pd_loading.setVisibility(View.VISIBLE);
         isLoading = true;
 
@@ -322,6 +325,18 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
     }
 
     @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        if (wishlist == null) {
+            if (isLoading) {
+                pd_loading.setVisibility(View.GONE);
+                isLoading = false;
+            }
+        }
+    }
+
+    @Override
     public void onResurface() {
         Log.d("WISHLIST", "onResurface");
         wlAdapter.notifyDataSetChanged();
@@ -367,11 +382,6 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
         });
 
         return true;
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override
