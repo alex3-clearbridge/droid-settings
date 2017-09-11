@@ -404,13 +404,13 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
         if (addressList != null && addressList.size() != 0){
             Address address = addressList.get(0);
             zip = address.getPostalCode();
-            zip = zip.replaceAll("\\s+", "");
-            Global.Prefs.saveUserZip(zip);
+            if (zip != null){
+                zip = zip.replaceAll("\\s+", "");
+                Global.Prefs.saveUserZip(zip);
+            }
         }
 
-        //Global.Prefs.saveUserZip(zip);
-
-        findClosestStore(zip);
+        if (zip != null) findClosestStore(zip);
     }
 
     private void findClosestStore(String zip){

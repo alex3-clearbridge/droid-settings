@@ -70,6 +70,9 @@ public class MapViewFrag extends BaseStackFrag {
     private int storeCardLevel = 0;
     private LatLng previousCameraLocation;
 
+    public MapViewFrag() {
+    }
+
     public static MapViewFrag newInstance(Store store, Callback callback) {
         MapViewFrag mvf = new MapViewFrag(callback);
         if (store != null) mvf.myStore.Init(store);

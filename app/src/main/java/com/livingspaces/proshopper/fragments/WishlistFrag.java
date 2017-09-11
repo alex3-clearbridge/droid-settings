@@ -86,15 +86,15 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
         if (!Global.Prefs.hasToken()) {
             // user not logged in
             if (!rawWL.isEmpty()) {
+                isLoading = true;
                 getProduct();
             }
             else {
                 localWishlist = null;
-                wishlist = null;
             }
         }
         else {
-
+            isLoading = true;
             if (!rawWL.isEmpty()) {
                 addToWishlist();
             }
@@ -230,11 +230,8 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
         rootView = (RelativeLayout) inflater.inflate(R.layout.fragment_wishlist, container, false);
         Log.d(TAG, "onCreateView: ");
 
-        //if (wishlist == null) wishlist = new ArrayList<>();
-
         pd_loading = rootView.findViewById(R.id.pBar_wishlist);
         pd_loading.setVisibility(View.VISIBLE);
-        isLoading = true;
 
         scanProduct = (TextView) rootView.findViewById(R.id.tv_enterCode);
         scanProduct.setOnClickListener(new View.OnClickListener() {
@@ -328,11 +325,8 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if (wishlist == null) {
-            if (isLoading) {
-                pd_loading.setVisibility(View.GONE);
-                isLoading = false;
-            }
+        if (wishlist.size() == 0 && !isLoading) {
+            pd_loading.setVisibility(View.GONE);
         }
     }
 
@@ -370,6 +364,7 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
         topRight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 Utility.shareUrl(getActivity(), wishlist);
 
                 /** Google Analytics - share_list_action_bar */
