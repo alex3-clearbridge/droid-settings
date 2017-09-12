@@ -93,7 +93,4 @@ public interface EndPoint {
             @Query("zipcode") String zip,
             @Header("X-Auth-Token") String authToken
     );
-
-    @GET("http://ip-api.com/json")
-    Call<NetLocation> getLoc();
 }

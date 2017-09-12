@@ -15,7 +15,7 @@ public class Services {
         SignIn("https://dev.livingspaces.com/Secure/UserPortal/UserSignIn.aspx"),
         Subscribe("http://www.livingspaces.com/landingpage.aspx?fileName=app-email-sign-up"),
         Website("http://dev.livingspaces.com"),
-        // ShareProduct("http://www.livingspaces.com/landingpage.aspx?fileName=wish-list&")
+        //ShareProduct("http://www.livingspaces.com/landingpage.aspx?fileName=wish-list&")
         Cart("http://dev.livingspaces.com/Views/Mobile/ViewCart.aspx"),
         PrivacyPolicy("http://dev.livingspaces.com/privacy-policy-app"),
         StorePolicy("http://dev.livingspaces.com/store-policies-app"),

@@ -56,8 +56,6 @@ public class DialogFrag extends DialogFragment {
             window.setGravity(Gravity.TOP);
             WindowManager.LayoutParams param = window.getAttributes();
             window.getAttributes().windowAnimations = R.style.DialogAnimation;
-            param.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            param.softInputMode = WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE;
             param.x = 0;
             param.y = 200;
             window.setAttributes(param);

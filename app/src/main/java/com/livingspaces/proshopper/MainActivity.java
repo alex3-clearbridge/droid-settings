@@ -87,21 +87,6 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
                     .setInterval(10000) // 10 sec
                     .setFastestInterval(5000); // 5 sec
         }
-        else if (isConnectedToNetwork()){
-            Network.makeNetLocation(new IRequestCallback.NetLocation() {
-                @Override
-                public void onSuccess(NetLocation location) {
-                    if (location != null && location.getLat() != null && location.getLon() != null){
-                        handleNewLocation(null, location.getLat(), location.getLon());
-                    }
-                }
-
-                @Override
-                public void onFailure(String message) {
-                    Log.d(TAG, "makeNetLocation::onFailure: ");
-                }
-            });
-        }
     }
 
     private void Init() {
@@ -112,8 +97,8 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
 
         getSupportFragmentManager().beginTransaction().add(R.id.container_main, NavigationFrag.newInstance()).commit();
 
-        if (!isGpsAvailable() && !isConnectedToNetwork()){
-            Log.d(TAG, "No GPS and no Internet connection --> Call Account Page to choose store");
+        if (!isGpsAvailable()){
+            Log.d(TAG, "No GPS an∂d no Internet connection --> Call Account Page to choose store");
             Global.FragManager.stackFrag(AccountFrag.newInstance());
         }
 
@@ -263,8 +248,7 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
     @Override
     public void popToFrag(String fragTitle) {
         Log.d(TAG, "popToFrag");
-        while (!fragStack.isEmpty() && !fragStack.peek().getTitle().equals(fragTitle) && popFrag(true))
-            ;
+        while (!fragStack.isEmpty() && !fragStack.peek().getTitle().equals(fragTitle) && popFrag(true));
         updateViewsForFrag();
     }
 

@@ -70,41 +70,35 @@ public class ItemDetailFrag extends BaseStackFrag {
             ((ImageView) rootView.findViewById(R.id.niv_itemImg)).setImageResource(R.drawable.ls_w_img_default);
         }
 
-        rootView.findViewById(R.id.rl_moreDetails).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                WebViewFrag wvfInst = WebViewFrag.newInstance(Services.URL.Product.get()).withProduct(item);
+        rootView.findViewById(R.id.rl_moreDetails).setOnClickListener(v -> {
+            WebViewFrag wvfInst = WebViewFrag.newInstance(Services.URL.Product.get()).withProduct(item);
 
-                if (fromWishlist) wvfInst.fromWishlist(WLCallback);
-                else wvfInst.forWishlist(WLCallback);
+            if (fromWishlist) wvfInst.fromWishlist(WLCallback);
+            else wvfInst.forWishlist(WLCallback);
 
-                Global.FragManager.stackFrag(wvfInst);
+            Global.FragManager.stackFrag(wvfInst);
 
-                /** Google Analytics - more_details */
-                Utility.gaTracker.send(new HitBuilders.EventBuilder()
-                                .setCategory("ui_action")
-                                .setAction("more_details")
-                                .setLabel(item.getSku())
-                                .build()
-                );
-            }
+            /** Google Analytics - more_details */
+            Utility.gaTracker.send(new HitBuilders.EventBuilder()
+                            .setCategory("ui_action")
+                            .setAction("more_details")
+                            .setLabel(item.getSku())
+                            .build()
+            );
         });
 
-        rootView.findViewById(R.id.tv_addMore).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!fromWishlist)
-                    Global.FragManager.popToFrag(NavigationFrag.NavItem.SCAN.title());
-                else
-                    Global.FragManager.startFrag(CodeScanFrag.newInstance().forWishList(WLCallback));
+        rootView.findViewById(R.id.tv_addMore).setOnClickListener(v -> {
+            if (!fromWishlist)
+                Global.FragManager.popToFrag(NavigationFrag.NavItem.SCAN.title());
+            else
+                Global.FragManager.startFrag(CodeScanFrag.newInstance().forWishList(WLCallback));
 
-                /** Google Analytics - add_another_product */
-                Utility.gaTracker.send(new HitBuilders.EventBuilder()
-                                .setCategory("ui_action")
-                                .setAction("add_another_product")
-                                .build()
-                );
-            }
+            /** Google Analytics - add_another_product */
+            Utility.gaTracker.send(new HitBuilders.EventBuilder()
+                            .setCategory("ui_action")
+                            .setAction("add_another_product")
+                            .build()
+            );
         });
 
         TextView tv_toWishlist = (TextView) rootView.findViewById(R.id.tv_toWL);
@@ -155,9 +149,14 @@ public class ItemDetailFrag extends BaseStackFrag {
             });
 
             if (fromWishlist) Global.FragManager.popToFrag("WISHLIST");
-            else if (forWishlist) Global.FragManager.stackFrag(WishlistFrag.newInstance());
+            else if (forWishlist) {
+                Global.FragManager.popToHome();
+                Global.FragManager.stackFrag(WishlistFrag.newInstance());
+            }
             else Global.FragManager.popToFrag(NavigationFrag.NavItem.SCAN.title());
+            Toast.makeText(getContext(), "Removed from Wishlist", Toast.LENGTH_SHORT).show();
         });
+
         return true;
     }
 

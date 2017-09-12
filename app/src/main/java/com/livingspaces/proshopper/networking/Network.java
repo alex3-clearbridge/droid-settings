@@ -108,11 +108,6 @@ public class Network {
         mNetwork.sendGetStoreByZipREQ(zip, cb);
     }
 
-    public static void makeNetLocation(IRequestCallback.NetLocation cb){
-        if (mNetwork == null) return;
-        mNetwork.sendGetNetLocationREQ(cb);
-    }
-
     private void sendLoginREQ(String user, String pass, IRequestCallback.Login cb){
         Log.d(TAG, "sendLoginREQ: ");
         LoginRequest body = new LoginRequest(user, pass);
@@ -290,7 +285,7 @@ public class Network {
 
     private void sendGetStoresREQ(IRequestCallback.Stores cb){
         Log.d(TAG, "sendGetStoresREQ: ");
-        Call<List<Store>> stores = mApiService.getStorelist("3CCE9BEB-AC66-4F12-BF37-B3FA66E08325");
+        Call<List<Store>> stores = mApiService.getStorelist(KeyValues.X_AUTH.second);
         stores.enqueue(new Callback<List<Store>>() {
             @Override
             public void onResponse(Call<List<Store>> call, Response<List<Store>> response) {
@@ -326,25 +321,6 @@ public class Network {
         });
     }
 
-    private void sendGetNetLocationREQ(IRequestCallback.NetLocation cb){
-        Log.d(TAG, "sendGetNetLocationREQ: ");
-        Call<NetLocation> getLoc = mApiService.getLoc();
-        getLoc.enqueue(new Callback<NetLocation>() {
-            @Override
-            public void onResponse(Call<NetLocation> call, Response<NetLocation> response) {
-                Log.d(TAG, "sendGetNetLocationREQ::onResponse: " + response.body());
-                if (response.code() == 200)cb.onSuccess(response.body());
-                else cb.onFailure(String.valueOf(response.code()));
-            }
-
-            @Override
-            public void onFailure(Call<NetLocation> call, Throwable t) {
-                Log.d(TAG, "sendGetNetLocationREQ::onFailure: " + t.getMessage());
-                cb.onFailure(t.getMessage());
-            }
-        });
-    }
-
     public static Map<String, String> getDefHeaders(boolean cart) {
 
         Log.d(TAG, "getDefHeaders:");
@@ -353,21 +329,30 @@ public class Network {
 
         headers.put(KeyValues.X_AUTH.first, KeyValues.X_AUTH.second);
         headers.put(KeyValues.MOB_APP.first, KeyValues.MOB_APP.second);
+
+        /*headers.put("Authorization", "Bearer erFmkfRECzp3ItwYtlh1rNuUARRiqPiV07DODMx8_OEP5vnhFIqwOCD7kmnHiBkMqgkmcKfPUM1ZBEomTbEA9wLgghg14yQBvc09BL66jehtjODIGcK2-KEYjMLTmmAu9jqtIE0ORPUi6BBlODkQRbntVxh8gG7sHc1f5gy6BJY8L0tbXQ98K382LBpYi36ZpjQzOiElCfeTGzLvq-oSTtMdOwAPBB1HOOLokpPoHRIXOGCh68JsL-DUls5xCKSlIb6EdChBmedaE4pqjVUI7HOWpmDonx5-3NckDfis9CaBVFM7TJR3g8W13qGx119dXQg6nvXKYebke2bej2yylw");
+        headers.put("username", "azvk89@yahoo.com");
+        headers.put("storeId", "01");
+        headers.put("zipCode", "90803");*/
+
         if (Global.Prefs.hasToken()) {
             String token = Global.Prefs.getAccessToken();
             headers.put("Authorization", token);
         }
         else headers.put("Authorization", "");
+
         if (Global.Prefs.hasToken()) {
             String username = Global.Prefs.getUserId();
             headers.put("username", username);
         }
         else headers.put("username", "");
+
         if (Global.Prefs.hasStore()) {
             String storeId = Global.Prefs.getStore().getId();
             headers.put("storeId", storeId);
         }
         else headers.put("storeId", "");
+
         if (Global.Prefs.hasUserZip()) {
             String zip = Global.Prefs.getUserZip();
             headers.put("zipCode", "90803");
@@ -376,7 +361,6 @@ public class Network {
 
         return headers;
     }
-
 
     public static class KeyValues {
         public static Pair<String, String> X_AUTH = new Pair<>("X-Auth-Token", "3CCE9BEB-AC66-4F12-BF37-B3FA66E08325");
