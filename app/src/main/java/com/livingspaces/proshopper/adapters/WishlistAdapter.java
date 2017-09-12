@@ -12,9 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.android.volley.toolbox.NetworkImageView;
 import com.livingspaces.proshopper.R;
-//import com.livingspaces.proshopper.data.Item;
+import com.livingspaces.proshopper.data.response.Image;
 import com.livingspaces.proshopper.fragments.ItemDetailFrag;
 import com.livingspaces.proshopper.interfaces.IWishlistCallback;
 import com.livingspaces.proshopper.data.response.Product;
@@ -83,12 +82,13 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.WishHo
         WLCallback.updateView();
     }
 
-    public void setItemOpen(boolean open)
-    {
+    public void setItemOpen(boolean open) {
+        Log.d(TAG, "setItemOpen: ");
         itemOpen = open;
     }
 
     public void setForEdit(boolean forEdit) {
+        Log.d(TAG, "setForEdit: ");
         WLCallback.onEditStateChanged(forEdit);
         inEditMode = forEdit;
         notifyDataSetChanged();
@@ -96,11 +96,13 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.WishHo
         WLCallback.updateView();
     }
     public void commitEdit() {
+        Log.d(TAG, "commitEdit: ");
         if (!inEditMode) return;
         inEditMode = false;
         WLCallback.onEditStateChanged(inEditMode);
 
         for (Product item : itemsToDelete) {
+            Log.d(TAG, "commitEdit::itemsToDelete " + item.getSku());
             WLCallback.deleteItem(item.getSku());
             Global.Prefs.editWishItem(item.getSku(), false);
         }
@@ -118,7 +120,7 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.WishHo
 
         private final RelativeLayout container, itemFooter;
         private final LinearLayout wishContainer;
-        private final NetworkImageView iv_item;
+        private final ImageView iv_item;
         private final ImageView iv_edit;
         private final TextView tv_title, tv_sku, tv_cost, tv_delete;
 
@@ -132,7 +134,7 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.WishHo
             itemFooter = (RelativeLayout) itemView.findViewById(R.id.item_footer);
             wishContainer = (LinearLayout) container.findViewById(R.id.ll_wishItem);
 
-            iv_item = (NetworkImageView) container.findViewById(R.id.niv_wishImg);
+            iv_item = (ImageView) container.findViewById(R.id.niv_wishImg);
             tv_title = (TextView) container.findViewById(R.id.tv_wishTitle);
             tv_sku = (TextView) container.findViewById(R.id.tv_wishSKU);
             tv_cost = (TextView) container.findViewById(R.id.tv_wishCost);
@@ -175,11 +177,9 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.WishHo
 
             if (item.getImages() != null && item.getImages().size() > 0 && item.getImages().get(0) != null && item.getImages().get(0).getImgUrl() != null) {
                 Picasso.with(context).load(item.getImages().get(0).getImgUrl()).into(iv_item);
-
-                //iv_item.setImageUrl(item.getImages().get(0).getImgUrl(), NetworkManager.getIMGLoader());
             }
             else {
-                iv_item.setDefaultImageResId(R.drawable.ls_w_img_default);
+                iv_item.setImageResource(R.drawable.ls_w_img_default);
             }
             tv_title.setText(item.getTitle());
             tv_cost.setText("$ " + item.getPrice());
@@ -206,6 +206,7 @@ public class WishlistAdapter extends RecyclerView.Adapter<WishlistAdapter.WishHo
                 Log.d("Wish Adapter ::onDelete", "");
                 mLastClickTime = SystemClock.elapsedRealtime();
                 items.remove(index);
+                WLCallback.deleteItem(item.getSku());
                 Global.Prefs.editWishItem(item.getSku(), false);
                 notifyItemRemoved(index);
                 notifyDataSetChanged();

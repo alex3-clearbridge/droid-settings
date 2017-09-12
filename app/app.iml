@@ -92,7 +92,6 @@
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/shaders" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/splits-support" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/symbols" />
-      <excludeFolder url="file://$MODULE_DIR$/build/intermediates/tmp" />
       <excludeFolder url="file://$MODULE_DIR$/build/intermediates/transforms" />
       <excludeFolder url="file://$MODULE_DIR$/build/outputs" />
       <excludeFolder url="file://$MODULE_DIR$/build/tmp" />
@@ -124,7 +123,6 @@
     <orderEntry type="library" name="design-23.1.1" level="project" />
     <orderEntry type="library" name="play-services-maps-8.1.0" level="project" />
     <orderEntry type="library" name="play-services-basement-8.1.0" level="project" />
-    <orderEntry type="library" name="library-aar-1.0.0" level="project" />
     <orderEntry type="library" name="okhttp-3.3.0" level="project" />
     <orderEntry type="library" name="recyclerview-v7-26.0.0-alpha1" level="project" />
     <orderEntry type="library" name="support-compat-26.0.0-alpha1" level="project" />

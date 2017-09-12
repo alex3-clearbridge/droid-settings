@@ -18,7 +18,7 @@
         style="@style/DetailTitleTxt"
         app:font="bold"/>
 
-    <com.android.volley.toolbox.NetworkImageView
+    <ImageView
         android:id="@+id/niv_itemImg"
         android:layout_width="match_parent"
         android:layout_height="0dip"

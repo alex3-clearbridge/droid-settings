@@ -4,6 +4,7 @@ package com.livingspaces.proshopper.fragments;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +12,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.toolbox.NetworkImageView;
 import com.livingspaces.proshopper.R;
-//import com.livingspaces.proshopper.data.Item;
+import com.livingspaces.proshopper.data.response.MessageResponse;
+import com.livingspaces.proshopper.interfaces.IRequestCallback;
 import com.livingspaces.proshopper.interfaces.IWishlistCallback;
+import com.livingspaces.proshopper.networking.Network;
 import com.livingspaces.proshopper.networking.Services;
 import com.livingspaces.proshopper.data.response.Product;
 import com.livingspaces.proshopper.utilities.Global;
@@ -61,11 +63,11 @@ public class ItemDetailFrag extends BaseStackFrag {
         ((TextView) rootView.findViewById(R.id.tv_itemPrice)).setText("$ " + item.getPrice());
         ((TextView) rootView.findViewById(R.id.tv_itemSKU)).setText(item.getSku());
         if (item.getImages() != null && item.getImages().size() > 0 && item.getImages().get(0) != null && item.getImages().get(0).getImgUrl() != null) {
-            Picasso.with(getContext()).load(item.getImages().get(0).getImgUrl()).into(((NetworkImageView) rootView.findViewById(R.id.niv_itemImg)));
+            Picasso.with(getContext()).load(item.getImages().get(0).getImgUrl()).into(((ImageView) rootView.findViewById(R.id.niv_itemImg)));
 
             //((NetworkImageView) rootView.findViewById(R.id.niv_itemImg)).setImageUrl(item.getImages().get(0).getImgUrl(), NetworkManager.getIMGLoader());
         } else {
-            ((NetworkImageView) rootView.findViewById(R.id.niv_itemImg)).setDefaultImageResId(R.drawable.ls_w_img_default);
+            ((ImageView) rootView.findViewById(R.id.niv_itemImg)).setImageResource(R.drawable.ls_w_img_default);
         }
 
         rootView.findViewById(R.id.rl_moreDetails).setOnClickListener(new View.OnClickListener() {
@@ -133,16 +135,28 @@ public class ItemDetailFrag extends BaseStackFrag {
     public boolean setTopRight(final ImageView topRight) {
         topRight.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ls_s_btn_remove_00));
         topRight.setRotation(-135);
-        topRight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Global.Prefs.editWishItem(item.getSku(), false);
-                if (WLCallback != null) WLCallback.getWishlist().remove(item);
-
-                if (fromWishlist) Global.FragManager.popToFrag("WISHLIST");
-                else if (forWishlist) Global.FragManager.stackFrag(WishlistFrag.newInstance());
-                else Global.FragManager.popToFrag(NavigationFrag.NavItem.SCAN.title());
+        topRight.setOnClickListener(v -> {
+            Global.Prefs.editWishItem(item.getSku(), false);
+            if (WLCallback != null) {
+                //WLCallback.deleteItem(item.getSku());
+                WLCallback.getWishlist().remove(item);
             }
+
+            Network.makeDeleteItemWishlistREQ(item.getSku(), new IRequestCallback.Message() {
+                @Override
+                public void onSuccess(MessageResponse response) {
+                    Log.d("ItemDetail", "onSuccess: ");
+                }
+
+                @Override
+                public void onFailure(String message) {
+                    Log.d("ItemDetail", "onFailure: ");
+                }
+            });
+
+            if (fromWishlist) Global.FragManager.popToFrag("WISHLIST");
+            else if (forWishlist) Global.FragManager.stackFrag(WishlistFrag.newInstance());
+            else Global.FragManager.popToFrag(NavigationFrag.NavItem.SCAN.title());
         });
         return true;
     }

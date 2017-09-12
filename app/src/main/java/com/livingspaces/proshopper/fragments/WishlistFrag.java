@@ -201,8 +201,8 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
             }
             else if (!rawWL.isEmpty()){
                 String[] arr = rawWL.split(",");
-                for (int i = 0; i < arr.length; i++){
-                    Network.makeGetProductREQ(arr[i], new IRequestCallback.Product() {
+                for (String anArr : arr) {
+                    Network.makeGetProductREQ(anArr, new IRequestCallback.Product() {
                         @Override
                         public void onSuccess(ProductResponse product) {
                             Log.d(TAG, "GetProduct::onSuccess: ");
@@ -300,8 +300,10 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
 
             @Override
             public void onDismiss(int[] reverseSortedPositions) {
+                Log.d(TAG, "onDismiss: ");
                 for (int position : reverseSortedPositions) {
                     wishlist.remove(position);
+                    Log.d(TAG, "onDismiss: " + position);
                 }
                 wlAdapter.notifyDataSetChanged();
             }
@@ -343,12 +345,9 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
 
         topRight.setRotation(0);
         topRight.setImageResource(R.drawable.ls_w_btn_delete);
-        topRight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                wlAdapter.commitEdit();
-                wishlistFAB.setForMenu();
-            }
+        topRight.setOnClickListener(v -> {
+            wlAdapter.commitEdit();
+            wishlistFAB.setForMenu();
         });
 
         return true;
@@ -361,19 +360,16 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
             return false;
         }
         topRight.setText("Share List");
-        topRight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        topRight.setOnClickListener(v -> {
 
-                Utility.shareUrl(getActivity(), wishlist);
+            Utility.shareUrl(getActivity(), wishlist);
 
-                /** Google Analytics - share_list_action_bar */
-                Utility.gaTracker.send(new HitBuilders.EventBuilder()
-                                .setCategory("ui_action")
-                                .setAction("share_list_action_bar")
-                                .build()
-                );
-            }
+            /** Google Analytics - share_list_action_bar */
+            Utility.gaTracker.send(new HitBuilders.EventBuilder()
+                            .setCategory("ui_action")
+                            .setAction("share_list_action_bar")
+                            .build()
+            );
         });
 
         return true;

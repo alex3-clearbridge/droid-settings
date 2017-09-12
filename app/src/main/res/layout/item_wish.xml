@@ -61,7 +61,7 @@
                 android:background="@android:color/background_light"
                 android:clickable="true">
 
-                <com.android.volley.toolbox.NetworkImageView
+                <ImageView
                     android:id="@+id/niv_wishImg"
                     android:layout_height="match_parent"
                     android:layout_width="0dip"

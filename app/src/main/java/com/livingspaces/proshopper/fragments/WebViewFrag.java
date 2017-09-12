@@ -17,6 +17,8 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.livingspaces.proshopper.R;
+import com.livingspaces.proshopper.data.response.MessageResponse;
+import com.livingspaces.proshopper.interfaces.IRequestCallback;
 import com.livingspaces.proshopper.interfaces.IWishlistCallback;
 import com.livingspaces.proshopper.networking.Network;
 import com.livingspaces.proshopper.networking.Services;
@@ -162,18 +164,34 @@ public class WebViewFrag extends BaseStackFrag {
                 if (!added && WLCallback != null) {
                     WLCallback.getWishlist().remove(item);
                     Global.Prefs.editWishItem(item.getSku(), false);
-                    //Toast.makeText(getActivity(), "Removed from WishList", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Removed from WishList", Toast.LENGTH_SHORT).show();
                     Global.FragManager.popToFrag(fromWishlist ? "WISHLIST" : NavigationFrag.NavItem.SCAN.title());
                 } else {
+                    Log.d(TAG, "onClick: added || WLCallback == null");
                     getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                    topRightEx.animate().setDuration(250).rotationBy(added ? 135 : -135).withEndAction(new Runnable() {
-                        @Override
-                        public void run() {
-                            Global.Prefs.editWishItem(item.getSku(), added);
-                            getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                        }
+                    topRightEx.animate().setDuration(250).rotationBy(added ? 135 : -135).withEndAction(() -> {
+                        Global.Prefs.editWishItem(item.getSku(), added);
+                        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                     }).start();
+                    
+                    if (!added){
+                        Network.makeDeleteItemWishlistREQ(item.getSku(), new IRequestCallback.Message() {
+                            @Override
+                            public void onSuccess(MessageResponse response) {
+                                Log.d(TAG, "onSuccess: ");
+                                Toast.makeText(getActivity(), "Removed from WishList", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onFailure(String message) {
+                                Log.d(TAG, "onFailure: ");
+                            }
+                        });
+                    }
+                    else {
+                        Toast.makeText(getActivity(), "Added to WishList", Toast.LENGTH_SHORT).show();
+                    }
 
                     /** Google Analytics - product_details_add_wishlist */
                     Utility.gaTracker.send(

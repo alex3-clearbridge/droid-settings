@@ -35,7 +35,7 @@ dependencies {
     compile 'com.android.support:design:23.1.1'
     compile 'me.dm7.barcodescanner:zbar:1.8.3'
     compile 'com.android.support:recyclerview-v7:+'
-    compile 'com.mcxiaoke.volley:library-aar:1.0.0'
+
     compile 'com.android.support:support-v13:+'
     compile 'com.google.android.gms:play-services-maps:8.1.0'
     compile 'com.google.android.gms:play-services-analytics:8.1.0'
