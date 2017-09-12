@@ -53,7 +53,7 @@ public class DialogFrag extends DialogFragment {
         Window window = getDialog().getWindow();
 
         if (window != null){
-            window.setGravity(Gravity.TOP | Gravity.TOP);
+            window.setGravity(Gravity.TOP);
             WindowManager.LayoutParams param = window.getAttributes();
             window.getAttributes().windowAnimations = R.style.DialogAnimation;
             param.width = ViewGroup.LayoutParams.MATCH_PARENT;
@@ -80,7 +80,6 @@ public class DialogFrag extends DialogFragment {
     @Override
     public void onStart() {
         super.onStart();
-
         //getDialog().getWindow().setLayout(680, ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
@@ -97,74 +96,72 @@ public class DialogFrag extends DialogFragment {
 
         if (callback != null) callback.created();
 
-        tv_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (callback != null) callback.onOk();
-            }
+        tv_button.setOnClickListener(view1 -> {
+            if (callback != null) callback.onOk();
         });
     }
 
-    public void setCont(){
+    public void setCont(
+    ){
         switch (choice) {
             case "empty":
                 Log.d(TAG, choice);
-                tv_header.setText("Form Error");
-                tv_text.setText("Invalid Username or Password.");
+                tv_header.setText(R.string.form_error_head);
+                tv_text.setText(R.string.form_error_txt);
                 break;
             case "notValid":
                 Log.d(TAG, choice);
-                tv_header.setText("Invalid email");
-                tv_text.setText("Please enter a valid email address.");
+                tv_header.setText(R.string.inv_email_head);
+                tv_text.setText(R.string.inv_email_txt);
                 break;
             case "smallPass":
                 Log.d(TAG, choice);
-                tv_header.setText("PASSWORD ERROR");
-                tv_text.setText("Password must be at least 6 characters.");
+                tv_header.setText(R.string.pass_error_head);
+                tv_text.setText(R.string.pass_error_txt);
                 break;
             case "createFailed":
                 Log.d(TAG, choice);
-                tv_header.setText("LOGIN FAILED");
-                tv_text.setText("Sorry, an unknown error occured. Please try again later.");
+                tv_header.setText(R.string.log_fail_head);
+                tv_text.setText(R.string.log_fail_txt);
                 break;
             case "ok":
                 Log.d(TAG, choice);
-                tv_header.setText("Success");
-                tv_text.setText("Login successful.");
+                tv_header.setText(R.string.log_success_head);
+                tv_text.setText(R.string.log_success_txt);
                 break;
             case "notMatch":
                 Log.d(TAG, choice);
-                tv_header.setText("Password Error");
-                tv_text.setText("Passwords do not match.");
+                tv_header.setText(R.string.pass_match_error_head);
+                tv_text.setText(R.string.pass_match_error_txt);
                 break;
             case "createSuccess":
                 Log.d(TAG, choice);
-                tv_header.setText("Success");
-                tv_text.setText("Account was created successfully.");
+                tv_header.setText(R.string.account_head);
+                tv_text.setText(R.string.account_txt);
                 break;
             case "emailSent":
                 Log.d(TAG, choice);
-                tv_header.setText("Email sent");
-                tv_text.setText("We have sent an email with instructions on how to reset your password.");
+                tv_header.setText(R.string.email_sent_head);
+                tv_text.setText(R.string.email_sent_txt);
                 break;
             case "invalidEmail":
                 Log.d(TAG, choice);
-                tv_header.setText("INVALID EMAIL");
-                tv_text.setText("Your email does not exist in our system, try again.");
+                tv_header.setText(R.string.email_not_system_head);
+                tv_text.setText(R.string.email_not_system_txt);
                 break;
             case "loading":
                 Log.d(TAG, choice);
                 tv_header.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "SourceSansPro-Light.ttf"));
                 tv_header.setAllCaps(false);
-                tv_header.setText("Working on your request");
+                tv_header.setText(R.string.prog_bar_loading);
                 tv_text.setVisibility(View.INVISIBLE);
                 pd_loading.setVisibility(View.VISIBLE);
                 tv_button.setText("Cancel");
                 break;
             case "noNetwork":
                 Log.d(TAG, choice);
-                tv_header.setText("Network Error");
-                tv_text.setText("Please check your network connection");
+                tv_header.setText(R.string.no_network_head);
+                tv_text.setText(R.string.no_network_txt);
                 break;
         }
     }
