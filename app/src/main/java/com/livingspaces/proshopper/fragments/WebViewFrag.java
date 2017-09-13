@@ -180,7 +180,6 @@ public class WebViewFrag extends BaseStackFrag {
                             @Override
                             public void onSuccess(MessageResponse response) {
                                 Log.d(TAG, "onSuccess: ");
-                                Toast.makeText(getActivity(), "Removed from WishList", Toast.LENGTH_SHORT).show();
                             }
 
                             @Override
@@ -188,6 +187,7 @@ public class WebViewFrag extends BaseStackFrag {
                                 Log.d(TAG, "onFailure: ");
                             }
                         });
+                        Toast.makeText(getActivity(), "Removed from WishList", Toast.LENGTH_SHORT).show();
                     }
                     else {
                         Toast.makeText(getActivity(), "Added to WishList", Toast.LENGTH_SHORT).show();
