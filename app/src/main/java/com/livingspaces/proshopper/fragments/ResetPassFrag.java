@@ -120,41 +120,6 @@ public class ResetPassFrag extends BaseStackFrag implements DialogFrag.ICallback
 
 
             }, 1000);
-        /*new Handler().postDelayed(() -> {
-            NetworkManager.makeResetPassREQ(email, new IREQCallback() {
-                @Override
-                public void onRSPSuccess(String rsp) {
-                    Log.d(TAG, "onRSPSuccess");
-
-                    Log.d(TAG, "RESPONSE :: " + rsp);
-
-                    if (rsp.contains("Your email containing instructions to reset your password has been sent!")){
-                        onOk();
-                        isLoading = false;
-                        isResetSuccess = true;
-                        new Handler().postDelayed(() -> {
-                            showDialog("emailSent");
-                        }, 500);
-                    }
-                    else onRSPFail();
-                }
-
-                @Override
-                public void onRSPFail() {
-                    Log.d(TAG, "onRSPFail");
-                    onOk();
-                    isLoading = false;
-                    new Handler().postDelayed(() -> {
-                        showDialog("invalidEmail");
-                    }, 500);
-                }
-
-                @Override
-                public String getURL() {
-                    return Services.API.ResetPassword.get();
-                }
-            });
-        }, 1000);*/
     }
 
     @Override
@@ -187,11 +152,6 @@ public class ResetPassFrag extends BaseStackFrag implements DialogFrag.ICallback
         if (mDialogFrag != null) {
             isDialogShowing = false;
             mDialogFrag.dismiss();
-        }
-
-        if (isResetSuccess) {
-            isResetSuccess = false;
-            Global.FragManager.popToHome();
         }
     }
 

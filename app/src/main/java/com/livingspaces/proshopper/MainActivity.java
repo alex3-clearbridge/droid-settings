@@ -63,7 +63,6 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //NetworkManager.Init(this);
         Network.Init(this);
         Global.Init(this);
         Layout.Init(this);
@@ -98,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
         getSupportFragmentManager().beginTransaction().add(R.id.container_main, NavigationFrag.newInstance()).commit();
 
         if (!isGpsAvailable()){
-            Log.d(TAG, "No GPS an∂d no Internet connection --> Call Account Page to choose store");
+            Log.d(TAG, "No GPS --> Call Account Page to choose store");
             Global.FragManager.stackFrag(AccountFrag.newInstance());
         }
 

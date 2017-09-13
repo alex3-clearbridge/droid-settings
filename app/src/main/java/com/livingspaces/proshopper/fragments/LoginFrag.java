@@ -120,7 +120,7 @@ public class LoginFrag extends BaseStackFrag implements DialogFrag.ICallback {
                                 response.getRefresh_token(),
                                 response.getUser_name());
                         isLogged = true;
-                        new Handler().postDelayed(() -> showDialog("ok"), 500);
+                        Global.FragManager.popToHome();
                     } else {
                         onFailure("null message");
                     }
@@ -135,39 +135,6 @@ public class LoginFrag extends BaseStackFrag implements DialogFrag.ICallback {
                 }
             });
         }, 1000);
-
-        /*new Handler().postDelayed(() -> {
-            NetworkManager.makeLoginREQ(name, pass, new IREQCallback() {
-                @Override
-                public void onRSPSuccess(String rsp) {
-                    Log.d(TAG, "onRSPSuccess");
-
-                    if (rsp.contains("access_token") && (rsp.contains("refresh_token"))) {
-                        onOk();
-                        isLoading = false;
-                        Token token = new Token(rsp);
-                        Global.Prefs.editToken(token.access_token, token.refresh_token, token.userName);
-                        isLogged = true;
-                        new Handler().postDelayed(() -> showDialog("ok"), 500);
-                    } else {
-                        onRSPFail();
-                    }
-                }
-
-                @Override
-                public void onRSPFail() {
-                    onOk();
-                    isLoading = false;
-                    new Handler().postDelayed(() -> showDialog("createFailed"), 500);
-                    Log.d(TAG, "onRSPFail");
-                }
-
-                @Override
-                public String getURL() {
-                    return Services.API.Token.get();
-                }
-            });
-        }, 1000);*/
     }
 
     private boolean isEmpty(EditText ed) {
