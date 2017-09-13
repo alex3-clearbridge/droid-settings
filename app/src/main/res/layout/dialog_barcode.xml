@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         app:font="light"
         style="@style/DialogMainTxt"
-        android:text="Enter a 5 digit product ID or a 20 digit barcode."
+        android:text="Enter a product ID or a 20 digit barcode."
         android:layout_marginBottom="15dp"/>
 
     <com.livingspaces.proshopper.views.EditTextKeyCB

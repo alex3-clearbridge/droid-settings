@@ -58,7 +58,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_storeaddress_accountfrag"
-            android:layout_marginBottom="20.7dp"
             android:text="Huntington beach,"
             android:textSize="14sp"
             android:textColor="@color/MainLog_txt"/>
@@ -83,12 +82,34 @@
             android:textSize="14sp"
             android:textColor="@color/MainLog_txt"/>
 
+        <com.livingspaces.proshopper.views.LSTextView
+            android:id="@+id/tv_storedistance_accountfrag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_storecity_accountfrag"
+            android:layout_marginBottom="20.7dp"
+            android:text="27"
+            android:textSize="14sp"
+            android:textColor="@color/MainLog_txt"/>
+
+        <com.livingspaces.proshopper.views.LSTextView
+            android:id="@+id/tv_storedistanceUnit_accountfrag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/tv_storedistance_accountfrag"
+            android:layout_alignBaseline="@+id/tv_storedistance_accountfrag"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="20.7dp"
+            android:text="miles"
+            android:textSize="14sp"
+            android:textColor="@color/MainLog_txt"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginRight="11.5dp"
             android:orientation="horizontal"
-            android:layout_below="@id/tv_storestate_accountfrag"
+            android:layout_below="@id/tv_storedistance_accountfrag"
             android:layout_marginTop="10dp">
 
             <com.livingspaces.proshopper.views.LSTextView

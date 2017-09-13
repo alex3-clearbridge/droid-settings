@@ -50,7 +50,8 @@ public class Global {
                 KEY_storeZipcode = "storeZipCode",
                 KEY_storeAddress = "storeAddress",
                 KEY_storeCity = "storeCity",
-                KEY_storeState = "storeState";
+                KEY_storeState = "storeState",
+                KEY_storeDistance = "storeDistance";
 
         private static SharedPreferences sharedPrefs;
         private static String d_wishList;
@@ -59,7 +60,8 @@ public class Global {
                 store_zip,
                 store_address,
                 store_city,
-                store_state;
+                store_state,
+                store_distance;
 
 
         public static void Init(MainActivity mainActivity) {
@@ -160,6 +162,7 @@ public class Global {
                     .putString(KEY_storeAddress, store.getStoreAddresses().getAddress())
                     .putString(KEY_storeCity, store.getStoreAddresses().getCity())
                     .putString(KEY_storeState, store.getStoreAddresses().getState())
+                    .putString(KEY_storeDistance, store.getDistance())
                     .apply();
 
 
@@ -175,12 +178,14 @@ public class Global {
             store_address = sharedPrefs.getString(KEY_storeAddress, "");
             store_city = sharedPrefs.getString(KEY_storeCity, "");
             store_state = sharedPrefs.getString(KEY_storeState, "");
+            store_distance = sharedPrefs.getString(KEY_storeDistance, "");
 
             Store store = new Store();
             store.setId(store_id);
             store.setName(store_name);
             store.setZipCode(store_zip);
             store.setStoreAddresses(new StoreAddress(store_address, store_city, store_state));
+            store.setDistance(store_distance);
 
             return store;
         }

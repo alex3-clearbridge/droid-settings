@@ -89,10 +89,10 @@
             android:layout_marginLeft="24.5dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:text="About out Ads"
+            android:text="About our Ads"
             android:textSize="15sp"
             android:textColor="@color/MainLog_txt"/>
-
+        
         <ImageView
             android:id="@+id/iv_settings_about"
             android:layout_width="17.5dp"

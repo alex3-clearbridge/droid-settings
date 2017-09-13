@@ -33,7 +33,7 @@ public class AccountFrag extends BaseStackFrag implements StoreDialog.ICallback{
 
     private static final String TAG = AccountFrag.class.getSimpleName();
 
-    private LSTextView tv_selectStore, tv_storeName, tv_storeAddress, tv_storeCity, tv_storeState, tv_storeZip, tv_callBtn, tv_changeStoreBtn;
+    private LSTextView tv_selectStore, tv_storeName, tv_storeAddress, tv_storeCity, tv_storeState, tv_storeZip, tv_storeDistance_unit, tv_callBtn, tv_changeStoreBtn, tv_storeDistance;
     private StoreDialog mStoreDialog;
     private View rootView, hasStoreView, noStoreView;
     private Store mStore;
@@ -64,6 +64,8 @@ public class AccountFrag extends BaseStackFrag implements StoreDialog.ICallback{
         tv_storeCity = (LSTextView) rootView.findViewById(R.id.tv_storecity_accountfrag);
         tv_storeState = (LSTextView) rootView.findViewById(R.id.tv_storestate_accountfrag);
         tv_storeZip = (LSTextView) rootView.findViewById(R.id.tv_storezip_accountfrag);
+        tv_storeDistance = (LSTextView) rootView.findViewById(R.id.tv_storedistance_accountfrag);
+        tv_storeDistance_unit = (LSTextView) rootView.findViewById(R.id.tv_storedistanceUnit_accountfrag);
         tv_callBtn = (LSTextView) rootView.findViewById(R.id.tv_call_accountfrag);
         tv_changeStoreBtn = (LSTextView) rootView.findViewById(R.id.tv_changestore_accountfrag);
 
@@ -99,12 +101,15 @@ public class AccountFrag extends BaseStackFrag implements StoreDialog.ICallback{
         tv_storeCity.setTypeface(fontLight);
         tv_storeState.setTypeface(fontLight);
         tv_storeZip.setTypeface(fontLight);
+        tv_storeDistance.setTypeface(fontLight);
+        tv_storeDistance_unit.setTypeface(fontLight);
 
         tv_storeName.setText(mStore.getName());
         tv_storeAddress.setText(mStore.getStoreAddresses().getAddress());
         tv_storeCity.setText(mStore.getStoreAddresses().getCity() + ", ");
         tv_storeState.setText(mStore.getStoreAddresses().getState() + " ");
         tv_storeZip.setText(mStore.getZipCode());
+        tv_storeDistance.setText(mStore.getDistance());
 
         tv_callBtn.setOnClickListener(onCallBtnCLicked);
         tv_changeStoreBtn.setOnClickListener(onSelectStoreClicked);

@@ -60,6 +60,7 @@ public class StoreDialogAdapter extends RecyclerView.Adapter<StoreDialogAdapter.
         holder.tv_storeCity.setText(store.getStoreAddresses().getCity() + ", ");
         holder.tv_storeState.setText(store.getStoreAddresses().getState() + " ");
         holder.tv_storeZip.setText(store.getZipCode());
+        holder.tv_storeDistance.setText(store.getDistance());
         holder.iv_add.setImageDrawable(d_add);
 
     }
@@ -72,7 +73,7 @@ public class StoreDialogAdapter extends RecyclerView.Adapter<StoreDialogAdapter.
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
-        LSTextView tv_storeName, tv_storeAddress, tv_storeCity, tv_storeState,tv_storeZip;
+        LSTextView tv_storeName, tv_storeAddress, tv_storeCity, tv_storeState,tv_storeZip, tv_storeDistance, tv_distanceUnit;
         ImageView iv_add;
 
         public ViewHolder(View itemView) {
@@ -84,6 +85,9 @@ public class StoreDialogAdapter extends RecyclerView.Adapter<StoreDialogAdapter.
             tv_storeCity = (LSTextView)itemView.findViewById(R.id.tv_storecity_storedialog);
             tv_storeState = (LSTextView)itemView.findViewById(R.id.tv_storestate_storedialog);
             tv_storeZip = (LSTextView)itemView.findViewById(R.id.tv_storezip_storedialog);
+            tv_storeDistance = (LSTextView) itemView.findViewById(R.id.tv_storedistance_storedialog);
+            tv_distanceUnit = (LSTextView) itemView.findViewById(R.id.tv_storedistanceUnit_storedialog);
+
             iv_add = (ImageView) itemView.findViewById(R.id.iv_storedialog);
 
             Typeface fontLight = Typeface.createFromAsset(context.getAssets(), "SourceSansPro-Light.ttf");
@@ -93,6 +97,8 @@ public class StoreDialogAdapter extends RecyclerView.Adapter<StoreDialogAdapter.
             tv_storeCity.setTypeface(fontLight);
             tv_storeState.setTypeface(fontLight);
             tv_storeZip.setTypeface(fontLight);
+            tv_storeDistance.setTypeface(fontLight);
+            tv_distanceUnit.setTypeface(fontLight);
 
             itemView.setOnClickListener(this);
         }

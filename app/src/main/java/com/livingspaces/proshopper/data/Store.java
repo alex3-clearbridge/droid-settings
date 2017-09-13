@@ -21,7 +21,7 @@ public class Store {
     private String latitude;
     @SerializedName("longitude")
     private String longitude;
-    @SerializedName("distance")
+    @SerializedName("actualDistance")
     private String distance;
 
     public String currDist;
