@@ -105,7 +105,16 @@ public class AccountFrag extends BaseStackFrag implements StoreDialog.ICallback{
         tv_storeCity.setText(mStore.getStoreAddresses().getCity() + ", ");
         tv_storeState.setText(mStore.getStoreAddresses().getState() + " ");
         tv_storeZip.setText(mStore.getZipCode());
-        tv_storeDistance.setText(mStore.getDistance());
+
+        if (mStore.getDistance() == null || mStore.getDistance().isEmpty()) {
+            tv_storeDistance.setVisibility(View.INVISIBLE);
+            tv_storeDistance_unit.setVisibility(View.INVISIBLE);
+        }
+        else {
+            tv_storeDistance.setVisibility(View.VISIBLE);
+            tv_storeDistance_unit.setVisibility(View.VISIBLE);
+            tv_storeDistance.setText(mStore.getDistance());
+        }
 
         tv_callBtn.setOnClickListener(onCallBtnCLicked);
         tv_changeStoreBtn.setOnClickListener(onSelectStoreClicked);
