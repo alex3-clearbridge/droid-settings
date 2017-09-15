@@ -13,7 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.livingspaces.proshopper.R;
-import com.livingspaces.proshopper.data.Store;
+import com.livingspaces.proshopper.data.response.Store;
 import com.livingspaces.proshopper.utilities.Layout;
 import com.livingspaces.proshopper.utilities.Utility;
 import com.livingspaces.proshopper.utilities.sizes.PhoneSizes;

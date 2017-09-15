@@ -29,7 +29,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.livingspaces.proshopper.R;
-import com.livingspaces.proshopper.data.Store;
+import com.livingspaces.proshopper.data.response.Store;
 import com.livingspaces.proshopper.networking.GpsManager;
 import com.livingspaces.proshopper.utilities.Layout;
 import com.livingspaces.proshopper.utilities.Utility;
@@ -37,7 +37,6 @@ import com.livingspaces.proshopper.views.LSTextView;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 

@@ -5,11 +5,10 @@ import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.hardware.Camera;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.livingspaces.proshopper.MainActivity;
-import com.livingspaces.proshopper.data.Store;
-import com.livingspaces.proshopper.data.StoreAddress;
+import com.livingspaces.proshopper.data.response.Store;
+import com.livingspaces.proshopper.data.response.StoreAddress;
 import com.livingspaces.proshopper.interfaces.IMainFragManager;
 
 /**

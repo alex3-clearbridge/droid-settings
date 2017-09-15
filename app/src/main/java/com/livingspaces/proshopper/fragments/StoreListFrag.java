@@ -10,12 +10,10 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.FrameLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 
 import com.livingspaces.proshopper.R;
 import com.livingspaces.proshopper.adapters.StoreAdapter;
-import com.livingspaces.proshopper.data.Store;
+import com.livingspaces.proshopper.data.response.Store;
 
 import java.util.List;
 

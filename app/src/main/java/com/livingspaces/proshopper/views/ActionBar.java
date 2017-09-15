@@ -14,12 +14,16 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.livingspaces.proshopper.MainActivity;
 import com.livingspaces.proshopper.R;
+import com.livingspaces.proshopper.data.response.MessageResponse;
 import com.livingspaces.proshopper.fragments.AccountFrag;
 import com.livingspaces.proshopper.fragments.BaseStackFrag;
 import com.livingspaces.proshopper.fragments.LoginFrag;
 import com.livingspaces.proshopper.fragments.NavigationFrag;
 import com.livingspaces.proshopper.fragments.WebViewFrag;
+import com.livingspaces.proshopper.interfaces.IRequestCallback;
+import com.livingspaces.proshopper.networking.Network;
 import com.livingspaces.proshopper.networking.Services;
 import com.livingspaces.proshopper.utilities.Global;
 import com.livingspaces.proshopper.utilities.Utility;
@@ -236,12 +240,14 @@ public class ActionBar extends RelativeLayout {
             iv_topRight.animate().alpha(1).setDuration(250).start();
         }).start();
 
-        v_topRightUp.animate().alpha(0).setDuration(250).withEndAction(() -> {
+        v_topRightUp.animate().alpha(0).setDuration(450).withEndAction(() -> {
             v_topRightUp.setVisibility(VISIBLE);
-            v_topRightUp.animate().alpha(1).setDuration(250).start();
+            v_topRightUp.animate().alpha(1).setDuration(450).start();
         }).start();
 
-        tv_topRightUp.setText("0");
+        if (Global.Prefs.hasToken()) updateCartCount();
+        else tv_topRightUp.setText("0");
+
 
         iv_topRight.setOnClickListener(onCartClicked);
         v_topRightUp.setOnClickListener(onCartClicked);
@@ -254,6 +260,23 @@ public class ActionBar extends RelativeLayout {
         }).start();
 
         iv_topRightEx.setOnClickListener(onWebHomeClicked);
+    }
+
+    public void updateCartCount(){
+        Network.makeGetCartCountREQ(new IRequestCallback.Message() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+                Log.d(TAG, "getCartCount::onSuccess: ");
+                if (response.getMessage() != null) tv_topRightUp.setText(response.getMessage());
+                else onFailure("0");
+            }
+
+            @Override
+            public void onFailure(String message) {
+                Log.d(TAG, "getCartCount::onFailure: ");
+                tv_topRightUp.setText("0");
+            }
+        });
     }
 
     private View.OnClickListener onCartClicked = view -> {

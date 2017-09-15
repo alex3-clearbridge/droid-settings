@@ -1,4 +1,4 @@
-package com.livingspaces.proshopper.views;
+package com.livingspaces.proshopper.fragments;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -7,27 +7,24 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.google.android.gms.analytics.HitBuilders;
 import com.livingspaces.proshopper.R;
 import com.livingspaces.proshopper.adapters.StoreDialogAdapter;
-import com.livingspaces.proshopper.data.Store;
-import com.livingspaces.proshopper.interfaces.IEditTextImeBackListener;
+import com.livingspaces.proshopper.data.response.Store;
 import com.livingspaces.proshopper.interfaces.IRequestCallback;
 import com.livingspaces.proshopper.networking.Network;
 import com.livingspaces.proshopper.utilities.Utility;
+import com.livingspaces.proshopper.views.LSEditText;
+import com.livingspaces.proshopper.views.LSTextView;
 
 import java.util.List;
-
-import static android.content.Context.INPUT_METHOD_SERVICE;
 
 /**
  * Created by alexeyredchets on 2017-08-21.
@@ -60,27 +57,24 @@ public class StoreDialog extends DialogFragment implements StoreDialogAdapter.Cl
         et_zip.setText("");
         et_zip.setOnClickListener(v -> et_zip.setCursorVisible(true));
 
-        et_zip.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                et_zip.setCursorVisible(false);
-                if (actionId == EditorInfo.IME_ACTION_DONE
-                        || actionId == EditorInfo.IME_NULL
-                        || (event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))) {
+        et_zip.setOnEditorActionListener((v, actionId, event) -> {
+            et_zip.setCursorVisible(false);
+            if (actionId == EditorInfo.IME_ACTION_DONE
+                    || actionId == EditorInfo.IME_NULL
+                    || (event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))) {
 
-                    zipCode = et_zip.getText().toString();
-                    makeStoreRequests(zipCode);
+                zipCode = et_zip.getText().toString();
+                makeStoreRequests(zipCode);
 
-                    /** Google Analytics -- search_by_zip */
-                    Utility.gaTracker.send(new HitBuilders.EventBuilder().
-                            setCategory("ui_action")
-                            .setAction("search_by_zip")
-                            .setLabel(zipCode)
-                            .build()
-                    );
-                }
-                return false;
+                /** Google Analytics -- search_by_zip */
+                Utility.gaTracker.send(new HitBuilders.EventBuilder().
+                        setCategory("ui_action")
+                        .setAction("search_by_zip")
+                        .setLabel(zipCode)
+                        .build()
+                );
             }
+            return false;
         });
 
         mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 1));
@@ -113,7 +107,7 @@ public class StoreDialog extends DialogFragment implements StoreDialogAdapter.Cl
                 isLoading = false;
                 pd_loading.setVisibility(View.GONE);
                 mRecyclerView.setVisibility(View.VISIBLE);
-                mStoreDialogAdapter.updateAdapter(storeList);
+                mStoreDialogAdapter.updateAdapter(storeList, true);
             }
 
             @Override
@@ -136,7 +130,7 @@ public class StoreDialog extends DialogFragment implements StoreDialogAdapter.Cl
         requestStores();
     }
 
-    private void requestStores(){
+    private void requestStores() {
 
         mRecyclerView.setVisibility(View.GONE);
         pd_loading.setVisibility(View.VISIBLE);
@@ -151,7 +145,7 @@ public class StoreDialog extends DialogFragment implements StoreDialogAdapter.Cl
                 isLoading = false;
                 pd_loading.setVisibility(View.GONE);
                 mRecyclerView.setVisibility(View.VISIBLE);
-                mStoreDialogAdapter.updateAdapter(storeList);
+                mStoreDialogAdapter.updateAdapter(storeList, false);
             }
 
             @Override
@@ -161,6 +155,7 @@ public class StoreDialog extends DialogFragment implements StoreDialogAdapter.Cl
                 mRecyclerView.setVisibility(View.VISIBLE);
             }
         });
+    }
 
         /*NetworkManager.makeREQ(new IREQCallback() {
             @Override
@@ -189,7 +184,7 @@ public class StoreDialog extends DialogFragment implements StoreDialogAdapter.Cl
                 return "http://api.livingspaces.com/api/v1/store/getAllStores";
             }
         });*/
-    }
+    //}
 
 
 

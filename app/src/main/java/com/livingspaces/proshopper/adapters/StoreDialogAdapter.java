@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.livingspaces.proshopper.R;
-import com.livingspaces.proshopper.data.Store;
+import com.livingspaces.proshopper.data.response.Store;
 import com.livingspaces.proshopper.views.LSTextView;
 
 import java.util.List;
@@ -28,6 +28,7 @@ public class StoreDialogAdapter extends RecyclerView.Adapter<StoreDialogAdapter.
     private Context context;
     private ClickListener clickListener;
     private Drawable d_add;
+    private boolean showDistance;
 
     public StoreDialogAdapter(Context context, ClickListener clickListener) {
         this.context = context;
@@ -36,9 +37,10 @@ public class StoreDialogAdapter extends RecyclerView.Adapter<StoreDialogAdapter.
         d_add = ContextCompat.getDrawable(context, R.drawable.ls_g_btn_add);
     }
 
-    public void updateAdapter(List<Store> storeList){
+    public void updateAdapter(List<Store> storeList, boolean showDist){
         Log.d(TAG, "updateAdapter: ");
         this.storeList = storeList;
+        this.showDistance = showDist;
         notifyDataSetChanged();
     }
 
@@ -60,9 +62,16 @@ public class StoreDialogAdapter extends RecyclerView.Adapter<StoreDialogAdapter.
         holder.tv_storeCity.setText(store.getStoreAddresses().getCity() + ", ");
         holder.tv_storeState.setText(store.getStoreAddresses().getState() + " ");
         holder.tv_storeZip.setText(store.getZipCode());
-        holder.tv_storeDistance.setText(store.getDistance());
         holder.iv_add.setImageDrawable(d_add);
-
+        if (showDistance) {
+            holder.tv_storeDistance.setVisibility(View.VISIBLE);
+            holder.tv_distanceUnit.setVisibility(View.VISIBLE);
+            holder.tv_storeDistance.setText(store.getDistance());
+        }
+        else {
+            holder.tv_storeDistance.setVisibility(View.INVISIBLE);
+            holder.tv_distanceUnit.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -99,7 +108,6 @@ public class StoreDialogAdapter extends RecyclerView.Adapter<StoreDialogAdapter.
             tv_storeZip.setTypeface(fontLight);
             tv_storeDistance.setTypeface(fontLight);
             tv_distanceUnit.setTypeface(fontLight);
-
             itemView.setOnClickListener(this);
         }
 

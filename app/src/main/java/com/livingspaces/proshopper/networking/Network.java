@@ -4,8 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.util.Pair;
 
-import com.livingspaces.proshopper.data.Store;
-import com.livingspaces.proshopper.data.response.NetLocation;
+import com.livingspaces.proshopper.data.response.Store;
 import com.livingspaces.proshopper.interfaces.IRequestCallback;
 import com.livingspaces.proshopper.data.request.LoginRequest;
 import com.livingspaces.proshopper.data.request.RefreshTokenRequest;
@@ -106,6 +105,11 @@ public class Network {
     public static void makeGetStoreByZip(String zip, IRequestCallback.Stores cb){
         if (mNetwork == null) return;
         mNetwork.sendGetStoreByZipREQ(zip, cb);
+    }
+
+    public static void makeGetCartCountREQ(IRequestCallback.Message cb){
+        if (mNetwork == null) return;
+        mNetwork.sendGetCartCountREQ(cb);
     }
 
     private void sendLoginREQ(String user, String pass, IRequestCallback.Login cb){
@@ -316,6 +320,27 @@ public class Network {
             @Override
             public void onFailure(Call<List<Store>> call, Throwable t) {
                 Log.d(TAG, "sendGetStoreByZipREQ::onFailure: " + t.getMessage());
+                cb.onFailure(t.getMessage());
+            }
+        });
+    }
+
+    private void sendGetCartCountREQ(IRequestCallback.Message cb){
+        Log.d(TAG, "sendGetCartCountREQ: ");
+        String username = Global.Prefs.getUserId();
+        String token = Global.Prefs.getAccessToken();
+        Call<MessageResponse> getCount = mApiService.getCartCount(username, KeyValues.X_AUTH.second, token);
+        getCount.enqueue(new Callback<MessageResponse>() {
+            @Override
+            public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
+                Log.d(TAG, "sendGetCartCountREQ::onResponse: ");
+                if (response.code() == 200)cb.onSuccess(response.body());
+                else cb.onFailure(String.valueOf(response.code()));
+            }
+
+            @Override
+            public void onFailure(Call<MessageResponse> call, Throwable t) {
+                Log.d(TAG, "sendGetCartCountREQ::onFailure: ");
                 cb.onFailure(t.getMessage());
             }
         });

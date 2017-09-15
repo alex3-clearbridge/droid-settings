@@ -25,8 +25,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.livingspaces.proshopper.analytics.AnalyticsApplication;
-import com.livingspaces.proshopper.data.Store;
-import com.livingspaces.proshopper.data.response.NetLocation;
+import com.livingspaces.proshopper.data.response.Store;
 import com.livingspaces.proshopper.fragments.AccountFrag;
 import com.livingspaces.proshopper.fragments.BaseStackFrag;
 import com.livingspaces.proshopper.fragments.LoginFrag;
@@ -96,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
 
         getSupportFragmentManager().beginTransaction().add(R.id.container_main, NavigationFrag.newInstance()).commit();
 
-        if (!isGpsAvailable()){
+        if (!isGpsAvailable() && !Global.Prefs.hasStore()){
             Log.d(TAG, "No GPS --> Call Account Page to choose store");
             Global.FragManager.stackFrag(AccountFrag.newInstance());
         }
@@ -135,6 +134,7 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
                         && response.getRefresh_token() != null
                         && response.getUser_name() != null) {
                     Global.Prefs.editToken(response.getAccess_token(), response.getRefresh_token(), response.getUser_name());
+                    actionBar.updateCartCount();
                 }
                 else {
                     onFailure("null message");

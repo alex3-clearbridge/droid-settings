@@ -1,6 +1,5 @@
 package com.livingspaces.proshopper.fragments;
 
-import android.animation.Animator;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -17,13 +16,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.livingspaces.proshopper.R;
-import com.livingspaces.proshopper.data.DataModel;
-import com.livingspaces.proshopper.data.Store;
-import com.livingspaces.proshopper.interfaces.IREQCallback;
+import com.livingspaces.proshopper.data.response.Store;
 //import com.livingspaces.proshopper.networking.NetworkManager;
 import com.livingspaces.proshopper.utilities.Global;
 import com.livingspaces.proshopper.views.LSTextView;
-import com.livingspaces.proshopper.views.StoreDialog;
 
 /**
  * Created by alexeyredchets on 2017-08-15.

@@ -1,9 +1,8 @@
 package com.livingspaces.proshopper.interfaces;
 
-import com.livingspaces.proshopper.data.Store;
+import com.livingspaces.proshopper.data.response.Store;
 import com.livingspaces.proshopper.data.response.MessageResponse;
 import com.livingspaces.proshopper.data.response.LoginResponse;
-import com.livingspaces.proshopper.data.response.NetLocation;
 import com.livingspaces.proshopper.data.response.ProductResponse;
 
 import java.util.List;

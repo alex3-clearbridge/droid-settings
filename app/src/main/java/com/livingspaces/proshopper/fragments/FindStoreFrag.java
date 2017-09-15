@@ -13,7 +13,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 
 import com.livingspaces.proshopper.R;
-import com.livingspaces.proshopper.data.Store;
+import com.livingspaces.proshopper.data.response.Store;
 import com.livingspaces.proshopper.interfaces.IEditTextImeBackListener;
 import com.livingspaces.proshopper.interfaces.IRequestCallback;
 import com.livingspaces.proshopper.networking.Network;

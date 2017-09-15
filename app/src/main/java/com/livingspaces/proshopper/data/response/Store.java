@@ -1,8 +1,6 @@
-package com.livingspaces.proshopper.data;
+package com.livingspaces.proshopper.data.response;
 
 import com.google.gson.annotations.SerializedName;
-
-import java.util.List;
 
 /**
  * Created by rugvedambekar on 15-09-21.
