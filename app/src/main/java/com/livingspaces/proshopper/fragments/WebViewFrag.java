@@ -107,7 +107,7 @@ public class WebViewFrag extends BaseStackFrag {
             public boolean shouldOverrideUrlLoading(WebView view, String url1) {
                 Log.e(TAG, "shouldOverrideUrlLoading: " + url1);
 
-                if (url1.equals("http://dev.livingspaces.com/VerifyZip.aspx?productId=")){
+                /*if (url1.equals("http://dev.livingspaces.com/VerifyZip.aspx?productId=")){
                     //view.loadUrl("http://dev.livingspaces.com/Test/TestBrad.aspx", Network.getDefHeaders(false));
                     //url1 = "http://dev.livingspaces.com/Views/Mobile/VerifyZip.aspx?productId=" + item.getSku();
                     Log.d(TAG, "shouldOverrideUrlLoading: GOT IT");
@@ -124,9 +124,9 @@ public class WebViewFrag extends BaseStackFrag {
                         Log.d(TAG, "shouldOverrideUrlLoading: " + url1);
                         return super.shouldOverrideUrlLoading(view, url1);
                     }
-                }
+                }*/
 
-                //view.loadUrl(url1, Network.getDefHeaders(false));
+                view.loadUrl(url1, Network.getDefHeaders(false));
 
                 return super.shouldOverrideUrlLoading(view, url1);
             }

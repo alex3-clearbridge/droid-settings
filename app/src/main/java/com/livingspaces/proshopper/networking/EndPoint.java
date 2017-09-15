@@ -93,7 +93,7 @@ public interface EndPoint {
             @Header("X-Auth-Token") String authToken
     );
 
-    @POST("api/Product/getCartCount")
+    @GET("api/Product/getCartCount")
     Call<MessageResponse> getCartCount(
             @Query("username") String username,
             @Header("X-Auth-Token") String authToken,
