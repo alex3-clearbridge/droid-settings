@@ -10,6 +10,8 @@ public class ProductResponse {
 
     @SerializedName("product")
     Product product;
+    @SerializedName("currentProductLocation")
+    String curStoreId;
 
     public ProductResponse() {
     }
@@ -20,5 +22,13 @@ public class ProductResponse {
 
     public void setProduct(Product product) {
         this.product = product;
+    }
+
+    public String getCurStoreId() {
+        return curStoreId;
+    }
+
+    public void setCurStoreId(String curStoreId) {
+        this.curStoreId = curStoreId;
     }
 }

@@ -20,9 +20,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.livingspaces.proshopper.R;
 //import com.livingspaces.proshopper.data.Item;
+import com.livingspaces.proshopper.data.response.Store;
 import com.livingspaces.proshopper.interfaces.IRequestCallback;
 import com.livingspaces.proshopper.interfaces.IWishlistCallback;
 import com.livingspaces.proshopper.networking.Network;
@@ -36,6 +38,8 @@ import com.livingspaces.proshopper.utilities.sizes.PhoneSizes;
 import com.livingspaces.proshopper.views.BarcodeDialog;
 import com.livingspaces.proshopper.views.CameraPreview;
 import com.google.android.gms.analytics.HitBuilders;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -367,57 +371,6 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
                 );
             }
         });
-/*
-        NetworkManager.makeREQ(new IREQCallback() {
-            @Override
-            public void onRSPSuccess(String rsp) {
-                reqInProgress = false;
-                if (getActivity() == null || dialogBarcode.reqWasCanceled()) return;
-
-                Item item = DataModel.parseItem(rsp);
-                if (item == null) {
-                    onRSPFail();
-                    return;
-                }
-
-                dialogBarcode.hide();
-                startFragForItem(item);
-
-                */
-/* Google Analytics - enter_barcode_success *//*
-
-                Utility.gaTracker.send(new HitBuilders.EventBuilder()
-                                .setCategory("ui_action")
-                                .setAction("enter_barcode_success")
-                                .setLabel(input)
-                                .build()
-                );
-            }
-
-            @Override
-            public void onRSPFail() {
-                reqInProgress = false;
-                if (getActivity() == null || dialogBarcode.reqWasCanceled()) return;
-
-                dialogBarcode.showError();
-
-                */
-/* Google Analytics - enter_barcode_fail *//*
-
-                Utility.gaTracker.send(new HitBuilders.EventBuilder()
-                                .setCategory("ui_action")
-                                .setAction("enter_barcode_fail")
-                                .setLabel(input)
-                                .build()
-                );
-            }
-
-            @Override
-            public String getURL() {
-                return Services.API.Product.get() + dialogBarcode.getInput();
-            }
-        });
-*/
     }
 
     private void startFragForItem(Product item) {
@@ -451,158 +404,107 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
         dialogBarcode.show(true);
         overlay(true);
 
-        new Handler().postDelayed(new Runnable() {
-            public void run() {
+        new Handler().postDelayed(() -> Network.makeGetProductREQ(barcodeData, new IRequestCallback.Product() {
+            @Override
+            public void onSuccess(ProductResponse product) {
+                reqInProgress = false;
+                if (getActivity() == null || dialogBarcode.reqWasCanceled()) return;
 
-                Network.makeGetProductREQ(barcodeData, new IRequestCallback.Product() {
-                    @Override
-                    public void onSuccess(ProductResponse product) {
-                        reqInProgress = false;
-                        if (getActivity() == null || dialogBarcode.reqWasCanceled()) return;
+                Product item = product.getProduct();
+                if (item == null) {
+                    onFailure("null message");
+                    return;
+                }
 
-                        Product item = product.getProduct();
-                        if (item == null) {
-                            onFailure("null message");
-                            return;
-                        }
+                updateStore(product.getCurStoreId(), item);
 
-                        overlay(false);
-                        dialogBarcode.hide();
-                        startFragForItem(item);
+                if (forWishlist) {
+                        /** Google Analytics - scan_wishlist_success */
 
-                        if (forWishlist) {
-                                /** Google Analytics - scan_wishlist_success */
+                    Utility.gaTracker.send(new HitBuilders.EventBuilder()
+                                    .setCategory("ui_action")
+                                    .setAction("scan_wishlist_success")
+                                    .setLabel(barcodeData)
+                                    .build()
+                    );
+                } else {
+                        /** Google Analytics - scan_success */
 
-                            Utility.gaTracker.send(new HitBuilders.EventBuilder()
-                                            .setCategory("ui_action")
-                                            .setAction("scan_wishlist_success")
-                                            .setLabel(barcodeData)
-                                            .build()
-                            );
-                        } else {
-                                /** Google Analytics - scan_success */
-
-                            Utility.gaTracker.send(new HitBuilders.EventBuilder()
-                                            .setCategory("ui_action")
-                                            .setAction("scan_success")
-                                            .setLabel(barcodeData)
-                                            .build()
-                            );
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(String message) {
-                        reqInProgress = false;
-                        if (getActivity() == null || dialogBarcode.reqWasCanceled()) return;
-                        dialogBarcode.showError();
-                        overlay(false);
-                        showError();
-
-                        if (forWishlist) {
-
-                                /** Google Analytics - scan_wishlist_fail */
-
-                            Utility.gaTracker.send(new HitBuilders.EventBuilder()
-                                            .setCategory("ui_action")
-                                            .setAction("scan_wishlist_fail")
-                                            .setLabel(barcodeData)
-                                            .build()
-                            );
-                        } else {
-
-                            /** Google Analytics - scan_fail */
-
-                            Utility.gaTracker.send(new HitBuilders.EventBuilder()
-                                            .setCategory("ui_action")
-                                            .setAction("scan_fail")
-                                            .setLabel(barcodeData)
-                                            .build()
-                            );
-                        }
-                    }
-                });
-/*
-                NetworkManager.makeREQ(new IREQCallback() {
-                    @Override
-                    public void onRSPSuccess(String rsp) {
-                        reqInProgress = false;
-                        if (getActivity() == null || dialogBarcode.reqWasCanceled()) return;
-
-                        Product item = DataModel.parseItem(rsp);
-                        if (item == null) {
-                            onRSPFail();
-                            return;
-                        }
-
-                        overlay(false);
-                        dialogBarcode.hide();
-                        startFragForItem(item);
-
-                        if (forWishlist) {
-                            */
-/** Google Analytics - scan_wishlist_success *//*
-
-                            Utility.gaTracker.send(new HitBuilders.EventBuilder()
-                                            .setCategory("ui_action")
-                                            .setAction("scan_wishlist_success")
-                                            .setLabel(barcodeData)
-                                            .build()
-                            );
-                        } else {
-                            */
-/** Google Analytics - scan_success *//*
-
-                            Utility.gaTracker.send(new HitBuilders.EventBuilder()
-                                            .setCategory("ui_action")
-                                            .setAction("scan_success")
-                                            .setLabel(barcodeData)
-                                            .build()
-                            );
-                        }
-                    }
-
-                    @Override
-                    public void onRSPFail() {
-                        reqInProgress = false;
-                        if (getActivity() == null || dialogBarcode.reqWasCanceled()) return;
-                        dialogBarcode.showError();
-                        overlay(false);
-                        showError();
-
-                        if (forWishlist) {
-                            */
-/** Google Analytics - scan_wishlist_fail *//*
-
-                            Utility.gaTracker.send(new HitBuilders.EventBuilder()
-                                            .setCategory("ui_action")
-                                            .setAction("scan_wishlist_fail")
-                                            .setLabel(barcodeData)
-                                            .build()
-                            );
-                        } else {
-                            */
-/** Google Analytics - scan_fail *//*
-
-                            Utility.gaTracker.send(new HitBuilders.EventBuilder()
-                                            .setCategory("ui_action")
-                                            .setAction("scan_fail")
-                                            .setLabel(barcodeData)
-                                            .build()
-                            );
-                        }
-
-                    }
-
-                    @Override
-                    public String getURL() {
-                        return Services.API.Product.get() + barcodeData;
-                    }
-                });
-*/
+                    Utility.gaTracker.send(new HitBuilders.EventBuilder()
+                                    .setCategory("ui_action")
+                                    .setAction("scan_success")
+                                    .setLabel(barcodeData)
+                                    .build()
+                    );
+                }
             }
-        }, 1000);
 
+            @Override
+            public void onFailure(String message) {
+                reqInProgress = false;
+                if (getActivity() == null || dialogBarcode.reqWasCanceled()) return;
+                dialogBarcode.showError();
+                overlay(false);
+                showError();
+
+                if (forWishlist) {
+
+                        /** Google Analytics - scan_wishlist_fail */
+
+                    Utility.gaTracker.send(new HitBuilders.EventBuilder()
+                                    .setCategory("ui_action")
+                                    .setAction("scan_wishlist_fail")
+                                    .setLabel(barcodeData)
+                                    .build()
+                    );
+                } else {
+
+                    /** Google Analytics - scan_fail */
+
+                    Utility.gaTracker.send(new HitBuilders.EventBuilder()
+                                    .setCategory("ui_action")
+                                    .setAction("scan_fail")
+                                    .setLabel(barcodeData)
+                                    .build()
+                    );
+                }
+            }
+        }), 1000);
+
+    }
+
+    private void updateStore(String storeId, Product item){
+        if (!Global.Prefs.hasStore() || !Global.Prefs.getStore().getId().equals(storeId)){
+            Network.makeGetStoresREQ(new IRequestCallback.Stores() {
+                @Override
+                public void onSuccess(List<Store> storeList) {
+                    Log.d(TAG, "onSuccess: ");
+                    for (Store newStore : storeList){
+                        if (newStore.getId().equals(storeId)){
+                            Global.Prefs.saveStore(newStore);
+                        }
+                    }
+                    Toast.makeText(mActivity, "Your store location was updated", Toast.LENGTH_SHORT).show();
+                    loadProductDetail(item);
+                }
+
+                @Override
+                public void onFailure(String message) {
+                    Log.d(TAG, "onFailure: ");
+                    loadProductDetail(item);
+                }
+
+            });
+        }
+        else {
+            loadProductDetail(item);
+        }
+    }
+
+    private void loadProductDetail(Product item){
+        overlay(false);
+        dialogBarcode.hide();
+        startFragForItem(item);
     }
 
     @Override
