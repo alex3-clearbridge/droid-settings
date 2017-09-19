@@ -64,8 +64,6 @@ public class ItemDetailFrag extends BaseStackFrag {
         ((TextView) rootView.findViewById(R.id.tv_itemSKU)).setText(item.getSku());
         if (item.getImages() != null && item.getImages().size() > 0 && item.getImages().get(0) != null && item.getImages().get(0).getImgUrl() != null) {
             Picasso.with(getContext()).load(item.getImages().get(0).getImgUrl()).into(((ImageView) rootView.findViewById(R.id.niv_itemImg)));
-
-            //((NetworkImageView) rootView.findViewById(R.id.niv_itemImg)).setImageUrl(item.getImages().get(0).getImgUrl(), NetworkManager.getIMGLoader());
         } else {
             ((ImageView) rootView.findViewById(R.id.niv_itemImg)).setImageResource(R.drawable.ls_w_img_default);
         }

@@ -413,6 +413,7 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
         new Handler().postDelayed(() -> Network.makeGetProductREQ(barcodeData, new IRequestCallback.Product() {
             @Override
             public void onSuccess(ProductResponse product) {
+                Log.d(TAG, "onBarcodeFound::onSuccess ");
                 reqInProgress = false;
                 if (getActivity() == null || dialogBarcode.reqWasCanceled()) return;
 
@@ -422,7 +423,10 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
                     return;
                 }
 
-                updateStore(product.getCurStoreId(), item);
+                if (product.getCurStoreId() != null) {
+                    Global.Prefs.saveCurrentStore(product.getCurStoreId());
+                    loadProductDetail(item);
+                }
 
                 if (forWishlist) {
                         /** Google Analytics - scan_wishlist_success */
@@ -463,7 +467,8 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
                                     .setLabel(barcodeData)
                                     .build()
                     );
-                } else {
+                }
+                else {
 
                     /** Google Analytics - scan_fail */
 
@@ -477,34 +482,6 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
             }
         }), 1000);
 
-    }
-
-    private void updateStore(String storeId, Product item){
-        if (!Global.Prefs.hasStore() || !Global.Prefs.getStore().getId().equals(storeId)){
-            Network.makeGetStoresREQ(new IRequestCallback.Stores() {
-                @Override
-                public void onSuccess(List<Store> storeList) {
-                    Log.d(TAG, "onSuccess: ");
-                    for (Store newStore : storeList){
-                        if (newStore.getId().equals(storeId)){
-                            Global.Prefs.saveStore(newStore);
-                        }
-                    }
-                    Toast.makeText(mActivity, "Your store location was updated", Toast.LENGTH_SHORT).show();
-                    loadProductDetail(item);
-                }
-
-                @Override
-                public void onFailure(String message) {
-                    Log.d(TAG, "onFailure: ");
-                    loadProductDetail(item);
-                }
-
-            });
-        }
-        else {
-            loadProductDetail(item);
-        }
     }
 
     private void loadProductDetail(Product item){

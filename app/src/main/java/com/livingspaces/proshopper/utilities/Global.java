@@ -51,6 +51,7 @@ public class Global {
                 KEY_storeCity = "storeCity",
                 KEY_storeState = "storeState",
                 KEY_storeDistance = "storeDistance";
+        private static final String KEY_currentStoreId = "currentStore";
 
         private static SharedPreferences sharedPrefs;
         private static String d_wishList;
@@ -61,6 +62,7 @@ public class Global {
                 store_city,
                 store_state,
                 store_distance;
+        private static String current_store_id;
 
 
         public static void Init(MainActivity mainActivity) {
@@ -144,6 +146,20 @@ public class Global {
         public static String getUserId(){
             if (sharedPrefs == null && !sharedPrefs.contains(KEY_userName)) return "";
             return sharedPrefs.getString(KEY_userName, "");
+        }
+
+        public static boolean hasCurrentStore(){
+            return sharedPrefs != null && sharedPrefs.contains(KEY_currentStoreId);
+        }
+
+        public static void saveCurrentStore(String storeId){
+            if (sharedPrefs == null || storeId.isEmpty()) return;
+            sharedPrefs.edit().putString(KEY_currentStoreId, storeId).apply();
+        }
+
+        public static String getCurrentStoreId(){
+            if (sharedPrefs == null && !sharedPrefs.contains(KEY_currentStoreId)) return "";
+            return sharedPrefs.getString(KEY_currentStoreId, "");
         }
 
         public static boolean hasStore(){

@@ -161,7 +161,7 @@ public class Network {
                                   String pass,
                                   IRequestCallback.Message cb){
         Log.d(TAG, "sendCreateAccREQ: ");
-        Call<MessageResponse> crAcc = mApiService.createAccount(fname, lname, email, zip, pass, pass, false);
+        Call<MessageResponse> crAcc = mApiService.createAccount(fname, lname, email, pass, pass, zip, false, KeyValues.X_AUTH.second);
         crAcc.enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {
@@ -348,7 +348,7 @@ public class Network {
         });
     }
 
-    public static Map<String, String> getDefHeaders(boolean cart) {
+    public static Map<String, String> getDefHeaders(boolean productPage) {
 
         Log.d(TAG, "getDefHeaders:");
 
@@ -374,17 +374,21 @@ public class Network {
         }
         else headers.put("username", "");
 
-        if (Global.Prefs.hasStore()) {
-            String storeId = Global.Prefs.getStore().getId();
-            headers.put("storeId", storeId);
-        }
-        else headers.put("storeId", "");
-
         if (Global.Prefs.hasUserZip()) {
             String zip = Global.Prefs.getUserZip();
-            headers.put("zipCode", "90803");
+            headers.put("zipCode", zip);
         }
         else headers.put("zipCode", "");
+
+        String storeId;
+        if (Global.Prefs.hasCurrentStore()) {
+            storeId = Global.Prefs.getCurrentStoreId();
+        }
+        else if (Global.Prefs.hasStore()){
+            storeId = Global.Prefs.getStore().getId();
+        }
+        else storeId = "";
+        headers.put("storeId", storeId);
 
         return headers;
     }

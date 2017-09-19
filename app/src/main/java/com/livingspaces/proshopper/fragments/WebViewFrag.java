@@ -91,7 +91,7 @@ public class WebViewFrag extends BaseStackFrag {
         });
         if (item != null && item.getSku() != null && !item.getSku().equals("")) {
             Log.d(TAG, "onCreateView: load url with false " + url + item.getSku());
-            rootView.loadUrl(url + item.getSku(), Network.getDefHeaders(false));
+            rootView.loadUrl(url + item.getSku(), Network.getDefHeaders(true));
         } else {
             Log.d(TAG, "onCreateView: load url with true");
             rootView.loadUrl(url, Network.getDefHeaders(false));
