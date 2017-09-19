@@ -321,6 +321,12 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
     @Override
     public void onSubmit(final String input) {
         Log.d(TAG, "onSubmit: " + dialogBarcode.getInput());
+
+        if (dialogBarcode.getInput().length() == 20){
+            onBarcodeFound(dialogBarcode.getInput());
+            return;
+        }
+
         if (reqInProgress) return;
 
         reqInProgress = true;

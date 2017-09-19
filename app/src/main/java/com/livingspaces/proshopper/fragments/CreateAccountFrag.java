@@ -34,11 +34,11 @@ import com.livingspaces.proshopper.views.LSTextView;
  * Created by alexeyredchets on 2017-08-14.
  */
 
-public class CreateAccountFrag extends BaseStackFrag implements DialogFrag.ICallback{
+public class CreateAccountFrag extends BaseStackFrag implements DialogFrag.ICallback {
 
     private static final String TAG = CreateAccountFrag.class.getSimpleName();
 
-    private EditText ed_firstName, ed_lastName, ed_email, ed_pass, ed_confirmPass;
+    private EditText ed_firstName, ed_lastName, ed_email, ed_zip, ed_pass, ed_confirmPass;
     private LSTextView tv_terms, tv_createBtn;
     private DialogFrag mDialogFrag;
     private Bundle args;
@@ -62,6 +62,7 @@ public class CreateAccountFrag extends BaseStackFrag implements DialogFrag.ICall
         ed_firstName = (EditText)view.findViewById(R.id.ed_first_name);
         ed_lastName = (EditText)view.findViewById(R.id.ed_last_name);
         ed_email = (EditText)view.findViewById(R.id.ed_create_email);
+        ed_zip = (EditText)view.findViewById(R.id.ed_create_zip);
         ed_pass = (EditText)view.findViewById(R.id.ed_create_password);
         ed_confirmPass = (EditText)view.findViewById(R.id.ed_create_confirm_password);
         tv_terms = (LSTextView)view.findViewById(R.id.tv_privacy_terms);
@@ -80,34 +81,32 @@ public class CreateAccountFrag extends BaseStackFrag implements DialogFrag.ICall
 
         setupTerms();
 
-        tv_createBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d(TAG,"Create account clicked");
-                if (!isConnectedToNetwork()){
-                    showDialog("noNetwork");
-                    return;
-                }
-                if (isEmpty(ed_firstName)
-                        || isEmpty(ed_lastName)
-                        || isEmpty(ed_email)
-                        || isEmpty(ed_pass)
-                        || isEmpty(ed_confirmPass)){
-                    showDialog("empty");
-                }
-                else if (!isValidEmail(ed_email)){
-                    showDialog("notValid");
-                }
-                else if (!isPass(ed_pass)){
-                    showDialog("smallPass");
-                }
-                else if (!match(ed_pass, ed_confirmPass)){
-                    showDialog("notMatch");
-                }
+        tv_createBtn.setOnClickListener(view1 -> {
+            Log.d(TAG,"Create account clicked");
+            if (!isConnectedToNetwork()){
+                showDialog("noNetwork");
+                return;
+            }
+            if (isEmpty(ed_firstName)
+                    || isEmpty(ed_lastName)
+                    || isEmpty(ed_email)
+                    || isEmpty(ed_zip)
+                    || isEmpty(ed_pass)
+                    || isEmpty(ed_confirmPass)){
+                showDialog("emptyField");
+            }
+            else if (!isValidEmail(ed_email)){
+                showDialog("notValid");
+            }
+            else if (!isPass(ed_pass)){
+                showDialog("smallPass");
+            }
+            else if (!match(ed_pass, ed_confirmPass)){
+                showDialog("notMatch");
+            }
 
-                else {
-                    createAccountCall();
-                }
+            else {
+                createAccountCall();
             }
         });
     }
@@ -117,6 +116,7 @@ public class CreateAccountFrag extends BaseStackFrag implements DialogFrag.ICall
         String fname = ed_firstName.getText().toString();
         String lname = ed_lastName.getText().toString();
         String email = ed_email.getText().toString();
+        String zip = ed_zip.getText().toString();
         String pass = ed_pass.getText().toString();
 
         if (isLoading) return;
@@ -125,7 +125,7 @@ public class CreateAccountFrag extends BaseStackFrag implements DialogFrag.ICall
         showDialog("loading");
 
         new Handler().postDelayed(() -> {
-            Network.makeCreateAccREQ(fname, lname, email, pass, new IRequestCallback.Message() {
+            Network.makeCreateAccREQ(fname, lname, email, zip, pass, new IRequestCallback.Message() {
 
                 @Override
                 public void onSuccess(MessageResponse response) {
@@ -146,35 +146,6 @@ public class CreateAccountFrag extends BaseStackFrag implements DialogFrag.ICall
             }
         });
         }, 1000);
-        /*new Handler().postDelayed(() -> {
-            NetworkManager.makeCreateAccREQ(fname, lname, email, pass, confPass, new IREQCallback() {
-                @Override
-                public void onRSPSuccess(String rsp) {
-                    Log.d(TAG, "onRSPSuccess");
-
-                    Log.d(TAG, "RESPONSE :: " + rsp);
-
-                    if (rsp.contains("User account Created Successfully")){
-                        tokenRequest();
-                    }
-                    else onRSPFail();
-                }
-
-                @Override
-                public void onRSPFail() {
-                    Log.d(TAG, "onRSPFail");
-                    onOk();
-                    new Handler().postDelayed(() -> {
-                        showDialog("createFailed");
-                    }, 500);
-                }
-
-                @Override
-                public String getURL() {
-                    return Services.API.CreateAccount.get();
-                }
-            });
-        }, 1000);*/
     }
 
     private void tokenRequest(){
@@ -207,41 +178,6 @@ public class CreateAccountFrag extends BaseStackFrag implements DialogFrag.ICall
                 }, 500);
             }
         });
-        /*NetworkManager.makeLoginREQ(ed_email.getText().toString(), ed_pass.getText().toString(), new IREQCallback() {
-            @Override
-            public void onRSPSuccess(String rsp) {
-                Log.d(TAG, "onRSPSuccess");
-
-                onOk();
-                if (rsp.contains("access_token")){
-                    Token token = new Token(rsp);
-                    Global.Prefs.editToken(token.access_token, token.refresh_token, token.userName);
-                    isCreatedAndLogged = true;
-                    new Handler().postDelayed(() -> {
-                        showDialog("createSuccess");
-                    }, 500);
-                }
-                else {
-                    new Handler().postDelayed(() -> {
-                        showDialog("createFailed");
-                    }, 500);
-                }
-            }
-
-            @Override
-            public void onRSPFail() {
-                Log.d(TAG, "onRSPFail");
-                onOk();
-                new Handler().postDelayed(() -> {
-                    showDialog("notInSystem");
-                }, 500);
-            }
-
-            @Override
-            public String getURL() {
-                return Services.API.Token.get();
-            }
-        });*/
     }
 
     private void showDialog(String choice){

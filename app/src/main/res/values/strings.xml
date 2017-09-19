@@ -40,6 +40,7 @@
     <!--Dialog messages-->
     <string name="form_error_head">Form Error</string>
     <string name="form_error_txt">Invalid Username or Password.</string>
+    <string name="form_empty_error_txt">All fields are required.</string>
     <string name="inv_email_head">Invalid Email</string>
     <string name="inv_email_txt">Please enter a valid email address.</string>
     <string name="pass_error_head">Password Error</string>

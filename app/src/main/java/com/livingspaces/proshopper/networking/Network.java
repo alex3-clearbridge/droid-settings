@@ -66,10 +66,11 @@ public class Network {
     public static void makeCreateAccREQ(String fname,
                                         String lname,
                                         String email,
+                                        String zip,
                                         String pass,
                                         IRequestCallback.Message cb){
         if (mNetwork == null) return;
-        mNetwork.sendCreateAccREQ(fname, lname, email, pass, cb);
+        mNetwork.sendCreateAccREQ(fname, lname, email, zip, pass, cb);
     }
 
     public static void makeResetPassREQ(String email, IRequestCallback.Message cb){
@@ -156,10 +157,11 @@ public class Network {
     private void sendCreateAccREQ(String fname,
                                   String lname,
                                   String email,
+                                  String zip,
                                   String pass,
                                   IRequestCallback.Message cb){
         Log.d(TAG, "sendCreateAccREQ: ");
-        Call<MessageResponse> crAcc = mApiService.createAccount(fname, lname, email, pass, pass, false);
+        Call<MessageResponse> crAcc = mApiService.createAccount(fname, lname, email, zip, pass, pass, false);
         crAcc.enqueue(new Callback<MessageResponse>() {
             @Override
             public void onResponse(Call<MessageResponse> call, Response<MessageResponse> response) {

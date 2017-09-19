@@ -43,6 +43,17 @@
         style="@style/LoginEditText"/>
 
     <EditText
+        android:id="@+id/ed_create_zip"
+        android:layout_width="255dp"
+        android:layout_height="29dp"
+        android:layout_marginTop="18.5dp"
+        android:layout_gravity="center"
+        android:inputType="number"
+        android:hint="Zipcode"
+        android:background="@drawable/edit_text_box_login"
+        style="@style/LoginEditText"/>
+
+    <EditText
         android:id="@+id/ed_create_password"
         android:layout_width="255dp"
         android:layout_height="29dp"

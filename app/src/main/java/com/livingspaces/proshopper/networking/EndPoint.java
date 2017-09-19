@@ -42,6 +42,7 @@ public interface EndPoint {
             @Query("firstName") String firstName,
             @Query("lastName") String lastName,
             @Query("emailAddress") String email,
+            @Query("zipcode") String zip,
             @Query("password") String pass,
             @Query("confirmPass") String repass,
             @Query("wantsNews") boolean news

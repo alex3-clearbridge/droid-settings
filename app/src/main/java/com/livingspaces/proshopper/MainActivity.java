@@ -66,7 +66,13 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
         Global.Init(this);
         Layout.Init(this);
         Init();
-        InitLocationServices();
+
+        if (canAccessLocation()){
+            InitLocationServices();
+        }
+        else {
+            requestPermission();
+        }
     }
 
     private void InitLocationServices(){
@@ -176,18 +182,13 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     Log.e(TAG, "onRequestPermissionsResult GRANTED");
-                    // permission was granted, yay! Do the
-                    // camera-related task you need to do.
-
-
+                    // Permission was granted
+                    InitLocationServices();
                 } else {
                     Log.e(TAG, "onRequestPermissionsResult DENIED");
 
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+                    // permission denied --> do nothing
                 }
-                return;
-
             }
         }
     }
@@ -317,22 +318,20 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
     @Override
     public void onConnected(Bundle bundle) {
         Log.d(TAG, "onConnected: Location services connected");
+        getLastLocation();
+    }
 
-        if (canAccessLocation()){
-            Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+    private void getLastLocation(){
+        Location location = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
-            if (location == null){
-                Log.d(TAG, "onConnected: location == null");
-                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
-                        mLocationRequest,
-                        this);
-            }
-            else {
-                handleNewLocation(location, 0.0, 0.0);
-            }
+        if (location == null){
+            Log.d(TAG, "onConnected: location == null");
+            LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
+                    mLocationRequest,
+                    this);
         }
         else {
-            requestPermission();
+            handleNewLocation(location);
         }
     }
 
@@ -367,17 +366,14 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
         }
     }
 
-    private void handleNewLocation(Location location, Double lat, Double lon){
-        if (lat == 0 && lon ==0){
-            lat = location.getLatitude();
-            lon = location.getLongitude();
-        }
+    private void handleNewLocation(Location location){
+
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
 
         List<Address> addressList = null;
 
         try {
-            addressList = geocoder.getFromLocation(lat, lon, 1);
+            addressList = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -458,7 +454,7 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
     @Override
     public void onLocationChanged(Location location) {
         Log.d(TAG, "onLocationChanged: ");
-        handleNewLocation(location, 0.0, 0.0);
+        handleNewLocation(location);
     }
 
     private boolean isConnectedToNetwork(){

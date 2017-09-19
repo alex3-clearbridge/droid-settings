@@ -107,6 +107,11 @@ public class DialogFrag extends DialogFragment {
                 tv_header.setText(R.string.form_error_head);
                 tv_text.setText(R.string.form_error_txt);
                 break;
+            case "emptyField":
+                Log.d(TAG, choice);
+                tv_header.setText(R.string.form_error_head);
+                tv_text.setText(R.string.form_empty_error_txt);
+                break;
             case "notValid":
                 Log.d(TAG, choice);
                 tv_header.setText(R.string.inv_email_head);
