@@ -1,5 +1,6 @@
 package com.livingspaces.proshopper.fragments;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -12,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.RelativeLayout;
 
 import com.livingspaces.proshopper.R;
 import com.livingspaces.proshopper.views.LSTextView;
@@ -24,10 +27,13 @@ public class DialogFrag extends DialogFragment {
 
     private static final String TAG = DialogFrag.class.getSimpleName();
 
-    private LSTextView tv_header, tv_text, tv_button;
+    private LSTextView tv_header, tv_text, tv_button, tv_okButton, tv_cancelButton, tv_emptyButton;
+    private EditText ed_zip;
     private View pd_loading;
     private ICallback callback;
+    private IZipCallback zipCb;
     private String choice;
+    private View zipView;
 
     public DialogFrag newInstance(){
         return new DialogFrag();
@@ -64,6 +70,12 @@ public class DialogFrag extends DialogFragment {
         tv_header = (LSTextView)view.findViewById(R.id.tv_header_dialog_frag);
         tv_text = (LSTextView)view.findViewById(R.id.tv_text_dialog_frag);
         tv_button = (LSTextView)view.findViewById(R.id.tv_button_dialog_frag);
+        zipView = view.findViewById(R.id.zip_view);
+        zipView.setVisibility(View.GONE);
+        tv_okButton = (LSTextView)view.findViewById(R.id.tv_ok_button_dialog_frag);
+        tv_cancelButton = (LSTextView)view.findViewById(R.id.tv_cancel_button_dialog_frag);
+        ed_zip = (EditText)view.findViewById(R.id.ed_zip_dialog_frag);
+        tv_emptyButton = (LSTextView)view.findViewById(R.id.tv_empty_button_dialog_frag);
         pd_loading = view.findViewById(R.id.pBar_dialog_frag);
         pd_loading.setVisibility(View.GONE);
 
@@ -93,14 +105,26 @@ public class DialogFrag extends DialogFragment {
         Log.d(TAG, "onViewCreated");
 
         if (callback != null) callback.created();
+        if (zipCb != null) zipCb.onZipCreated();
 
         tv_button.setOnClickListener(view1 -> {
             if (callback != null) callback.onOk();
         });
+
+        tv_okButton.setOnClickListener(view12 -> {
+            if (zipCb != null){
+                if (!ed_zip.getText().toString().isEmpty() && ed_zip.getText().toString().length() == 5){
+                    zipCb.onZipOk(ed_zip.getText().toString());
+                }
+            }
+        });
+
+        tv_cancelButton.setOnClickListener(view13 -> {
+            if (zipCb != null) zipCb.onZipCancel();
+        });
     }
 
-    public void setCont(
-    ){
+    public void setCont(){
         switch (choice) {
             case "empty":
                 Log.d(TAG, choice);
@@ -166,6 +190,19 @@ public class DialogFrag extends DialogFragment {
                 tv_header.setText(R.string.no_network_head);
                 tv_text.setText(R.string.no_network_txt);
                 break;
+            case "showZip":
+                Log.d(TAG, choice);
+                tv_header.setTypeface(Typeface.createFromAsset(getContext().getAssets(), "SourceSansPro-Light.ttf"));
+                tv_header.setAllCaps(false);
+                tv_header.setText(R.string.enter_zip);
+                tv_button.setVisibility(View.INVISIBLE);
+                tv_text.setVisibility(View.INVISIBLE);
+                ed_zip.setVisibility(View.VISIBLE);
+                zipView.setVisibility(View.VISIBLE);
+                /*tv_emptyButton.setVisibility(View.VISIBLE);
+                tv_cancelButton.setVisibility(View.VISIBLE);
+                tv_okButton.setVisibility(View.VISIBLE);*/
+                break;
         }
     }
 
@@ -173,8 +210,24 @@ public class DialogFrag extends DialogFragment {
         callback = cb;
     }
 
+    public void setZipCallback(IZipCallback cb) {
+        zipCb = cb;
+    }
+
     public interface ICallback{
         void onOk();
         void created();
+    }
+
+    public interface IZipCallback{
+        void onZipOk(String zip);
+        void onZipCancel();
+        void onZipCreated();
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        zipCb.onZipCancel();
     }
 }

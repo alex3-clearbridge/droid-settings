@@ -14,6 +14,7 @@ import android.view.WindowManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.livingspaces.proshopper.R;
@@ -33,8 +34,11 @@ import com.google.android.gms.analytics.HitBuilders;
 public class WebViewFrag extends BaseStackFrag {
     private static final String TAG = WebViewFrag.class.getSimpleName();
 
-    private Drawable d_home;
+    private Drawable d_cart;
     private String title, url;
+
+    private View topUpView;
+    private TextView tv_topRightUp;
 
     private Product item;
     private boolean fromWishlist;
@@ -77,7 +81,7 @@ public class WebViewFrag extends BaseStackFrag {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         Log.d(TAG, "onCreateView: ");
-        d_home = ContextCompat.getDrawable(getContext(), R.drawable.ls_s_btn_home);
+        d_cart = ContextCompat.getDrawable(getContext(), R.drawable.ls_h_btn_cart);
 
         rootView = (WebView) inflater.inflate(R.layout.fragment_webview, container, false);
 
@@ -138,13 +142,45 @@ public class WebViewFrag extends BaseStackFrag {
         if (item == null) return false;
 
         topRight.setRotation(0);
-        topRight.setImageDrawable(d_home);
+        topRight.setImageDrawable(d_cart);
         topRight.setOnClickListener(v -> {
-
-            Global.FragManager.popToHome();
-
+            goToCart();
         });
         return true;
+    }
+
+    @Override
+    public boolean setTopRightUp(View topRightUp) {
+        if (item == null) return false;
+
+        tv_topRightUp = (TextView) topRightUp.findViewById(R.id.tv_topRightUp);
+
+        topRightUp.setVisibility(View.VISIBLE);
+        topRightUp.setOnClickListener(view -> {
+            goToCart();
+        });
+
+        if (Global.Prefs.hasToken()) updateCartCount();
+        else tv_topRightUp.setText("0");
+
+        return true;
+    }
+
+    private void goToCart(){
+        if (!Global.Prefs.hasToken()){
+            Log.d(TAG, "onClick: has no Token");
+            Global.FragManager.stackFrag(LoginFrag.newInstance());
+            Toast.makeText(getContext(), "You need to login first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        else if (!Global.Prefs.hasStore()){
+            Log.d(TAG, "onClick: has no store");
+            Global.FragManager.stackFrag(AccountFrag.newInstance());
+            Toast.makeText(getContext(), "You need to choose store first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Global.FragManager.stackFrag(WebViewFrag.newInstance("Cart", Services.URL.Cart.get()));
     }
 
     @Override
@@ -205,6 +241,24 @@ public class WebViewFrag extends BaseStackFrag {
             }
         });
         return true;
+    }
+
+    public void updateCartCount(){
+
+        Network.makeGetCartCountREQ(new IRequestCallback.Message() {
+            @Override
+            public void onSuccess(MessageResponse response) {
+                Log.d(TAG, "getCartCount::onSuccess: ");
+                if (response.getMessage() != null) tv_topRightUp.setText(response.getMessage());
+                else onFailure("0");
+            }
+
+            @Override
+            public void onFailure(String message) {
+                Log.d(TAG, "getCartCount::onFailure: ");
+                tv_topRightUp.setText("0");
+            }
+        });
     }
 
     @Override

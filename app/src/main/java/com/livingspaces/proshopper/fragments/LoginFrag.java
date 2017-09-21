@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.livingspaces.proshopper.R;
+import com.livingspaces.proshopper.data.response.CustomerInfoResponse;
 import com.livingspaces.proshopper.interfaces.IRequestCallback;
 import com.livingspaces.proshopper.networking.Network;
 import com.livingspaces.proshopper.data.response.LoginResponse;
@@ -120,6 +121,7 @@ public class LoginFrag extends BaseStackFrag implements DialogFrag.ICallback {
                                 response.getRefresh_token(),
                                 response.getUser_name());
                         isLogged = true;
+                        getCustomerInfo();
                         Global.FragManager.popToHome();
                     } else {
                         onFailure("null message");
@@ -135,6 +137,22 @@ public class LoginFrag extends BaseStackFrag implements DialogFrag.ICallback {
                 }
             });
         }, 1000);
+    }
+
+    private void getCustomerInfo(){
+        Network.makeGetInfoREQ(new IRequestCallback.Customer() {
+            @Override
+            public void onSuccess(CustomerInfoResponse response) {
+                if (response.getShippingAddress().getZipCode() != null && !response.getShippingAddress().getZipCode().isEmpty()){
+                    Global.Prefs.saveUserZip(response.getShippingAddress().getZipCode());
+                }
+            }
+
+            @Override
+            public void onFailure(String message) {
+                Log.d(TAG, "onFailure: ");
+            }
+        });
     }
 
     private boolean isEmpty(EditText ed) {

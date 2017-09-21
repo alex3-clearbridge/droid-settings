@@ -123,7 +123,7 @@ public class ActionBar extends RelativeLayout {
             animate(tv_topRight, frag.setTopRight(tv_topRight));
             animate(iv_topRight, frag.setTopRight(iv_topRight));
             animate(iv_topRightEx, frag.setTopRightEx(iv_topRightEx));
-
+            //animate(tv_topRightUp, frag.setTvTopRightUp(tv_topRightUp));
             animate(v_topRightUp, frag.setTopRightUp(v_topRightUp));
 
         } else {
@@ -132,7 +132,7 @@ public class ActionBar extends RelativeLayout {
             animate(tv_topRight, false);
             animate(iv_topRight, true);
             animate(iv_topRightEx,true);
-
+            //animate(tv_topRightUp, true);
             animate(v_topRightUp, true);
             //setViewWebsite();
         }

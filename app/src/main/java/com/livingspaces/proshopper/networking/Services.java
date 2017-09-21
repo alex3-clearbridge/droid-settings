@@ -6,22 +6,22 @@ package com.livingspaces.proshopper.networking;
 public class Services {
 
     //private static final String URL_BASE = "http://api.livingspaces.com/api/v1/"; //"http://apidev.livingspaces.com/api/v1/"//"http://mobileapidev.livingspaces.com/"
-    private static final String URL_BASE = "http://mobileapidev.livingspaces.com/";
+    private static final String URL_BASE = "http://mobileapiark.livingspaces.com/";
 
     public enum URL {
         //Product("http://www.livingspaces.com/ProductView.aspx?productId="), // "http://dev.livingspaces.com/ProductView.aspx?productId="
-        Product("http://dev.livingspaces.com/Views/Mobile/productview.aspx?productId="),
+        Product("http://ark.livingspaces.com/Views/Mobile/productview.aspx?productId="),
         //SignIn("https://www.livingspaces.com/Secure/UserPortal/UserSignIn.aspx"),//"https://dev.livingspaces.com/Secure/UserPortal/UserSignIn.aspx"
-        SignIn("https://dev.livingspaces.com/Secure/UserPortal/UserSignIn.aspx"),
+        SignIn("https://ark.livingspaces.com/Secure/UserPortal/UserSignIn.aspx"),
         Subscribe("http://www.livingspaces.com/landingpage.aspx?fileName=app-email-sign-up"),
-        Website("http://dev.livingspaces.com"),
+        Website("http://ark.livingspaces.com"),
         //ShareProduct("http://www.livingspaces.com/landingpage.aspx?fileName=wish-list&")
-        Cart("http://dev.livingspaces.com/Views/Mobile/ViewCart.aspx"),
-        PrivacyPolicy("http://dev.livingspaces.com/privacy-policy-app"),
-        StorePolicy("http://dev.livingspaces.com/store-policies-app"),
-        Terms("http://dev.livingspaces.com/terms-of-use-app"),
-        About("http://dev.livingspaces.com/about-our-ads-app"),
-        ShareProduct("http://dev.livingspaces.com/landingpage.aspx?fileName=wish-list&"); //"http://dev.livingspaces.com/landingpage.aspx?fileName=wish-list&"
+        Cart("http://ark.livingspaces.com/Views/Mobile/ViewCart.aspx"),
+        PrivacyPolicy("http://ark.livingspaces.com/privacy-policy-app"),
+        StorePolicy("http://ark.livingspaces.com/store-policies-app"),
+        Terms("http://ark.livingspaces.com/terms-of-use-app"),
+        About("http://ark.livingspaces.com/about-our-ads-app"),
+        ShareProduct("http://ark.livingspaces.com/landingpage.aspx?fileName=wish-list&"); //"http://dev.livingspaces.com/landingpage.aspx?fileName=wish-list&"
 
         private String url;
 

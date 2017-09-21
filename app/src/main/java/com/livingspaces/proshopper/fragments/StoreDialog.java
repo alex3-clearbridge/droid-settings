@@ -1,5 +1,6 @@
 package com.livingspaces.proshopper.fragments;
 
+import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -200,5 +201,12 @@ public class StoreDialog extends DialogFragment implements StoreDialogAdapter.Cl
 
     public interface ICallback {
         void onStoreSelected(Store store);
+        void onStoreCancel();
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        super.onCancel(dialog);
+        if (callback != null) callback.onStoreCancel();
     }
 }

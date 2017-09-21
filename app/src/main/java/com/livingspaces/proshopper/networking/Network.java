@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.util.Pair;
 
+import com.livingspaces.proshopper.data.response.CustomerInfoResponse;
 import com.livingspaces.proshopper.data.response.Store;
 import com.livingspaces.proshopper.interfaces.IRequestCallback;
 import com.livingspaces.proshopper.data.request.LoginRequest;
@@ -111,6 +112,11 @@ public class Network {
     public static void makeGetCartCountREQ(IRequestCallback.Message cb){
         if (mNetwork == null) return;
         mNetwork.sendGetCartCountREQ(cb);
+    }
+
+    public static void makeGetInfoREQ(IRequestCallback.Customer cb){
+        if (mNetwork == null) return;
+        mNetwork.sendGetCustomerREQ(cb);
     }
 
     private void sendLoginREQ(String user, String pass, IRequestCallback.Login cb){
@@ -343,6 +349,27 @@ public class Network {
             @Override
             public void onFailure(Call<MessageResponse> call, Throwable t) {
                 Log.d(TAG, "sendGetCartCountREQ::onFailure: ");
+                cb.onFailure(t.getMessage());
+            }
+        });
+    }
+
+    private void sendGetCustomerREQ(IRequestCallback.Customer cb){
+        Log.d(TAG, "sendGetCustomerREQ: ");
+        String username = Global.Prefs.getUserId();
+        String token = Global.Prefs.getAccessToken();
+        Call<CustomerInfoResponse> getInfo = mApiService.getInfo(username, KeyValues.X_AUTH.second, token);
+        getInfo.enqueue(new Callback<CustomerInfoResponse>() {
+            @Override
+            public void onResponse(Call<CustomerInfoResponse> call, Response<CustomerInfoResponse> response) {
+                Log.d(TAG, "sendGetCustomerREQ::onResponse: ");
+                if (response.code() == 200)cb.onSuccess(response.body());
+                else cb.onFailure(String.valueOf(response.code()));
+            }
+
+            @Override
+            public void onFailure(Call<CustomerInfoResponse> call, Throwable t) {
+                Log.d(TAG, "sendGetCustomerREQ::onFailure: ");
                 cb.onFailure(t.getMessage());
             }
         });

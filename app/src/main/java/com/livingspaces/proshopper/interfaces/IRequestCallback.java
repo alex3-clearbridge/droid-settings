@@ -1,5 +1,6 @@
 package com.livingspaces.proshopper.interfaces;
 
+import com.livingspaces.proshopper.data.response.CustomerInfoResponse;
 import com.livingspaces.proshopper.data.response.Store;
 import com.livingspaces.proshopper.data.response.MessageResponse;
 import com.livingspaces.proshopper.data.response.LoginResponse;
@@ -38,8 +39,8 @@ public interface IRequestCallback {
         void onFailure(String message);
     }
 
-    interface NetLocation {
-        void onSuccess(com.livingspaces.proshopper.data.response.NetLocation location);
+    interface Customer {
+        void onSuccess(CustomerInfoResponse response);
         void onFailure(String message);
     }
 }

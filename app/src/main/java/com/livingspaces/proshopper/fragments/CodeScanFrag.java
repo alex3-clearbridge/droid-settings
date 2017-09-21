@@ -4,7 +4,9 @@ package com.livingspaces.proshopper.fragments;
 import android.Manifest;
 import android.animation.Animator;
 import android.app.Activity;
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
@@ -19,6 +21,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,7 +47,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallback, CameraPreview.ICallback {
+public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallback, CameraPreview.ICallback, DialogFrag.IZipCallback, StoreDialog.ICallback {
     private static final String TAG = CodeScanFrag.class.getSimpleName();
 
     private Activity mActivity;
@@ -53,13 +56,18 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
     private ImageView iv_target;
     private LinearLayout layout_enableCameraAccess;
     private View overlay, dialogHelp, rootView;
+    private DialogFrag mDialogFrag;
+    private Bundle args;
+    private ProductResponse mProduct;
+    private StoreDialog mStoreDialog;
+    private Store mStore;
 
     private BarcodeDialog dialogBarcode;
     private IWishlistCallback WLCallback;
 
     private boolean isAccessDenied;
 
-    private boolean reqInProgress, forWishlist;
+    private boolean reqInProgress, forWishlist, isDialogFragShowing, isStoreDialogShowing;
     private int CAMERA_CODE_SCAN_REQUEST_CODE;
 
     public static CodeScanFrag newInstance() {
@@ -93,28 +101,29 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
         dialogBarcode.setCallback(this);
         dialogBarcode.registerHelpDialog(dialogHelp);
 
+        mDialogFrag = new DialogFrag();
+        mDialogFrag.setZipCallback(this);
+        args = new Bundle();
+
+        mStoreDialog = new StoreDialog();
+        mStoreDialog.setCallback(this);
+
         tv_enterBarcode = (TextView) rootView.findViewById(R.id.tv_enterCode);
-        tv_enterBarcode.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (camPreview.pause() || isAccessDenied) {
-                    dialogBarcode.show(false);
-                    overlay(true);
-                }
+        tv_enterBarcode.setOnClickListener(v -> {
+            if (camPreview.pause() || isAccessDenied) {
+                dialogBarcode.show(false);
+                overlay(true);
             }
         });
 
         Layout.setViewSize(tv_enterBarcode, PhoneSizes.dialogBarcode, Layout.SizeType.WIDTH);
 
-        rootView.post(new Runnable() {
-            @Override
-            public void run() {
-                Layout.setViewSize(dialogBarcode, PhoneSizes.dialogBarcode);
-                Layout.setViewSize(dialogHelp, PhoneSizes.dialogBarcode, Layout.SizeType.WIDTH);
+        rootView.post(() -> {
+            Layout.setViewSize(dialogBarcode, PhoneSizes.dialogBarcode);
+            Layout.setViewSize(dialogHelp, PhoneSizes.dialogBarcode, Layout.SizeType.WIDTH);
 
-                dialogBarcode.setVisibility(View.GONE);
-                dialogHelp.setVisibility(View.GONE);
-            }
+            dialogBarcode.setVisibility(View.GONE);
+            dialogHelp.setVisibility(View.GONE);
         });
 
         if (canAccessCamera()) {
@@ -237,12 +246,9 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
     }
 
     private void flip(final boolean toError) {
-        iv_target.animate().setDuration(250).alpha(0).withEndAction(new Runnable() {
-            @Override
-            public void run() {
-                iv_target.setImageResource(toError ? R.drawable.ls_s_img_scan_camera_not_found : R.drawable.ls_s_img_scan_camera);
-                iv_target.animate().setDuration(250).alpha(1).start();
-            }
+        iv_target.animate().setDuration(250).alpha(0).withEndAction(() -> {
+            iv_target.setImageResource(toError ? R.drawable.ls_s_img_scan_camera_not_found : R.drawable.ls_s_img_scan_camera);
+            iv_target.animate().setDuration(250).alpha(1).start();
         }).start();
         tv_enterBarcode.animate().setDuration(250).scaleY(0).withEndAction(new Runnable() {
             @Override
@@ -313,9 +319,21 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
             overlay(false);
             return true;
         }
-        dialogBarcode.cancelREQ();
-
-        return false;
+        else if (isDialogFragShowing){
+            mDialogFrag.dismiss();
+            isDialogFragShowing = false;
+            camPreview.resume();
+            overlay(false);
+            return true;
+        }
+        else if (isStoreDialogShowing){
+            mStoreDialog.dismiss();
+            isStoreDialogShowing = false;
+            camPreview.resume();
+            overlay(false);
+            return true;
+        }
+        else return super.handleBackPress();
     }
 
     @Override
@@ -345,8 +363,10 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
                     return;
                 }
 
+                mProduct = product;
+
                 dialogBarcode.hide();
-                startFragForItem(item);
+                //startFragForItem(item);
 
                 /* Google Analytics - enter_barcode_success */
 
@@ -356,6 +376,7 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
                                 .setLabel(input)
                                 .build()
                 );
+                checkUserZip();
             }
 
             @Override
@@ -423,10 +444,9 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
                     return;
                 }
 
-                if (product.getCurStoreId() != null) {
-                    Global.Prefs.saveCurrentStore(product.getCurStoreId());
-                    loadProductDetail(item);
-                }
+                mProduct = product;
+                dialogBarcode.hide();
+                //startFragForItem(item);
 
                 if (forWishlist) {
                         /** Google Analytics - scan_wishlist_success */
@@ -447,6 +467,8 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
                                     .build()
                     );
                 }
+
+                checkUserZip();
             }
 
             @Override
@@ -484,10 +506,41 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
 
     }
 
-    private void loadProductDetail(Product item){
-        overlay(false);
-        dialogBarcode.hide();
-        startFragForItem(item);
+    private void checkUserZip(){
+        if (!Global.Prefs.hasUserZip() || Global.Prefs.getUserZip().isEmpty()){
+            showDialogFrag();
+        }
+        else {
+            checkStoreId();
+        }
+    }
+
+    private void checkStoreId(){
+        if (mProduct.getCurStoreId() != null && !mProduct.getCurStoreId().isEmpty()){
+            Global.Prefs.saveCurrentStore(mProduct.getCurStoreId());
+            startFragForItem(mProduct.getProduct());
+        }
+        else if (Global.Prefs.hasStore()){
+            Global.Prefs.saveCurrentStore(Global.Prefs.getStore().getId());
+            startFragForItem(mProduct.getProduct());
+        }
+        else {
+            showStoreDialog();
+        }
+    }
+
+    private void showDialogFrag(){
+        isDialogFragShowing = true;
+        overlay(true);
+        args.putString("case", "showZip");
+        mDialogFrag.setArguments(args);
+        mDialogFrag.show(getFragmentManager(), "dialogFragment");
+    }
+
+    private void showStoreDialog(){
+        isStoreDialogShowing = true;
+        overlay(true);
+        mStoreDialog.show(getFragmentManager(), "storeDialogFragment");
     }
 
     @Override
@@ -505,5 +558,50 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
         camPreview.surfaceCreated(null);
         camPreview.resume();
         overlay(false);
+    }
+
+    private boolean isGpsAvailable(){
+        final LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+
+        return manager != null && manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
+    @Override
+    public void onZipOk(String zip) {
+        isDialogFragShowing = false;
+        Global.Prefs.saveUserZip(zip);
+        mDialogFrag.dismiss();
+        checkStoreId();
+    }
+
+    @Override
+    public void onZipCancel() {
+        isDialogFragShowing = false;
+        overlay(false);
+        mDialogFrag.dismiss();
+        camPreview.resume();
+    }
+
+    @Override
+    public void onZipCreated() {
+        mDialogFrag.setCont();
+    }
+
+    @Override
+    public void onStoreSelected(Store store) {
+        isStoreDialogShowing = false;
+        Global.Prefs.saveStore(store);
+        Global.Prefs.saveCurrentStore(store.getId());
+        overlay(false);
+        mStoreDialog.dismiss();
+        startFragForItem(mProduct.getProduct());
+    }
+
+    @Override
+    public void onStoreCancel() {
+        isStoreDialogShowing = false;
+        mStoreDialog.dismiss();
+        overlay(false);
+        camPreview.resume();
     }
 }

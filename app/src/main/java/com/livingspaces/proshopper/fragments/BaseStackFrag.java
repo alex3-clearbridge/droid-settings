@@ -27,6 +27,10 @@ public abstract class BaseStackFrag extends DialogFragment {
     public boolean setTopRightEx(ImageView topRightEx) { return false; }
     public boolean setTopRightUp(View topRightUp) { return false; }
 
+    public boolean setTvTopRightUp(TextView tv_topRightUp){
+        return false;
+    }
+
     public boolean handleBackPress() { return false; }
 
 }

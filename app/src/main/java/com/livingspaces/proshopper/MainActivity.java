@@ -25,6 +25,7 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.livingspaces.proshopper.analytics.AnalyticsApplication;
+import com.livingspaces.proshopper.data.response.CustomerInfoResponse;
 import com.livingspaces.proshopper.data.response.Store;
 import com.livingspaces.proshopper.fragments.AccountFrag;
 import com.livingspaces.proshopper.fragments.BaseStackFrag;
@@ -113,6 +114,7 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
         else {
             if (isConnectedToNetwork()) {
                 updateToken();
+                getCustomerInfo();
             }
         }
 
@@ -153,6 +155,22 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
                 Log.d(TAG, "updateToken::onRSPFail " + message);
                 Global.Prefs.clearToken();
                 callLogin();
+            }
+        });
+    }
+
+    private void getCustomerInfo(){
+        Network.makeGetInfoREQ(new IRequestCallback.Customer() {
+            @Override
+            public void onSuccess(CustomerInfoResponse response) {
+                if (response.getShippingAddress().getZipCode() != null && !response.getShippingAddress().getZipCode().isEmpty()){
+                    Global.Prefs.saveUserZip(response.getShippingAddress().getZipCode());
+                }
+            }
+
+            @Override
+            public void onFailure(String message) {
+                Log.d(TAG, "onFailure: ");
             }
         });
     }
@@ -461,5 +479,13 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isAvailable() && activeNetwork.isConnected();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (!Global.Prefs.hasToken() && Global.Prefs.hasUserZip()){
+            Global.Prefs.removeUserZip();
+        }
     }
 }

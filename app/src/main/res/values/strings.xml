@@ -60,6 +60,7 @@
     <string name="prog_bar_loading">Working on your request</string>
     <string name="no_network_head">Network Error</string>
     <string name="no_network_txt">Please check your network connection.</string>
+    <string name="enter_zip">Please enter your zipcode</string>
 
 
 </resources>

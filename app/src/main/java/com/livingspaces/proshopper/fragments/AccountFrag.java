@@ -189,6 +189,11 @@ public class AccountFrag extends BaseStackFrag implements StoreDialog.ICallback{
         showStore();
     }
 
+    @Override
+    public void onStoreCancel() {
+        mStoreDialog.dismiss();
+    }
+
 
     @Override
     public boolean handleBackPress() {

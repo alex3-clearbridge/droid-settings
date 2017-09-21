@@ -132,6 +132,7 @@ public class CreateAccountFrag extends BaseStackFrag implements DialogFrag.ICall
                     Log.d(TAG, "RESPONSE :: " + response.getMessage());
 
                     if (response.getMessage().contains("User account Created Successfully")){
+                        Global.Prefs.saveUserZip(zip);
                         tokenRequest();
                     }
                     else onFailure("error");
@@ -174,7 +175,7 @@ public class CreateAccountFrag extends BaseStackFrag implements DialogFrag.ICall
                 Log.d(TAG, "onRSPFail:: " + message);
                 onOk();
                 new Handler().postDelayed(() -> {
-                    showDialog("notInSystem");
+                    showDialog("createFailed");
                 }, 500);
             }
         });

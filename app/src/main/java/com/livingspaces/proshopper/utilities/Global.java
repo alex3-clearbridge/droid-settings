@@ -62,8 +62,6 @@ public class Global {
                 store_city,
                 store_state,
                 store_distance;
-        private static String current_store_id;
-
 
         public static void Init(MainActivity mainActivity) {
             sharedPrefs = mainActivity.getSharedPreferences(Prefs.TAG, Context.MODE_PRIVATE);
@@ -112,6 +110,14 @@ public class Global {
                     .remove(KEY_access_token)
                     .remove(KEY_refresh_token)
                     .remove(KEY_userName)
+                    .remove(KEY_userZip)
+                    /*.remove(KEY_storeId)
+                    .remove(KEY_storeName)
+                    .remove(KEY_storeZipcode)
+                    .remove(KEY_storeAddress)
+                    .remove(KEY_storeCity)
+                    .remove(KEY_storeState)
+                    .remove(KEY_storeDistance)*/
                     .apply();
         }
 
@@ -219,6 +225,11 @@ public class Global {
             if (sharedPrefs == null || !sharedPrefs.contains(KEY_userZip)) return null;
 
             return sharedPrefs.getString(KEY_userZip, "");
+        }
+
+        public static void removeUserZip(){
+            if (sharedPrefs == null || !sharedPrefs.contains(KEY_userZip)) return;
+            sharedPrefs.edit().remove(KEY_userZip).apply();
         }
     }
 }
