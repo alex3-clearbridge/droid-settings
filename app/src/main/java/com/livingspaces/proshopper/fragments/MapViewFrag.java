@@ -103,18 +103,15 @@ public class MapViewFrag extends BaseStackFrag {
         mActivity = getActivity();
 
         isFirstLaunch = true;
-        storeView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e("storeView", "storeCardLevel: " + Integer.toString(storeCardLevel % 4));
-                if (storeCardLevel % 4 >= 2) {
-                    myStore.show(3);
-                } else {
-                    myStore.show(2);
-                }
-
-                storeCardLevel++;
+        storeView.setOnClickListener(v -> {
+            Log.e("storeView", "storeCardLevel: " + Integer.toString(storeCardLevel % 4));
+            if (storeCardLevel % 4 >= 2) {
+                myStore.show(3);
+            } else {
+                myStore.show(2);
             }
+
+            storeCardLevel++;
         });
 
         mapSearchOverlay = rootView.findViewById(R.id.mapSearchOverlay);
