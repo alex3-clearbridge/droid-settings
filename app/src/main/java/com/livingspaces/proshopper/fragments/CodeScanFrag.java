@@ -437,7 +437,6 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
             public void onSuccess(ProductResponse product) {
                 Log.d(TAG, "onBarcodeFound::onSuccess ");
                 reqInProgress = false;
-                Activity ac = getActivity();
                 if (getActivity() == null) return;
 
                 Product item = product.getProduct();
