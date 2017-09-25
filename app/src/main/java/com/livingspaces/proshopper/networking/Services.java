@@ -36,6 +36,7 @@ public class Services {
 
     public enum API {
         Product("api/Product/"),
+        Main(""),
         Products("products/"),
         Stores("store/getAllStores/"),
         StoresWithZip("store/getAllStoresByZip/"),

@@ -34,7 +34,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class Network {
 
     private static final String TAG = Network.class.getSimpleName();
-    private static final String baseUrl = "http://mobileapidev.livingspaces.com/";
+    private static final String baseUrl = Services.API.Main.get();
 
     private static Retrofit mRetrofit;
     private static Network mNetwork;
