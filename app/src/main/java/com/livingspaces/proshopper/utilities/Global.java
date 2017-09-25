@@ -110,7 +110,6 @@ public class Global {
                     .remove(KEY_access_token)
                     .remove(KEY_refresh_token)
                     .remove(KEY_userName)
-                    .remove(KEY_userZip)
                     /*.remove(KEY_storeId)
                     .remove(KEY_storeName)
                     .remove(KEY_storeZipcode)

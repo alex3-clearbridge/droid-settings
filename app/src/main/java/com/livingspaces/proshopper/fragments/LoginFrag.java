@@ -16,9 +16,11 @@ import android.widget.EditText;
 
 import com.livingspaces.proshopper.R;
 import com.livingspaces.proshopper.data.response.CustomerInfoResponse;
+import com.livingspaces.proshopper.data.response.Product;
 import com.livingspaces.proshopper.interfaces.IRequestCallback;
 import com.livingspaces.proshopper.networking.Network;
 import com.livingspaces.proshopper.data.response.LoginResponse;
+import com.livingspaces.proshopper.networking.Services;
 import com.livingspaces.proshopper.utilities.Global;
 import com.livingspaces.proshopper.views.LSTextView;
 
@@ -33,11 +35,15 @@ public class LoginFrag extends BaseStackFrag implements DialogFrag.ICallback {
     private DialogFrag mDialogFrag;
     private LSTextView tv_login, tv_createAccount, tv_forgotPass;
     private EditText ed_login, ed_password;
-    private boolean isLoading = false, isLogged = false, isDialogShowing = false;
+    private boolean isLoading = false, isLogged = false, isDialogShowing = false, isForCart = false;
     private Bundle args;
+    private String currentSku;
 
-    public static LoginFrag newInstance() {
-        return new LoginFrag();
+    public static LoginFrag newInstance(boolean forCart, String sku) {
+        LoginFrag lf = new LoginFrag();
+        lf.isForCart = forCart;
+        lf.currentSku = sku;
+        return lf;
     }
 
     public LoginFrag() {
@@ -122,7 +128,15 @@ public class LoginFrag extends BaseStackFrag implements DialogFrag.ICallback {
                                 response.getUser_name());
                         isLogged = true;
                         getCustomerInfo();
-                        Global.FragManager.popToHome();
+                        isDialogShowing = false;
+                        if (isForCart) {
+                            isForCart = false;
+                            Product item = new Product();
+                            item.setSku(currentSku);
+                            Global.FragManager.popToHome();
+                            Global.FragManager.stackFrag(WebViewFrag.newInstance(Services.URL.Product.get()).withProduct(item));
+                        }
+                        else Global.FragManager.popToHome();
                     } else {
                         onFailure("null message");
                     }

@@ -1,8 +1,5 @@
-/*
 package com.livingspaces.proshopper.fragments;
 
-
-import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -22,6 +19,7 @@ import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -41,8 +39,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-public class MapViewFrag extends BaseStackFrag {
-    private static final String TAG = MapViewFrag.class.getSimpleName();
+/**
+ * Created by alexeyredchets on 2017-09-22.
+ */
+
+public class MapFrag extends BaseStackFrag implements OnMapReadyCallback {
+    private static final String TAG = MapFrag.class.getSimpleName();
     private int MAP_LOCATION_REQUEST_CODE = 112;
 
     public interface Callback {
@@ -70,16 +72,16 @@ public class MapViewFrag extends BaseStackFrag {
     private int storeCardLevel = 0;
     private LatLng previousCameraLocation;
 
-    public MapViewFrag() {
+    public MapFrag() {
     }
 
-    public static MapViewFrag newInstance(Store store, Callback callback) {
-        MapViewFrag mvf = new MapViewFrag(callback);
+    public static MapFrag newInstance(Store store, Callback callback) {
+        MapFrag mvf = new MapFrag(callback);
         if (store != null) mvf.myStore.Init(store);
         return mvf;
     }
 
-    public MapViewFrag(Callback callback) {
+    public MapFrag(Callback callback) {
         this.callback = callback;
     }
 
@@ -99,7 +101,7 @@ public class MapViewFrag extends BaseStackFrag {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView");
-        View rootView = inflater.inflate(R.layout.fragment_map_view, container, false);
+        View rootView = inflater.inflate(com.livingspaces.proshopper.R.layout.fragment_map_view, container, false);
         myStore.Init(rootView, inflater);
         mActivity = getActivity();
 
@@ -130,8 +132,14 @@ public class MapViewFrag extends BaseStackFrag {
         Log.d(TAG, "initializeMap");
 
         mapFragment = getGoogleMapFragment();
-        mGoogleMap = mapFragment.getMap();
+        //mGoogleMap = mapFragment.getMap();
 
+        mapFragment.getMapAsync(this);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap mGoogleMap) {
+        this.mGoogleMap = mGoogleMap;
         if (mGoogleMap != null) {
             setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
@@ -150,7 +158,7 @@ public class MapViewFrag extends BaseStackFrag {
             centerMapCamera();
         } else {
 
-            if (this.shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION)) {
+            if (this.shouldShowRequestPermissionRationale(android.Manifest.permission.ACCESS_FINE_LOCATION)) {
                 Log.e(TAG, "Location Access Denied");
 
                 // Access Denied
@@ -161,7 +169,7 @@ public class MapViewFrag extends BaseStackFrag {
                 Log.e(TAG, "requestPermissions: " + Integer.toString(MAP_LOCATION_REQUEST_CODE));
 
                 // Request Permission
-                ActivityCompat.requestPermissions((Activity) getContext(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MAP_LOCATION_REQUEST_CODE);
+                ActivityCompat.requestPermissions((Activity) getContext(), new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, MAP_LOCATION_REQUEST_CODE);
             }
         }
     }
@@ -242,12 +250,13 @@ public class MapViewFrag extends BaseStackFrag {
         }
     }
 
-    */
-/**
+
+    /**
      * Center the camera on the current location. It uses the default zoom storeCardLevel
      * for the camera, and it uses the default accuracy storeCardLevel for getting
      * current location.
-     *//*
+     */
+
 
     public void centerOnCurrentLocation() {
         if (mGoogleMap == null || mActivity == null || mLocation == null) {
@@ -386,8 +395,8 @@ public class MapViewFrag extends BaseStackFrag {
         }
     }
 
-    */
-/**
+
+    /**
      * Set the map type for Google Map. Available values for mapType are:
      * GoogleMap.MAP_TYPE_NONE = 0
      * GoogleMap.MAP_TYPE_NORMAL = 1
@@ -396,7 +405,8 @@ public class MapViewFrag extends BaseStackFrag {
      * GoogleMap.MAP_TYPE_HYBRID = 4
      *
      * @param The type of map to display.
-     *//*
+     */
+
 
     public void setMapType(int mapType) {
         if (mGoogleMap == null)
@@ -404,12 +414,11 @@ public class MapViewFrag extends BaseStackFrag {
         mGoogleMap.setMapType(mapType);
     }
 
-    */
-/**
+    /**
      * Add 1 marker to the map using marker options.
      *
      * @param A marker options object that defines how to render the marker.
-     *//*
+     */
 
     public void addMarker(MarkerOptions markerOptions) {
         if (mGoogleMap == null)
@@ -417,12 +426,11 @@ public class MapViewFrag extends BaseStackFrag {
         mGoogleMap.addMarker(markerOptions);
     }
 
-    */
-/**
+    /**
      * Add a list of markers to the map using marker options list.
      *
      * @param A marker options list that defines how to render the markers.
-     *//*
+     */
 
     public void addMarkerList(List<MarkerOptions> markerOptionsList) {
         int markerCount;
@@ -469,14 +477,14 @@ public class MapViewFrag extends BaseStackFrag {
     }
 
 
-    */
-/**
+    /**
      * StoreLevel:
      * 0: HIDDEN
      * 1: CITY
      * 2: STORE_ADDRESS
      * 3: STORE_HRS
-     *//*
+     */
+
 
     private class MyStore {
 
@@ -651,4 +659,5 @@ public class MapViewFrag extends BaseStackFrag {
             storeView.setY(storeYTop[level]);
         }
     }
-}*/
+
+}

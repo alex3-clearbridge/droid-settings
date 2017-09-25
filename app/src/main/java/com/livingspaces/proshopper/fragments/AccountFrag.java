@@ -133,13 +133,13 @@ public class AccountFrag extends BaseStackFrag implements StoreDialog.ICallback{
             topRight.setText("Logout");
             topRight.setOnClickListener(view -> {
                 Global.Prefs.clearToken();
-                //Global.Prefs.clearWishList();
+                Global.Prefs.clearWishList();
                 Global.FragManager.popToHome();
             });
         }
         else {
             topRight.setText("Log In");
-            topRight.setOnClickListener(view -> Global.FragManager.stackFrag(LoginFrag.newInstance()));
+            topRight.setOnClickListener(view -> Global.FragManager.stackFrag(LoginFrag.newInstance(false, "")));
         }
 
         return true;

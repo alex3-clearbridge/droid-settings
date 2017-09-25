@@ -265,14 +265,14 @@ public class FindStoreFrag extends BaseStackFrag implements IEditTextImeBackList
         doubleFrag.getFrontFrag().onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
-    public class DoubleSidedFrag implements MapViewFrag.Callback, StoreListFrag.Callback {
+    public class DoubleSidedFrag implements MapFrag.Callback, StoreListFrag.Callback {
 
         private boolean frontUp;
-        private MapViewFrag frontFrag;
+        private MapFrag frontFrag;
         private StoreListFrag backFrag;
 
-        private MapViewFrag getFrontFrag() {
-            if (frontFrag == null) frontFrag = MapViewFrag.newInstance(null, this);
+        private MapFrag getFrontFrag() {
+            if (frontFrag == null) frontFrag = MapFrag.newInstance(null, this);
             return frontFrag;
         }
 

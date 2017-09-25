@@ -45,6 +45,7 @@ public class WebViewFrag extends BaseStackFrag {
     private Product item;
     private boolean fromWishlist;
     private IWishlistCallback WLCallback;
+    private String[] currentSku;
 
     private WebView rootView;
 
@@ -112,15 +113,27 @@ public class WebViewFrag extends BaseStackFrag {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 Log.d(TAG, "shouldOverrideUrlLoading: " + url);
+                if (url.contains("http://ark.livingspaces.com/SignInPrompt") && currentSku != null){
+                    // user not logged in --> stop loading page and go to login fragment
+                    Global.FragManager.stackFrag(LoginFrag.newInstance(true, currentSku[1]));
+                    return true;
+                }
+                /*if (url.contains("http://ark.livingspaces.com/Views/Mobile/productview.aspx?productId=") ||
+                        url.contains("http://ark.livingspaces.com/ProductView.aspx?productId=")) {
+                    view.loadUrl(url, Network.getDefHeaders(false));
+                    return super.shouldOverrideUrlLoading(view, url);
+                }*/
+
                 return false;
             }
 
             @Override
             public void onLoadResource(WebView view, String url) {
                 Log.d(TAG, "onLoadResource: " + url);
-                if (url.contains("/Views/Mobile/productview.aspx?productId=")){
-                    Log.e(TAG, "onLoadResource: ");
-                    new Handler().postDelayed(() -> updateCartCount(), 1500);
+                if (url.contains("http://ark.livingspaces.com/Views/Mobile/productview.aspx?productId=") ||
+                        url.contains("http://ark.livingspaces.com/ProductView.aspx?productId=")){
+                    // save product sku to load product page after login process
+                    currentSku = url.split("=");
                 }
                 super.onLoadResource(view, url);
             }
@@ -156,7 +169,7 @@ public class WebViewFrag extends BaseStackFrag {
         Log.d(TAG, "onCartClicked: ");
         if (!Global.Prefs.hasToken()){
             Log.d(TAG, "onClick: has no Token");
-            Global.FragManager.stackFrag(LoginFrag.newInstance());
+            Global.FragManager.stackFrag(LoginFrag.newInstance(false,""));
             Toast.makeText(getContext(), "You need to login first", Toast.LENGTH_SHORT).show();
             return;
         }

@@ -282,7 +282,7 @@ public class ActionBar extends RelativeLayout {
     private View.OnClickListener onCartClicked = view -> {
         if (!Global.Prefs.hasToken()){
             Log.d(TAG, "onClick: has no Token");
-            Global.FragManager.stackFrag(LoginFrag.newInstance());
+            Global.FragManager.stackFrag(LoginFrag.newInstance(false, ""));
             Toast.makeText(getContext(), "You need to login first", Toast.LENGTH_SHORT).show();
             return;
         }

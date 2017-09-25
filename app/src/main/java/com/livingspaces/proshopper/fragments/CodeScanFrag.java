@@ -38,6 +38,7 @@ import com.livingspaces.proshopper.utilities.Global;
 import com.livingspaces.proshopper.utilities.Layout;
 import com.livingspaces.proshopper.utilities.Utility;
 import com.livingspaces.proshopper.utilities.sizes.PhoneSizes;
+import com.livingspaces.proshopper.views.ActionBar;
 import com.livingspaces.proshopper.views.BarcodeDialog;
 import com.livingspaces.proshopper.views.CameraPreview;
 import com.google.android.gms.analytics.HitBuilders;
@@ -436,7 +437,8 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
             public void onSuccess(ProductResponse product) {
                 Log.d(TAG, "onBarcodeFound::onSuccess ");
                 reqInProgress = false;
-                if (getActivity() == null || dialogBarcode.reqWasCanceled()) return;
+                Activity ac = getActivity();
+                if (getActivity() == null) return;
 
                 Product item = product.getProduct();
                 if (item == null) {
@@ -507,6 +509,7 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
     }
 
     private void checkUserZip(){
+        Log.d(TAG, "checkUserZip: ");
         if (!Global.Prefs.hasUserZip() || Global.Prefs.getUserZip().isEmpty()){
             showDialogFrag();
         }
@@ -516,6 +519,7 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
     }
 
     private void checkStoreId(){
+        Log.d(TAG, "checkStoreId: ");
         if (mProduct.getCurStoreId() != null && !mProduct.getCurStoreId().isEmpty()){
             Global.Prefs.saveCurrentStore(mProduct.getCurStoreId());
             startFragForItem(mProduct.getProduct());
@@ -530,6 +534,7 @@ public class CodeScanFrag extends BaseStackFrag implements BarcodeDialog.ICallba
     }
 
     private void showDialogFrag(){
+        Log.d(TAG, "showDialogFrag: ");
         isDialogFragShowing = true;
         overlay(true);
         args.putString("case", "showZip");
