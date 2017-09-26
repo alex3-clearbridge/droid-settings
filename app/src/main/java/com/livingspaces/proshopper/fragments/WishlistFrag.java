@@ -108,9 +108,23 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
 
     private void getProduct(){
 
-        String[] arr = rawWL.split(",");
+        Network.makeGetProductsREQ(rawWL, new IRequestCallback.ProductList() {
+            @Override
+            public void onSuccess(List<Product> response) {
+                Log.d(TAG, "getProduct::onSuccess: ");
+                wishlist = response;
+                update();
+            }
 
-        for (int i = 0; i < arr.length; i++){
+            @Override
+            public void onFailure(String message) {
+                Log.d(TAG, "getProduct::onFailure: ");
+            }
+        });
+
+        //String[] arr = rawWL.split(",");
+
+        /*for (int i = 0; i < arr.length; i++){
             Network.makeGetProductREQ(arr[i], new IRequestCallback.Product() {
                 @Override
                 public void onSuccess(ProductResponse product) {
@@ -133,7 +147,7 @@ public class WishlistFrag extends BaseStackFrag implements IWishlistCallback, Wi
                     update();
                 }
             }
-        }
+        }*/
     }
 
     private void addToWishlist(){

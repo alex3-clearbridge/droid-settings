@@ -1,6 +1,7 @@
 package com.livingspaces.proshopper.interfaces;
 
 import com.livingspaces.proshopper.data.response.CustomerInfoResponse;
+import com.livingspaces.proshopper.data.response.Product;
 import com.livingspaces.proshopper.data.response.Store;
 import com.livingspaces.proshopper.data.response.MessageResponse;
 import com.livingspaces.proshopper.data.response.LoginResponse;
@@ -41,6 +42,11 @@ public interface IRequestCallback {
 
     interface Customer {
         void onSuccess(CustomerInfoResponse response);
+        void onFailure(String message);
+    }
+
+    interface ProductList {
+        void onSuccess(List<com.livingspaces.proshopper.data.response.Product> response);
         void onFailure(String message);
     }
 }

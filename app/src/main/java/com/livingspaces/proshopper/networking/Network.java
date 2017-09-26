@@ -119,6 +119,11 @@ public class Network {
         mNetwork.sendGetCustomerREQ(cb);
     }
 
+    public static void makeGetProductsREQ(String items, IRequestCallback.ProductList cb){
+        if (mNetwork == null) return;
+        mNetwork.sendGetProductsREQ(items, cb);
+    }
+
     private void sendLoginREQ(String user, String pass, IRequestCallback.Login cb){
         Log.d(TAG, "sendLoginREQ: ");
         LoginRequest body = new LoginRequest(user, pass);
@@ -370,6 +375,25 @@ public class Network {
             @Override
             public void onFailure(Call<CustomerInfoResponse> call, Throwable t) {
                 Log.d(TAG, "sendGetCustomerREQ::onFailure: ");
+                cb.onFailure(t.getMessage());
+            }
+        });
+    }
+
+    private void sendGetProductsREQ(String items, IRequestCallback.ProductList cb){
+        Log.d(TAG, "sendGetProductsREQ: ");
+        Call<List<Product>> getItems = mApiService.getProducts(items, KeyValues.X_AUTH.second);
+        getItems.enqueue(new Callback<List<Product>>() {
+            @Override
+            public void onResponse(Call<List<Product>> call, Response<List<Product>> response) {
+                Log.d(TAG, "sendGetProductsREQ::onResponse: ");
+                if (response.code() == 200)cb.onSuccess(response.body());
+                else cb.onFailure(String.valueOf(response.code()));
+            }
+
+            @Override
+            public void onFailure(Call<List<Product>> call, Throwable t) {
+                Log.d(TAG, "sendGetProductsREQ::onFailure: ");
                 cb.onFailure(t.getMessage());
             }
         });

@@ -1,6 +1,7 @@
 package com.livingspaces.proshopper.networking;
 
 import com.livingspaces.proshopper.data.response.CustomerInfoResponse;
+import com.livingspaces.proshopper.data.response.Product;
 import com.livingspaces.proshopper.data.response.Store;
 import com.livingspaces.proshopper.data.response.MessageResponse;
 import com.livingspaces.proshopper.data.response.LoginResponse;
@@ -108,5 +109,11 @@ public interface EndPoint {
             @Query("username") String username,
             @Header("X-Auth-Token") String authToken,
             @Header("Authorization") String token
+    );
+
+    @GET("http://apiark.livingspaces.com/api/v1/Products/{items}")
+    Call<List<Product>> getProducts(
+        @Path("items") String items,
+        @Header("X-Auth-Token") String authToken
     );
 }
