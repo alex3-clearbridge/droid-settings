@@ -118,6 +118,11 @@ public class WebViewFrag extends BaseStackFrag {
                     Global.FragManager.stackFrag(LoginFrag.newInstance(true, currentSku[1]));
                     return true;
                 }
+                else if (url.contains("http://ark.livingspaces.com/ViewCart.aspx")){
+                    Global.FragManager.popToHome();
+                    Global.FragManager.stackFrag(WebViewFrag.newInstance("Cart", Services.URL.Cart.get()));
+                    return true;
+                }
                 /*if (url.contains("http://ark.livingspaces.com/Views/Mobile/productview.aspx?productId=") ||
                         url.contains("http://ark.livingspaces.com/ProductView.aspx?productId=")) {
                     view.loadUrl(url, Network.getDefHeaders(false));
