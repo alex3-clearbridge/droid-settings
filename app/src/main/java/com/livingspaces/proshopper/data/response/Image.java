@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class Image {
 
-    @SerializedName("mediumUrl")
+    @SerializedName("fullPath")
     String imgUrl;
 
     public Image() {
