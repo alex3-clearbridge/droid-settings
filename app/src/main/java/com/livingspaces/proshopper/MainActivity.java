@@ -238,8 +238,7 @@ public class MainActivity extends AppCompatActivity implements IMainFragManager,
 
     @Override
     public void popToFrag(String fragTitle) {
-        while (!fragStack.isEmpty() && !fragStack.peek().getTitle().equals(fragTitle) && popFrag(true))
-            ;
+        while (!fragStack.isEmpty() && !fragStack.peek().getTitle().equals(fragTitle) && popFrag(true));
         updateViewsForFrag();
     }
 

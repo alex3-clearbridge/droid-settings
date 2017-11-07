@@ -125,8 +125,8 @@ public class ItemDetailFrag extends BaseStackFrag {
 
     @Override
     public boolean setTopRight(final ImageView topRight) {
-        topRight.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ls_s_btn_remove_00));
-        topRight.setRotation(-135);
+        topRight.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ls_w_btn_delete));
+        //topRight.setRotation(-135);
         topRight.setOnClickListener(v -> {
             Global.Prefs.editWishItem(item.getSku(), false);
             if (WLCallback != null) {

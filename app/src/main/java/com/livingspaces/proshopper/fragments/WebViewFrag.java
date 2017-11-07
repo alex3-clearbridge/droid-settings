@@ -192,8 +192,9 @@ public class WebViewFrag extends BaseStackFrag {
         if (item == null) return false;
 
         final boolean inWishlist = Global.Prefs.hasWishItem(item.getSku());
-        topRightEx.setRotation(inWishlist ? 135 : 0);
-        topRightEx.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ls_s_btn_remove_00));
+        //topRightEx.setRotation(inWishlist ? 135 : 0);
+        if (!inWishlist) topRightEx.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ls_s_btn_remove_00));
+        else topRightEx.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ls_w_btn_delete));
         topRightEx.setOnClickListener(new View.OnClickListener() {
             boolean added = inWishlist;
 
@@ -210,9 +211,21 @@ public class WebViewFrag extends BaseStackFrag {
                     Log.d(TAG, "onClick: added || WLCallback == null");
                     getActivity().getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
                             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
-                    topRightEx.animate().setDuration(250).rotationBy(added ? 135 : -135).withEndAction(() -> {
-                        Global.Prefs.editWishItem(item.getSku(), added);
-                        getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                    if (added) topRightEx.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ls_w_btn_delete));
+                    else topRightEx.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.ls_s_btn_remove_00));
+                    /*new Runnable() {
+                        @Override
+                        public void run() {
+                            Global.Prefs.editWishItem(item.getSku(), added);
+                            getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                        }
+                    };*/
+                    topRightEx.animate().setDuration(250).rotationBy(added ? 0 : 0).withEndAction(new Runnable() {
+                        @Override
+                        public void run() {
+                            Global.Prefs.editWishItem(item.getSku(), added);
+                            getActivity().getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                        }
                     }).start();
                     
                     if (!added){
