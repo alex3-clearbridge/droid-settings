@@ -31,7 +31,7 @@ public class NavigationFrag extends Fragment implements View.OnClickListener {
         SUB("Subscribe", R.id.nav_sub, R.drawable.ls_h_icon_sub),
         SOCIAL("Social Media", R.id.nav_social, R.drawable.ls_h_icon_social),
         ACCOUNT("My Account", R.id.nav_account, R.drawable.is_h_btn_account),
-        SETTINGS("Settings", R.id.nav_settings, R.drawable.ls_h_btn_settings);
+        SETTINGS("Browse Website", R.id.nav_browse, R.drawable.ls_h_btn_web);
 
         private int resId, imgId;
         private String title;
@@ -106,9 +106,9 @@ public class NavigationFrag extends Fragment implements View.OnClickListener {
                 label = "My Account";
                 Global.FragManager.stackFrag(AccountFrag.newInstance());
                 break;
-            case R.id.nav_settings:
-                label = "Settings";
-                Global.FragManager.stackFrag(SettingsFrag.newInstance());
+            case R.id.nav_browse:
+                label = "Browse";
+                Global.FragManager.stackFrag(WebViewFrag.newInstance("LivingSpaces", Services.URL.Website.get()));
                 break;
         }
 

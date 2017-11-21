@@ -171,6 +171,10 @@ public class Global {
             return sharedPrefs != null && sharedPrefs.contains(KEY_storeId);
         }
 
+        public static boolean hasUserId(){
+            return sharedPrefs != null && sharedPrefs.contains(KEY_userName);
+        }
+
         public static void saveStore(Store store){
 
             if (sharedPrefs == null || store == null) return;

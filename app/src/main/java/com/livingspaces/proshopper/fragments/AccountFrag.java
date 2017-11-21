@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.livingspaces.proshopper.R;
 import com.livingspaces.proshopper.data.response.Store;
 //import com.livingspaces.proshopper.networking.NetworkManager;
+import com.livingspaces.proshopper.networking.Services;
 import com.livingspaces.proshopper.utilities.Global;
 import com.livingspaces.proshopper.views.LSTextView;
 
@@ -29,7 +30,7 @@ public class AccountFrag extends BaseStackFrag implements StoreDialog.ICallback{
 
     private static final String TAG = AccountFrag.class.getSimpleName();
 
-    private LSTextView tv_selectStore, tv_storeName, tv_storeAddress, tv_storeCity, tv_storeState, tv_storeZip, tv_storeDistance_unit, tv_callBtn, tv_changeStoreBtn, tv_storeDistance;
+    private LSTextView tv_accountName, tv_selectStore, tv_storeName, tv_storeAddress, tv_storeCity, tv_storeState, tv_storeZip, tv_storeDistance_unit, tv_callBtn, tv_changeStoreBtn, tv_storeDistance;
     private StoreDialog mStoreDialog;
     private View rootView, hasStoreView, noStoreView;
     private Store mStore;
@@ -55,6 +56,7 @@ public class AccountFrag extends BaseStackFrag implements StoreDialog.ICallback{
         noStoreView = rootView.findViewById(R.id.v_no_store);
         noStoreView.setVisibility(View.GONE);
 
+        tv_accountName = (LSTextView) rootView.findViewById(R.id.tv_account_name);
         tv_storeName = (LSTextView) rootView.findViewById(R.id.tv_storename_accountfrag);
         tv_storeAddress = (LSTextView) rootView.findViewById(R.id.tv_storeaddress_accountfrag);
         tv_storeCity = (LSTextView) rootView.findViewById(R.id.tv_storecity_accountfrag);
@@ -77,13 +79,29 @@ public class AccountFrag extends BaseStackFrag implements StoreDialog.ICallback{
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        if (hasStore){
+        if (hasStore) {
             mStore = Global.Prefs.getStore();
-            if (mStore == null) return;
+            if (mStore == null) {
+                return;
+            }
             showStore();
-        }
-        else
+        } else {
             chooseStore();
+        }
+
+        if (Global.Prefs.hasUserId()) {
+            tv_accountName.setText(Global.Prefs.getUserId());
+            tv_accountName.setVisibility(View.VISIBLE);
+        } else {
+            tv_accountName.setText("");
+            tv_accountName.setVisibility(View.GONE);
+        }
+
+        view.findViewById(R.id.v_terms).setOnClickListener(view1 -> Global.FragManager.stackFrag(WebViewFrag.newInstance("Terms of use", Services.URL.Terms.get())));
+
+        view.findViewById(R.id.v_policy).setOnClickListener(view1 -> Global.FragManager.stackFrag(WebViewFrag.newInstance("Privacy policy", Services.URL.StorePolicy.get())));
+
+        view.findViewById(R.id.v_about).setOnClickListener(view1 -> Global.FragManager.stackFrag(WebViewFrag.newInstance("About out ads", Services.URL.About.get())));
     }
 
     private void showStore(){

@@ -36,7 +36,7 @@ public class ActionBar extends RelativeLayout {
 
     private static final String TAG = ActionBar.class.getSimpleName();
 
-    private Drawable d_main, d_back, d_cart, d_web, d_close;
+    private Drawable d_main, d_back, d_cart, d_close;
 
     private ImageView iv_topLeft;
     private ImageView iv_topLeftEx;
@@ -72,7 +72,6 @@ public class ActionBar extends RelativeLayout {
         d_main = ContextCompat.getDrawable(getContext(), R.drawable.ls_h_img_logo);
         d_back = ContextCompat.getDrawable(getContext(), R.drawable.ls_g_btn_back);
         d_cart = ContextCompat.getDrawable(getContext(), R.drawable.ls_h_btn_cart);
-        d_web = ContextCompat.getDrawable(getContext(), R.drawable.ls_h_btn_web);
         d_close = ContextCompat.getDrawable(getContext(), R.drawable.ls_g_btn_cancel);
 
         iv_topLeft = (ImageView) findViewById(R.id.iv_topLeft);
@@ -251,15 +250,6 @@ public class ActionBar extends RelativeLayout {
 
         iv_topRight.setOnClickListener(onCartClicked);
         v_topRightUp.setOnClickListener(onCartClicked);
-
-        iv_topRightEx.setClickable(false);
-        iv_topRightEx.setRotation(0);
-        iv_topRightEx.animate().alpha(0).setDuration(250).withEndAction(() -> {
-            iv_topRightEx.setImageDrawable(d_web);
-            iv_topRightEx.animate().alpha(1).setDuration(250).start();
-        }).start();
-
-        iv_topRightEx.setOnClickListener(onWebHomeClicked);
     }
 
     public void updateCartCount(){
@@ -300,18 +290,6 @@ public class ActionBar extends RelativeLayout {
                 .setCategory("ui_action")
                 .setAction("cart_button_click")
                 .setLabel("View Cart")
-                .build()
-        );
-    };
-
-    private View.OnClickListener onWebHomeClicked = view -> {
-        Global.FragManager.stackFrag(WebViewFrag.newInstance("LivingSpaces", Services.URL.Website.get()));
-
-            /* Google Analytics -- home_button_click */
-        Utility.gaTracker.send(new HitBuilders.EventBuilder()
-                .setCategory("ui_action")
-                .setAction("home_button_click")
-                .setLabel("View Website")
                 .build()
         );
     };
