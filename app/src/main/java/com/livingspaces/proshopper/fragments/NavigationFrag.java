@@ -31,7 +31,7 @@ public class NavigationFrag extends Fragment implements View.OnClickListener {
         SUB("Subscribe", R.id.nav_sub, R.drawable.ls_h_icon_sub),
         SOCIAL("Social Media", R.id.nav_social, R.drawable.ls_h_icon_social),
         ACCOUNT("My Account", R.id.nav_account, R.drawable.is_h_btn_account),
-        SETTINGS("Browse Website", R.id.nav_browse, R.drawable.ls_h_btn_web);
+        BROWSE("Browse Website", R.id.nav_browse, R.drawable.ls_h_btn_web_b);
 
         private int resId, imgId;
         private String title;
