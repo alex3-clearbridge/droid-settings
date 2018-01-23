@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name">Living Spaces</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="phoneNumber">1–877–266-7300</string>
+    <string name="openUntil">Open Until 9:00 PM</string>
+    <string name="closed">Closed</string>
+    <string name="viewWebsite">View Website</string>
+
+
+    <!-- Google Maps API Key -->
+    <string name="GoogleMapsAPIKey">AIzaSyD2FwAWzwL9gEXrXhI5ajv-BU2o42l1b0E</string>
+
+
+    <!-- Google Analytics ID -->
+    <string name="GoogleAnalyticsID">UA–463007-5</string>
+
+    <!--sharing strings list -->
+    <string name="share_subject">My Living Spaces Wishlist</string>
+    <string name="shareMsgText1">I wanted to share my</string>
+    <string name="shareMsgText2">Living Spaces Wishlist</string>
+    <string name="shareMsgText3">&#160;with you.</string>
+    <string name="shareChooserTitle">Share Wishlist</string>
+
+    <string name="subscribe_page_title">EMAIL</string>
+
+    <string name="facebook">Facebook</string>
+    <string name="google">Google +</string>
+    <string name="youtube">YouTube</string>
+    <string name="pinterest">Pinterest</string>
+    <string name="houzz">Houzz</string>
+    <string name="twitter">Twitter</string>
+    <string name="instagram">Instagram</string>
+    <string name="blog">Blog</string>
+
+    <!--Dialog messages-->
+    <string name="form_error_head">Form Error</string>
+    <string name="form_error_txt">Invalid Username or Password.</string>
+    <string name="form_empty_error_txt">All fields are required.</string>
+    <string name="inv_email_head">Invalid Email</string>
+    <string name="inv_email_txt">Please enter a valid email address.</string>
+    <string name="pass_error_head">Password Error</string>
+    <string name="pass_error_txt">Password must be at least 6 characters.</string>
+    <string name="log_fail_head">Login Failed</string>
+    <string name="log_fail_txt">Sorry, an unknown error occurred. Please try again later.</string>
+    <string name="log_success_head">Success</string>
+    <string name="log_success_txt">Login successful.</string>
+    <string name="pass_match_error_head">Password Error</string>
+    <string name="pass_match_error_txt">Passwords do not match.</string>
+    <string name="account_head">Success</string>
+    <string name="account_txt">Account was created successfully.</string>
+    <string name="email_sent_head">Email Sent</string>
+    <string name="email_sent_txt">We have sent an email with instructions on how to reset your password.</string>
+    <string name="email_not_system_head">Invalid Email</string>
+    <string name="email_not_system_txt">Your email does not exist in our system, try again.</string>
+    <string name="prog_bar_loading">Working on your request</string>
+    <string name="no_network_head">Network Error</string>
+    <string name="no_network_txt">Please check your network connection.</string>
+    <string name="enter_zip">Please enter your zipcode</string>
+
+
+</resources>

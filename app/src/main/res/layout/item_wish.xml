@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    >
+    <RelativeLayout
+        android:id="@+id/item_footer"
+        android:layout_width="match_parent"
+        android:layout_height="200dp">
+
+    </RelativeLayout>
+    <RelativeLayout
+        android:id="@+id/back"
+        android:tag="back"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        >
+        <com.livingspaces.proshopper.views.LSTextView
+            android:id="@+id/tv_deleteItem"
+            android:layout_width="100dp"
+            android:layout_height="130dp"
+            android:layout_alignParentRight="true"
+            android:background="@android:color/holo_red_dark"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:text="Delete"
+            app:font="regular"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/front"
+        android:tag="front"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        >
+
+        <ImageView
+            android:id="@+id/ib_editWish"
+            android:layout_width="50dp"
+            android:layout_height="130dp"
+            android:scaleType="fitCenter"
+            android:paddingLeft="17dp"
+            android:paddingRight="17dp"
+            android:clickable="true"
+            android:src="@drawable/ls_w_btn_check_00"
+            android:background="@android:color/transparent"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:id="@+id/ll_wishItem"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:background="@android:color/background_light"
+                android:clickable="true">
+
+                <ImageView
+                    android:id="@+id/niv_wishImg"
+                    android:layout_height="match_parent"
+                    android:layout_width="0dip"
+                    android:layout_weight="3"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ls_w_img_default"/>
+
+                <RelativeLayout
+                    android:layout_height="match_parent"
+                    android:layout_width="0dip"
+                    android:layout_weight="5"
+                    android:orientation="vertical"
+                    android:paddingRight="10dp"
+                    android:paddingLeft="10dp">
+
+                    <com.livingspaces.proshopper.views.LSTextView
+                        android:id="@+id/tv_wishTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Title"
+                        android:maxLines="2"
+                        android:lines="2"
+                        android:layout_marginTop="10dp"
+                        android:ellipsize="end"
+                        style="@style/LSTitleTxt"
+                        app:font="bold"/>
+                    <LinearLayout
+                        android:id="@+id/SKU_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/tv_wishTitle"
+                        android:layout_marginBottom="5dp"
+                        android:orientation="horizontal">
+
+                        <com.livingspaces.proshopper.views.LSTextView
+                            android:id="@+id/tv_wishSKUTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginRight="5dp"
+                            android:text="SKU Number:"
+                            style="@style/LSDefTxt"
+                            app:font="regular"/>
+
+                        <com.livingspaces.proshopper.views.LSTextView
+                            android:id="@+id/tv_wishSKU"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="SKU"
+                            style="@style/LSDefTxt"
+                            app:font="bold"/>
+
+                    </LinearLayout>
+
+                    <com.livingspaces.proshopper.views.LSTextView
+                        android:id="@+id/tv_wishCost"
+                        android:layout_marginTop="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/SKU_container"
+                        android:text="cost"
+                        style="@style/LSLightTxt"
+                        app:font="bold"/>
+
+                </RelativeLayout>
+
+                <ImageView
+                    android:id="@+id/iv_details"
+                    android:layout_height="match_parent"
+                    android:layout_width="0dip"
+                    android:layout_weight="1"
+                    android:src="@drawable/ls_g_icon_arrow"
+                    android:paddingRight="12dp"
+                    android:paddingLeft="12dp"/>
+
+            </LinearLayout>
+            <View
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="@color/nav_divider_color"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+
+
+</FrameLayout>

@@ -1,0 +1,116 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    tools:context="com.livingspaces.proshopper.fragments.CodeScanFrag">
+
+    <FrameLayout
+        android:id="@+id/container_camera"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black" />
+
+    <ImageView
+        android:id="@+id/iv_target"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:src="@drawable/ls_s_img_scan_camera" />
+
+    <!-- Enable Camera Access screen -->
+    <LinearLayout
+        android:id="@+id/layout_enableCameraAccess"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FDFDFE"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:visibility="visible">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ls_s_img_noaccess" />
+
+        <com.livingspaces.proshopper.views.LSTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingBottom="15dp"
+            android:paddingTop="30dp"
+            android:singleLine="true"
+            android:text="Enable Camera Access"
+            android:textColor="#515151"
+            android:textSize="18sp"
+            app:font="regular" />
+
+        <com.livingspaces.proshopper.views.LSTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:maxLines="2"
+            android:text="In Settings, allow &quot;Living Spaces&quot; access\nyour camera to use the scan feature."
+            android:textColor="#515151"
+            android:textSize="16sp"
+            app:font="light" />
+
+    </LinearLayout>
+
+    <com.livingspaces.proshopper.views.LSTextView
+        android:id="@+id/tv_enterCode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="@drawable/button"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="Enter Product ID or Barcode"
+        android:textColor="#F7F6E8"
+        android:textSize="18sp" />
+
+    <com.livingspaces.proshopper.views.LSTextView
+        android:id="@+id/tv_submit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_weight="1"
+        android:width="0dip"
+        android:background="@drawable/button"
+        android:gravity="center"
+        android:paddingBottom="6dp"
+        android:paddingTop="6dp"
+        android:text="Submit"
+        android:textColor="#F7F6E8"
+        android:textSize="18sp" />
+
+    <View
+        android:id="@+id/shade_scanFrag"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/BlackFaded">
+
+    </View>
+
+    <com.livingspaces.proshopper.views.BarcodeDialog
+        android:id="@+id/dialog_code"
+        android:layout_width="300dp"
+        android:layout_height="250dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp" />
+
+    <include
+        android:id="@+id/dialog_help"
+        layout="@layout/dialog_help"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true" />
+
+</RelativeLayout>

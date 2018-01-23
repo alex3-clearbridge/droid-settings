@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="30dp"
+    android:background="@drawable/rounded_corner"
+    android:clickable="true">
+
+    <com.livingspaces.proshopper.views.LSTextView
+        android:id="@+id/tv_helpTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:text="How Do I Scan?"
+        app:font="bold"
+        style="@style/DialogMainTxt"/>
+
+    <com.livingspaces.proshopper.views.LSTextView
+        android:id="@+id/tv_instruction"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:text="Please see the below example to understand the Product ID and the barcode number."
+        android:layout_marginBottom="5dp"
+        style="@style/DialogMainTxt"
+        app:font="regular"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/ls_s_img_help"
+        android:scaleType="fitXY"
+        android:layout_marginBottom="5dp"/>
+
+    <com.livingspaces.proshopper.views.LSTextView
+        android:id="@+id/tv_enterCodeInHelp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Enter Product ID or Barcode"
+        style="@style/LSButton"
+        app:font="light"/>
+
+</LinearLayout>

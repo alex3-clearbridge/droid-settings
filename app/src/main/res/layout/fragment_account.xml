@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="20dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:background="@android:color/background_light"
+    tools:context="com.livingspaces.proshopper.fragments.AccountFrag">
+
+    <com.livingspaces.proshopper.views.LSTextView
+        android:id="@+id/tv_account_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="10dp"
+        android:textSize="17sp"
+        android:textColor="@color/MainLog_txt"
+        app:font="bold" />
+
+    <RelativeLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/background_light"
+        android:clickable="true">
+
+        <RelativeLayout
+            android:id="@+id/v_no_store"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:visibility="gone">
+
+            <com.livingspaces.proshopper.views.LSTextView
+                android:id="@+id/tv_select_store"
+                android:layout_width="292.5dp"
+                android:layout_height="32.5dp"
+                android:layout_marginBottom="23dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/button_login"
+                android:text="Select a Store"
+                style="@style/LoginButton" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/v_has_store"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="20dp"
+            android:layout_marginLeft="11.5dp"
+            android:clickable="true">
+
+            <com.livingspaces.proshopper.views.LSTextView
+                android:id="@+id/tv_storename_accountfrag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Huntington beach"
+                android:textSize="14sp"
+                android:textAllCaps="true"
+                android:textColor="@color/MainLog_txt"/>
+
+            <com.livingspaces.proshopper.views.LSTextView
+                android:id="@+id/tv_storeaddress_accountfrag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_storename_accountfrag"
+                android:text="6912 Edinger Ave"
+                android:textSize="14sp"
+                android:textColor="@color/MainLog_txt"/>
+
+            <com.livingspaces.proshopper.views.LSTextView
+                android:id="@+id/tv_storecity_accountfrag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_storeaddress_accountfrag"
+                android:text="Huntington beach,"
+                android:textSize="14sp"
+                android:textColor="@color/MainLog_txt"/>
+
+            <com.livingspaces.proshopper.views.LSTextView
+                android:id="@+id/tv_storestate_accountfrag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/tv_storecity_accountfrag"
+                android:layout_alignBaseline="@+id/tv_storecity_accountfrag"
+                android:text="CA"
+                android:textSize="14sp"
+                android:textColor="@color/MainLog_txt"/>
+
+            <com.livingspaces.proshopper.views.LSTextView
+                android:id="@+id/tv_storezip_accountfrag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/tv_storestate_accountfrag"
+                android:layout_alignBaseline="@+id/tv_storestate_accountfrag"
+                android:text="92647"
+                android:textSize="14sp"
+                android:textColor="@color/MainLog_txt"/>
+
+            <com.livingspaces.proshopper.views.LSTextView
+                android:id="@+id/tv_storedistance_accountfrag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tv_storecity_accountfrag"
+                android:layout_marginBottom="20.7dp"
+                android:text="27"
+                android:textSize="14sp"
+                android:textColor="@color/MainLog_txt"/>
+
+            <com.livingspaces.proshopper.views.LSTextView
+                android:id="@+id/tv_storedistanceUnit_accountfrag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/tv_storedistance_accountfrag"
+                android:layout_alignBaseline="@+id/tv_storedistance_accountfrag"
+                android:layout_marginLeft="5dp"
+                android:layout_marginBottom="20.7dp"
+                android:text="miles"
+                android:textSize="14sp"
+                android:textColor="@color/MainLog_txt"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="11.5dp"
+                android:orientation="horizontal"
+                android:layout_below="@id/tv_storedistance_accountfrag"
+                android:layout_marginTop="10dp">
+
+                <com.livingspaces.proshopper.views.LSTextView
+                    android:id="@+id/tv_call_accountfrag"
+                    android:layout_width="0dp"
+                    android:layout_height="32.5dp"
+                    android:layout_weight="3"
+                    android:background="@drawable/button_login"
+                    android:text="Call"
+                    style="@style/LoginButton" />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"/>
+
+                <com.livingspaces.proshopper.views.LSTextView
+                    android:id="@+id/tv_changestore_accountfrag"
+                    android:layout_width="0dp"
+                    android:layout_height="32.5dp"
+                    android:layout_weight="3"
+                    android:background="@drawable/button_login"
+                    android:text="Change Store"
+                    style="@style/LoginButton" />
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/nav_divider_color"
+        android:layout_gravity="center"/>
+
+    <RelativeLayout
+        android:id="@+id/v_terms"
+        android:layout_width="match_parent"
+        android:layout_height="49.5dp"
+        android:layout_marginTop="1.1dp">
+
+        <com.livingspaces.proshopper.views.LSTextView
+            android:id="@+id/tv_settings_terms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24.5dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:text="Terms of Use"
+            android:textSize="15sp"
+            android:textColor="@color/MainLog_txt"/>
+
+        <ImageView
+            android:id="@+id/iv_settings_terms"
+            android:layout_width="17.5dp"
+            android:layout_height="17.5dp"
+            android:layout_marginRight="15dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ls_g_btn_go"/>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/nav_divider_color"
+        android:layout_gravity="center"/>
+
+    <RelativeLayout
+        android:id="@+id/v_policy"
+        android:layout_width="match_parent"
+        android:layout_height="49.5dp"
+        android:layout_marginTop="1.1dp">
+
+        <com.livingspaces.proshopper.views.LSTextView
+            android:id="@+id/tv_settings_policy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24.5dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:text="Privacy Policy"
+            android:textSize="15sp"
+            android:textColor="@color/MainLog_txt"/>
+
+        <ImageView
+            android:id="@+id/iv_settings_policy"
+            android:layout_width="17.5dp"
+            android:layout_height="17.5dp"
+            android:layout_marginRight="15dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ls_g_btn_go"/>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/nav_divider_color"
+        android:layout_gravity="center"/>
+
+    <RelativeLayout
+        android:id="@+id/v_about"
+        android:layout_width="match_parent"
+        android:layout_height="49.5dp"
+        android:layout_marginTop="1.1dp">
+
+        <com.livingspaces.proshopper.views.LSTextView
+            android:id="@+id/tv_settings_about"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24.5dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:text="About our Ads"
+            android:textSize="15sp"
+            android:textColor="@color/MainLog_txt"/>
+
+        <ImageView
+            android:id="@+id/iv_settings_about"
+            android:layout_width="17.5dp"
+            android:layout_height="17.5dp"
+            android:layout_marginRight="15dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ls_g_btn_go"/>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/nav_divider_color"
+        android:layout_gravity="center"/>
+
+</LinearLayout>

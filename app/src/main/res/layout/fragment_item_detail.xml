@@ -1,0 +1,136 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:clickable="true"
+    android:background="@android:color/background_light"
+    android:padding="15dp"
+    tools:context="com.livingspaces.proshopper.fragments.ItemDetailFrag">
+
+    <com.livingspaces.proshopper.views.LSTextView
+        android:id="@+id/tv_itemTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:text="Product Title"
+        style="@style/DetailTitleTxt"
+        app:font="bold"/>
+
+    <ImageView
+        android:id="@+id/niv_itemImg"
+        android:layout_width="match_parent"
+        android:layout_height="0dip"
+        android:layout_weight="1"
+        android:src="@drawable/ls_w_img_default"
+        android:layout_marginBottom="15dp"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.livingspaces.proshopper.views.LSTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="5dp"
+            android:text="Price"
+            style="@style/LSDefTxt"
+            app:font="bold"/>
+
+        <com.livingspaces.proshopper.views.LSTextView
+            android:id="@+id/tv_itemPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="5dp"
+            android:text="$ ___"
+            style="@style/LSLightTxt"
+            app:font="semibold"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp">
+
+        <com.livingspaces.proshopper.views.LSTextView
+            android:id="@+id/tv_label_SKU"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="5dp"
+            android:text="SKU Number:"
+            style="@style/LSDefTxt"
+            app:font="light"/>
+
+        <com.livingspaces.proshopper.views.LSTextView
+            android:id="@+id/tv_itemSKU"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/tv_label_SKU"
+            android:layout_marginBottom="5dp"
+            android:text="SKU #"
+            style="@style/LSDefTxt"
+            app:font="bold"/>
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/v_botBorder"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/LightGray"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_moreDetails"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp">
+
+        <com.livingspaces.proshopper.views.LSTextView
+            android:id="@+id/tv_moreDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="More Details About the Product"
+            style="@style/LSDefTxt"
+            app:font="regular"/>
+
+        <ImageView
+            android:id="@+id/iv_moreDetails"
+            android:layout_height="match_parent"
+            android:layout_width="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ls_g_icon_arrow"/>
+
+    </RelativeLayout>
+
+    <View
+        android:id="@+id/v_topBorder"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_above="@id/tv_moreDetails"
+        android:background="@color/LightGray"/>
+
+    <com.livingspaces.proshopper.views.LSTextView
+        android:id="@+id/tv_addMore"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_gravity="center"
+        android:text="Add Another Product"
+        style="@style/LSButton" />
+
+    <com.livingspaces.proshopper.views.LSTextView
+        android:id="@+id/tv_toWL"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_gravity="center"
+        android:text="View Wishlist"
+        style="@style/LSButton" />
+</LinearLayout>

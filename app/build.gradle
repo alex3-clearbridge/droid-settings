@@ -1,0 +1,50 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion '27.0.1'
+
+    defaultConfig {
+        applicationId "com.livingspaces.proshopper"
+        minSdkVersion 16
+        targetSdkVersion 23
+        versionCode 4
+        versionName "1.0.2"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    lintOptions {
+        abortOnError false
+    }
+
+    compileOptions {
+        targetCompatibility 1.8
+        sourceCompatibility 1.8
+    }
+}
+
+dependencies {
+    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.nineoldandroids:library:2.4.0'
+    compile 'com.android.support:appcompat-v7:23.0.1'
+    compile 'com.android.support:design:23.1.1'
+    compile 'me.dm7.barcodescanner:zbar:1.8.3'
+    compile 'com.android.support:recyclerview-v7:+'
+
+    compile 'com.android.support:support-v13:+'
+    compile 'com.google.android.gms:play-services-maps:8.1.0'
+    compile 'com.google.android.gms:play-services-analytics:8.1.0'
+
+    compile 'com.google.android.gms:play-services-location:8.1.0'
+
+    compile 'com.squareup.retrofit2:retrofit:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+
+    compile 'com.squareup.picasso:picasso:2.5.2'
+
+}
