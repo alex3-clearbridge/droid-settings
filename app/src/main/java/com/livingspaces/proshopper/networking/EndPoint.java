@@ -111,7 +111,7 @@ public interface EndPoint {
             @Header("Authorization") String token
     );
 
-    @GET("http://apiark.livingspaces.com/api/v1/Products/{items}")
+    @GET("api/v1/Products/{items}")
     Call<List<Product>> getProducts(
         @Path("items") String items,
         @Header("X-Auth-Token") String authToken

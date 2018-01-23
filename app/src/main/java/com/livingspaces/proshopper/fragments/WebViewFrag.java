@@ -113,21 +113,16 @@ public class WebViewFrag extends BaseStackFrag {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 Log.d(TAG, "shouldOverrideUrlLoading: " + url);
-                if (url.contains("http://ark.livingspaces.com/SignInPrompt") && currentSku != null){
+                if (url.contains(Services.URL.ForComparison.SignInPrompt.get()) && currentSku != null){
                     // user not logged in --> stop loading page and go to login fragment
                     Global.FragManager.stackFrag(LoginFrag.newInstance(true, currentSku[1]));
                     return true;
                 }
-                else if (url.contains("http://ark.livingspaces.com/ViewCart.aspx")){
+                else if (url.contains(Services.URL.ForComparison.ViewCart.get())){
                     Global.FragManager.popToHome();
                     Global.FragManager.stackFrag(WebViewFrag.newInstance("Cart", Services.URL.Cart.get()));
                     return true;
                 }
-                /*if (url.contains("http://ark.livingspaces.com/Views/Mobile/productview.aspx?productId=") ||
-                        url.contains("http://ark.livingspaces.com/ProductView.aspx?productId=")) {
-                    view.loadUrl(url, Network.getDefHeaders(false));
-                    return super.shouldOverrideUrlLoading(view, url);
-                }*/
 
                 return false;
             }
@@ -135,8 +130,8 @@ public class WebViewFrag extends BaseStackFrag {
             @Override
             public void onLoadResource(WebView view, String url) {
                 Log.d(TAG, "onLoadResource: " + url);
-                if (url.contains("http://ark.livingspaces.com/Views/Mobile/productview.aspx?productId=") ||
-                        url.contains("http://ark.livingspaces.com/ProductView.aspx?productId=")){
+                if (url.contains(Services.URL.ForComparison.ProductView.get()) ||
+                        url.contains(Services.URL.ForComparison.MobileProductView.get())){
                     // save product sku to load product page after login process
                     currentSku = url.split("=");
                 }

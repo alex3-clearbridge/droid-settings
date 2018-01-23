@@ -20,7 +20,6 @@
 
     <!--sharing strings list -->
     <string name="share_subject">My Living Spaces Wishlist</string>
-    <string name="share_url">http://dev.livingspaces.com/landingpage.aspx?fileName=wish-list&amp;</string>
     <string name="shareMsgText1">I wanted to share my</string>
     <string name="shareMsgText2">Living Spaces Wishlist</string>
     <string name="shareMsgText3">&#160;with you.</string>
